@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Eddie-compatible bootstrap encrypts its payload over HTTP (core/Protocol.kt).
+     Hosts may be IP literals supplied by a refreshed manifest, so HTTP is enabled app-wide.
+     This setting itself does not restrict HTTP to the bootstrap client. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

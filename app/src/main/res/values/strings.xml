@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Wave VPN</string>
+    <string name="state_off">Off</string>
+    <string name="state_connecting">Connecting…</string>
+    <string name="state_stalled_short">No response</string>
+</resources>
