@@ -86,7 +86,7 @@ fun SettingsScreen(vm: AppViewModel, onSplitTunneling: () -> Unit) {
 
         Group(
             "Always-on VPN",
-            "Android's kill switch. Turn on Always-on VPN and Block connections without VPN for Wave VPN, and nothing leaves the phone outside the tunnel.",
+            "Turn on Always-on VPN and Block connections without VPN for Wave VPN. Android enforces this protection, but DNS may escape during tunnel changes on affected Android versions.",
         ) {
             row { ValueRow("Open Android VPN settings", null, onClick = { context.startActivity(Intent(AndroidSettings.ACTION_VPN_SETTINGS)) }) }
         }

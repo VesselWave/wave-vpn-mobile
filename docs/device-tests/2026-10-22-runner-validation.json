@@ -1,0 +1,165 @@
+{
+  "schema": 1,
+  "date": "2026-10-22",
+  "source_threads": [
+    "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+    "2a7198b7-2664-4843-897e-2349a08a5be7",
+    "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+  ],
+  "runner_source_sha256": {
+    "run.py": "68931a43368696293e9846d4d67037a34c672de1bff31080006075742c3ca721",
+    "Driver.java": "9f0467c930105a7497526d51f4324e007cb69e407e4ab8b9ec79db30c5a6cb11",
+    "Probe.java": "b568b92301a14b12fc2b9d8888effab914774974599a1846d9d54e9ca3cc012c",
+    "build.sh": "ec41433444db1125f12a3c7d01300e9ee8ccc45c50cf5d2cf8a13462d89fdc69",
+    "summarize.py": "c3c53957d6965ca91f1d2ac5f602b30068394f8a2ba39a124238cc05149487ac"
+  },
+  "checks": {
+    "offline_unittests": {
+      "passed": 17
+    },
+    "helper_apk_and_native_capture_build": "passed; JDK 17, SDK platform 37.0/build-tools 37.0.0, NDK 29.0.14206865",
+    "application_checks": {
+      "command": "./gradlew :core:test :app:lintDebug :app:assembleDebug",
+      "result": "passed; six offline protocol tests; opt-in live bootstrap skipped"
+    },
+    "gateway": "generated shell syntax and cleanup ordering checked offline; not exercised against a gateway in this harness validation"
+  },
+  "live": {
+    "artifact": {
+      "sha256": "3636d6522f23958a511c1b74c00f16cd0c7ac52e7dafb267304f2a3b0f6785b8",
+      "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+      "package": "me.vwave.vpn",
+      "version_code": 2,
+      "version_name": "0.2-dev",
+      "debuggable": false
+    },
+    "device": {
+      "api": 36,
+      "release": "16",
+      "security_patch": "2025-07-05",
+      "page_size": 4096,
+      "abi": "arm64-v8a",
+      "emulator": true
+    },
+    "capture_kind": "emulator",
+    "required_probes": [
+      "ipv4",
+      "dns",
+      "direct4",
+      "doh"
+    ],
+    "validated_capture_families": [
+      "ipv4"
+    ],
+    "status": "fail",
+    "cleanup_complete": true,
+    "results": [
+      {
+        "scenario": "positive-control",
+        "duration_seconds": 18.0,
+        "expected": "working",
+        "status": "pass",
+        "findings": [],
+        "capture_sha256": "edb918a4f5cb56ce5c3afe87428af41b22e1882291b8232c6cdfcd458fe6f512",
+        "capture_counts": {
+          "packets": 1270,
+          "all_https4_syn": 45,
+          "all_dns6_out": 89,
+          "raw_dns6_out": 89,
+          "all_dns4_out": 105,
+          "raw_dns4_out": 89,
+          "all_dot6_syn": 18,
+          "dot6_syn": 18,
+          "all_dot4_syn": 18,
+          "dot4_syn": 18,
+          "all_https6_syn": 9,
+          "direct_https4_syn": 8,
+          "system_dns4_out": 16
+        }
+      },
+      {
+        "scenario": "steady",
+        "duration_seconds": 18.0,
+        "expected": "working",
+        "status": "pass",
+        "findings": [],
+        "wan_exit_observations": 0,
+        "capture_sha256": "af9d033f7bb20381ff057e2ee60cc3aa8400e9348ce9bf70aa7205d79de83cba",
+        "capture_counts": {
+          "packets": 1616,
+          "wireguard_out": 935
+        }
+      },
+      {
+        "scenario": "crash",
+        "duration_seconds": 50.0,
+        "expected": "working",
+        "death_method": "root SIGKILL",
+        "restart_seconds": 1.199,
+        "wave_opened_to_recover": false,
+        "status": "fail",
+        "findings": [
+          "cleartext_dns_observed_ipv4_origin_not_assumed",
+          "unsupported_packet_forms_not_assessed"
+        ],
+        "wan_exit_observations": 0,
+        "capture_sha256": "e086a4562ce3a28324c3948eebde09367ee00d10b7dba7f746ad65c6074029ee",
+        "capture_counts": {
+          "packets": 3817,
+          "wireguard_out": 2085,
+          "unsupported_network_packets": 4,
+          "all_dns4_out": 2,
+          "all_https4_syn": 1
+        }
+      },
+      {
+        "scenario": "disconnect",
+        "duration_seconds": 35.0,
+        "expected": "blocked",
+        "status": "fail",
+        "findings": [
+          "unsupported_packet_forms_not_assessed"
+        ],
+        "wan_exit_observations": 0,
+        "capture_sha256": "26024af4a37166eab4c579ebe8889b7f075b741054433ff3bd9fcea680e36653",
+        "capture_counts": {
+          "packets": 2269,
+          "wireguard_out": 492,
+          "all_https4_syn": 190,
+          "unsupported_network_packets": 2
+        }
+      },
+      {
+        "scenario": "reconnect",
+        "duration_seconds": 45.0,
+        "expected": "working",
+        "status": "fail",
+        "findings": [
+          "unsupported_packet_forms_not_assessed"
+        ],
+        "wan_exit_observations": 0,
+        "capture_sha256": "115cba5ace77470ae741ebf26dcff4281101dec533e068bafde0a4e5f882c80f",
+        "capture_counts": {
+          "packets": 4682,
+          "all_https4_syn": 172,
+          "unsupported_network_packets": 2,
+          "wireguard_out": 2070
+        }
+      }
+    ]
+  },
+  "interrupted_run_restore": "completed before this run; completed restore also tested as idempotent offline",
+  "limitations": [
+    "Live harness validation exercised only the five listed scenarios. Other available scenarios have not all been rerun through this harness.",
+    "Only IPv4 capture had a working positive control. Tunneled IPv6 success is not native IPv6 uplink coverage.",
+    "The live run preceded final gateway fallback, split-restoration, DoH endpoint matching and read-only doctor refinements. Final offline checks cover parsing and safety regressions; those broader paths remain to be exercised live.",
+    "DNS packets are retained without claiming their requesting app or profile. Unsupported packet forms prevent a blanket privacy pass."
+  ],
+  "restoration_verified": {
+    "adb_uid": 2000,
+    "always_on_vpn_app": "null",
+    "new_target_and_helpers_removed": true,
+    "existing_debug_package_retained": true,
+    "physical_pixel_modified": false
+  }
+}

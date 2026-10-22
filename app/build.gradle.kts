@@ -3,6 +3,22 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+val releaseSigningEnvironment = listOf(
+    "WAVE_ANDROID_KEYSTORE",
+    "WAVE_ANDROID_KEY_ALIAS",
+    "WAVE_ANDROID_KEYSTORE_PASSWORD",
+    "WAVE_ANDROID_KEY_PASSWORD",
+).associateWith { providers.environmentVariable(it).orNull }
+val hasReleaseSigning = releaseSigningEnvironment.values.any { it != null }
+if (hasReleaseSigning) {
+    require(!gradle.startParameter.isConfigurationCacheRequested) {
+        "Release signing requires --no-configuration-cache to keep credentials out of cached configuration"
+    }
+    require(releaseSigningEnvironment.values.all { !it.isNullOrBlank() }) {
+        "Release signing requires all four WAVE_ANDROID signing environment variables"
+    }
+}
+
 android {
     namespace = "me.vwave.vpn"
     compileSdk = 37
@@ -16,12 +32,25 @@ android {
         ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64") }
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(releaseSigningEnvironment.getValue("WAVE_ANDROID_KEYSTORE")!!)
+                storeType = "PKCS12"
+                keyAlias = releaseSigningEnvironment.getValue("WAVE_ANDROID_KEY_ALIAS")
+                storePassword = releaseSigningEnvironment.getValue("WAVE_ANDROID_KEYSTORE_PASSWORD")
+                keyPassword = releaseSigningEnvironment.getValue("WAVE_ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "+debug"
         }
         release {
+            if (hasReleaseSigning) signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

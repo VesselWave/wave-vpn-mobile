@@ -2,6 +2,7 @@
 package me.vwave.vpn.vpn
 
 import android.content.Context
+import android.content.Intent
 import android.net.VpnService
 import com.wireguard.android.backend.GoBackend
 import com.wireguard.android.backend.Tunnel
@@ -81,10 +82,12 @@ class TunnelManager(private val context: Context, private val repository: AirRep
     }
     fun permissionIntent() = VpnService.prepare(context)
     fun connect(target: Target = preferences.current.target) {
+        context.startForegroundService(Intent(context, ConnectionService::class.java))
         operation?.cancel()
         operation = scope.launch { lock.withLock { connection(target) } }
     }
     fun disconnect() {
+        context.stopService(Intent(context, ConnectionService::class.java))
         operation?.cancel()
         operation = scope.launch { lock.withLock {
             try { withContext(Dispatchers.IO) { backend.setState(tunnel, Tunnel.State.DOWN, null) } }
@@ -156,6 +159,7 @@ class TunnelManager(private val context: Context, private val repository: AirRep
                 }
             }
             status.value = TunnelState.Down; since.value = null; counters.value = null
+            context.stopService(Intent(context, ConnectionService::class.java))
         } catch (e: CancellationException) {
             // Finish the serialized teardown before the next connect/disconnect can run.
             if (started) withContext(NonCancellable + Dispatchers.IO) {
@@ -168,6 +172,7 @@ class TunnelManager(private val context: Context, private val repository: AirRep
                 selectedServer?.let { status.value = TunnelState.Stalled(it) }
                 log.error("Connection monitoring failed; disconnect and retry")
             } else {
+                context.stopService(Intent(context, ConnectionService::class.java))
                 status.value = TunnelState.Failed("Check account, server and WireGuard settings")
                 log.error("Unable to start WireGuard")
             }

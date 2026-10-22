@@ -1,0 +1,739 @@
+{
+  "date_utc": "2026-10-22",
+  "initial_release_sha256": "7e25686199ec333a2733425c06ec04aa858768f26df304d7808c000188ff2ea2",
+  "final_release_sha256": "3636d6522f23958a511c1b74c00f16cd0c7ac52e7dafb267304f2a3b0f6785b8",
+  "certificate_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+  "physical_platform": {
+    "device": "Pixel 7",
+    "os": "GrapheneOS Android 17",
+    "incremental": "2026101601",
+    "security_patch": "2026-10-05",
+    "tested_profile": "owner",
+    "native_ipv6_uplink_positive_control": false
+  },
+  "physical_results": [
+    {
+      "capture": "physical-control.pcap",
+      "sha256": "fb6fefc78e737671e0c4595d6711185d9e1633988cbda0225f726821d0935bfd",
+      "bytes": 80423,
+      "first_packet_unix": 1792680820.309781,
+      "last_packet_unix": 1792680831.530782,
+      "observed_span_seconds": 11.221,
+      "counts": {
+        "packets": 493,
+        "all_dns4_out": 70,
+        "raw_dns4_out": 54,
+        "dot4_syn": 11,
+        "all_dot4_syn": 11,
+        "system_dns4_out": 12,
+        "direct_https4_syn": 11,
+        "all_https4_syn": 16
+      },
+      "scenario": "physical-control",
+      "method": "physical IPv4 Wi-Fi gateway",
+      "always_on": "null",
+      "blocking": "0",
+      "probes": {
+        "ipv4": {
+          "success": 5,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 0,
+          "failure": 6
+        },
+        "dns": {
+          "success": 5,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 5,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 11,
+          "failure": 0
+        },
+        "dot6": {
+          "success": 0,
+          "failure": 11
+        },
+        "bound-dns": {
+          "success": 5,
+          "failure": 0
+        },
+        "bound-tcp4": {
+          "success": 6,
+          "failure": 0
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 6
+        }
+      }
+    },
+    {
+      "capture": "physical-steady.pcap",
+      "sha256": "193010172619fe1a63938b9142b6b7f6e089b45cd9a2f4cdc3b5606266fde92b",
+      "bytes": 258144,
+      "first_packet_unix": 1792680896.21444,
+      "last_packet_unix": 1792680910.464684,
+      "observed_span_seconds": 14.25,
+      "counts": {
+        "packets": 1031,
+        "wireguard_out": 562
+      },
+      "scenario": "physical-steady",
+      "method": "physical IPv4 Wi-Fi gateway",
+      "always_on": "me.vwave.vpn",
+      "blocking": "1",
+      "probes": {
+        "ipv4": {
+          "success": 6,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 5,
+          "failure": 0
+        },
+        "dns": {
+          "success": 7,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 5,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 14,
+          "failure": 0
+        },
+        "dot6": {
+          "success": 13,
+          "failure": 0
+        },
+        "bound-dns": {
+          "success": 7,
+          "failure": 0
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 8
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 8
+        }
+      }
+    },
+    {
+      "capture": "physical-crash.pcap",
+      "sha256": "58d434d0145f5c1fb5beb57d2dfa15754aad092153086452398ce7502f717ad1",
+      "bytes": 581212,
+      "first_packet_unix": 1792680916.18961,
+      "last_packet_unix": 1792680940.695989,
+      "observed_span_seconds": 24.506,
+      "counts": {
+        "packets": 2882,
+        "wireguard_out": 1734
+      },
+      "scenario": "physical-crash",
+      "method": "physical IPv4 Wi-Fi gateway",
+      "always_on": "me.vwave.vpn",
+      "blocking": "1",
+      "restart_seconds": 2.716,
+      "probes": {
+        "ipv4": {
+          "success": 7,
+          "failure": 2
+        },
+        "ipv6": {
+          "success": 6,
+          "failure": 2
+        },
+        "dns": {
+          "success": 10,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 9,
+          "failure": 1
+        },
+        "dot4": {
+          "success": 18,
+          "failure": 3
+        },
+        "dot6": {
+          "success": 19,
+          "failure": 3
+        },
+        "bound-dns": {
+          "success": 9,
+          "failure": 0
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 13
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 13
+        }
+      }
+    },
+    {
+      "capture": "physical-disconnect.pcap",
+      "sha256": "353257e400a4574695dfe2596d37c60c69f3c8762426297c885975a94b3e8dc8",
+      "bytes": 306494,
+      "first_packet_unix": 1792680958.835016,
+      "last_packet_unix": 1792680973.116354,
+      "observed_span_seconds": 14.281,
+      "counts": {
+        "packets": 1905,
+        "wireguard_out": 954,
+        "all_https4_syn": 44
+      },
+      "scenario": "physical-disconnect",
+      "method": "physical IPv4 Wi-Fi gateway",
+      "always_on": "me.vwave.vpn",
+      "blocking": "1",
+      "probes": {
+        "ipv4": {
+          "success": 2,
+          "failure": 5
+        },
+        "ipv6": {
+          "success": 2,
+          "failure": 5
+        },
+        "dns": {
+          "success": 2,
+          "failure": 5
+        },
+        "direct4": {
+          "success": 2,
+          "failure": 5
+        },
+        "dot4": {
+          "success": 5,
+          "failure": 10
+        },
+        "dot6": {
+          "success": 4,
+          "failure": 10
+        },
+        "bound-dns": {
+          "success": 2,
+          "failure": 5
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 8
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 8
+        }
+      }
+    },
+    {
+      "capture": "physical-reconnect.pcap",
+      "sha256": "3edfb702fadebc6465c33de8d1462a7f511cf28110efb037c42ce861da51a5da",
+      "bytes": 342880,
+      "first_packet_unix": 1792680974.92309,
+      "last_packet_unix": 1792680992.14974,
+      "observed_span_seconds": 17.227,
+      "counts": {
+        "packets": 2423,
+        "all_https4_syn": 253,
+        "wireguard_out": 517
+      },
+      "scenario": "physical-reconnect",
+      "method": "physical IPv4 Wi-Fi gateway",
+      "always_on": "me.vwave.vpn",
+      "blocking": "1",
+      "probes": {
+        "ipv4": {
+          "success": 4,
+          "failure": 3
+        },
+        "ipv6": {
+          "success": 4,
+          "failure": 3
+        },
+        "dns": {
+          "success": 3,
+          "failure": 3
+        },
+        "direct4": {
+          "success": 5,
+          "failure": 3
+        },
+        "dot4": {
+          "success": 11,
+          "failure": 6
+        },
+        "dot6": {
+          "success": 11,
+          "failure": 5
+        },
+        "bound-dns": {
+          "success": 6,
+          "failure": 3
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 9
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 9
+        }
+      }
+    },
+    {
+      "capture": "physical-peer-outage-confirmed.pcap",
+      "sha256": "2e18412459e67de2b5f3e3040a653d1e224723c65903cb4a466fef03f1fe56d5",
+      "bytes": 1608530,
+      "first_packet_unix": 1792681299.499863,
+      "last_packet_unix": 1792681533.893701,
+      "observed_span_seconds": 234.394,
+      "counts": {
+        "packets": 6349,
+        "wireguard_out": 4211,
+        "all_dns4_out": 6,
+        "all_https4_syn": 13
+      },
+      "scenario": "physical-peer-outage-confirmed",
+      "method": "physical IPv4 Wi-Fi gateway",
+      "always_on": "me.vwave.vpn",
+      "blocking": "1",
+      "probes": {
+        "ipv4": {
+          "success": 9,
+          "failure": 19
+        },
+        "ipv6": {
+          "success": 10,
+          "failure": 46
+        },
+        "dns": {
+          "success": 7,
+          "failure": 11
+        },
+        "direct4": {
+          "success": 11,
+          "failure": 46
+        },
+        "dot4": {
+          "success": 21,
+          "failure": 156
+        },
+        "dot6": {
+          "success": 24,
+          "failure": 154
+        },
+        "bound-dns": {
+          "success": 6,
+          "failure": 11
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 116
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 116
+        }
+      },
+      "peer_block_seconds": 200,
+      "dropped_packets": 1878,
+      "last_20_seconds_probes": {
+        "ipv4": {
+          "success": 8,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 8,
+          "failure": 0
+        },
+        "dns": {
+          "success": 7,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 8,
+          "failure": 0
+        }
+      },
+      "stale_status_ui": "not assessed: snapshot was on server search screen"
+    },
+    {
+      "capture": "physical-final-dns-off.pcap",
+      "sha256": "bae3634835b743d581149927bf310fbc69403f5be80a3d0e3521f1a6316aba31",
+      "bytes": 265330,
+      "first_packet_unix": 1792681640.890907,
+      "last_packet_unix": 1792681658.247735,
+      "observed_span_seconds": 17.357,
+      "counts": {
+        "packets": 1143,
+        "wireguard_out": 679
+      },
+      "scenario": "physical-final-dns-off",
+      "method": "physical IPv4 Wi-Fi gateway",
+      "always_on": "me.vwave.vpn",
+      "blocking": "1",
+      "probes": {
+        "ipv4": {
+          "success": 8,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 4,
+          "failure": 1
+        },
+        "dns": {
+          "success": 6,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 8,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 14,
+          "failure": 2
+        },
+        "dot6": {
+          "success": 16,
+          "failure": 1
+        },
+        "doh": {
+          "success": 8,
+          "failure": 0
+        },
+        "bound-dns": {
+          "success": 8,
+          "failure": 0
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 9
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 9
+        }
+      }
+    },
+    {
+      "capture": "physical-private-dns-automatic.pcap",
+      "sha256": "f51e997a728807593d363630e45c92681193c0fca9181fe0681d4153b759c6c7",
+      "bytes": 306859,
+      "first_packet_unix": 1792681660.199558,
+      "last_packet_unix": 1792681679.614956,
+      "observed_span_seconds": 19.415,
+      "counts": {
+        "packets": 1316,
+        "all_dot4_syn": 1,
+        "wireguard_out": 764
+      },
+      "scenario": "physical-private-dns-automatic",
+      "method": "physical IPv4 Wi-Fi gateway",
+      "always_on": "me.vwave.vpn",
+      "blocking": "1",
+      "probes": {
+        "ipv4": {
+          "success": 6,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 6,
+          "failure": 0
+        },
+        "dns": {
+          "success": 8,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 8,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 17,
+          "failure": 2
+        },
+        "dot6": {
+          "success": 15,
+          "failure": 3
+        },
+        "doh": {
+          "success": 6,
+          "failure": 0
+        },
+        "bound-dns": {
+          "success": 7,
+          "failure": 0
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 10
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 10
+        }
+      }
+    },
+    {
+      "capture": "physical-private-dns-strict.pcap",
+      "sha256": "32c9e9ee939b923c9e73482a16cba6fce443e4ecb5d1624988e830afbd03dbde",
+      "bytes": 462962,
+      "first_packet_unix": 1792681681.805724,
+      "last_packet_unix": 1792681706.2601,
+      "observed_span_seconds": 24.454,
+      "counts": {
+        "packets": 1829,
+        "wireguard_out": 1067
+      },
+      "scenario": "physical-private-dns-strict",
+      "method": "physical IPv4 Wi-Fi gateway",
+      "always_on": "me.vwave.vpn",
+      "blocking": "1",
+      "probes": {
+        "ipv4": {
+          "success": 10,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 8,
+          "failure": 0
+        },
+        "dns": {
+          "success": 10,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 11,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 20,
+          "failure": 3
+        },
+        "dot6": {
+          "success": 20,
+          "failure": 3
+        },
+        "doh": {
+          "success": 10,
+          "failure": 0
+        },
+        "bound-dns": {
+          "success": 11,
+          "failure": 0
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 12
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 12
+        }
+      }
+    },
+    {
+      "capture": "physical-final-switch-direct.pcap",
+      "sha256": "8e9aa42fb6337bbffe95c125d1c0d6415481044366f05ccbf4e39e5b0690c8c5",
+      "bytes": 881968,
+      "first_packet_unix": 1792681856.093378,
+      "last_packet_unix": 1792681890.878829,
+      "observed_span_seconds": 34.785,
+      "counts": {
+        "packets": 4177,
+        "wireguard_out": 2546
+      },
+      "scenario": "physical-final-switch-direct",
+      "method": "physical IPv4 Wi-Fi gateway",
+      "always_on": "me.vwave.vpn",
+      "blocking": "1",
+      "probes": {
+        "ipv4": {
+          "success": 11,
+          "failure": 1
+        },
+        "ipv6": {
+          "success": 11,
+          "failure": 1
+        },
+        "dns": {
+          "success": 9,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 15,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 32,
+          "failure": 1
+        },
+        "dot6": {
+          "success": 29,
+          "failure": 3
+        },
+        "doh": {
+          "success": 12,
+          "failure": 0
+        },
+        "bound-dns": {
+          "success": 10,
+          "failure": 0
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 17
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 17
+        }
+      },
+      "selected_server": "Saiph",
+      "selection_verified_in_connected_overview": true
+    }
+  ],
+  "emulator_dns_attribution": {
+    "capture": "attribution.pcap",
+    "sha256": "beda29ffc236463abda7bb5898deb0bf240df21097e55102876b78319f238f8d",
+    "bytes": 435712,
+    "first_packet_unix": 1792680626.698333,
+    "last_packet_unix": 1792680653.13884,
+    "observed_span_seconds": 26.441,
+    "counts": {
+      "packets": 1627,
+      "wireguard_out": 764,
+      "all_dot4_syn": 3,
+      "all_dns4_out": 9,
+      "system_dns4_out": 5
+    },
+    "scenario": "emulator-repeated-process-death",
+    "completed_kill_cycles": 3,
+    "scheduled_kill_cycles": 8,
+    "interrupted": "Fourth iteration found no VPN process after seven seconds; capture is partial, not a full planned run.",
+    "always_on": "me.vwave.vpn",
+    "blocking": true,
+    "dns_kernel_socket_uid": 0,
+    "nonzero_other_uid_counters": false,
+    "observed_dns": {
+      "probe_queries_to_tunnel_dns_over_wifi": 5,
+      "google_push_queries_to_underlying_dns": 4
+    },
+    "conclusion": "Fresh application DNS names and background DNS were observed outside the VPN on Wi-Fi during process-death transitions. No marked raw UDP probe escape was seen in this sample."
+  },
+  "emulator_private_dns_off": {
+    "capture": "emulator-private-dns-off.pcap",
+    "sha256": "fb03a2635226641e55af174daec44b6b37e72cf708c3945594842b3713126e59",
+    "bytes": 944425,
+    "first_packet_unix": 1792681190.732904,
+    "last_packet_unix": 1792681269.302966,
+    "observed_span_seconds": 78.57,
+    "counts": {
+      "packets": 4003,
+      "wireguard_out": 2168,
+      "all_dns4_out": 5
+    },
+    "private_dns_mode": "off",
+    "process_restart_seconds": [
+      1.2,
+      4.236,
+      16.295
+    ],
+    "blocking": "1"
+  },
+  "physical_nonprobe_dns": {
+    "scenario": "physical-peer-outage-confirmed",
+    "query_packets": 6,
+    "uid_or_profile_attributed": false,
+    "hostnames_omitted_for_privacy": true
+  },
+  "physical_nonprobe_dot": {
+    "scenario": "physical-private-dns-automatic",
+    "tcp_syn_packets": 1,
+    "destination": "secondary configured underlying resolver",
+    "uid_or_profile_attributed": false
+  },
+  "strict_mode_link_properties": {
+    "use_private_dns": true,
+    "expected_hostname_present": true
+  },
+  "excluded_runs": [
+    "physical-server-switch: final active server not verified",
+    "physical-switch-confirmed: verification only found server name in search view",
+    "physical-peer-outage: selected peer changed and final UI read failed",
+    "physical-final-switch: desired final server not observed in Overview"
+  ],
+  "source_changes": "Only protection/status explanations in the shipped application; independent QA tools also extended.",
+  "release_published": false,
+  "final_artifact_runtime": {
+    "emulator_ipv4_ipv6_dns_https_smoke_passed": true,
+    "pixel_confirmed_server_switch_passed": true,
+    "pixel_ipv4_ipv6_dns_doh_runtime_succeeded_in_private_dns_matrix": true
+  },
+  "validation": {
+    "offline_protocol_tests": 6,
+    "offline_failures": 0,
+    "live_bootstrap_test": "skipped (opt-in)",
+    "debug_lint": "pass",
+    "debug_build": "pass",
+    "signed_minified_build": "pass",
+    "production_signature": "pass",
+    "16k_apk_alignment": "pass",
+    "qa_probe_compile": "pass",
+    "capture_summary_positive_control": "pass"
+  },
+  "cleanup": {
+    "pixel_wifi": "original DHCP restored",
+    "pixel_private_dns": "original mode and hostname restored",
+    "pixel_display_density": "original restored",
+    "gateway_forwarding_and_redirects": "original values restored",
+    "gateway_temporary_nft_table": "removed",
+    "emulator_temporary_apps": "uninstalled",
+    "emulator_always_on_and_blocking": "original null/0 restored and rebooted",
+    "emulator_adbd": "returned to non-root",
+    "pixel_temporary_probe": "removed after final post-reboot traffic check"
+  },
+  "pixel_final_release_reboot": {
+    "checked_before_opening_wave": true,
+    "process_present": true,
+    "vpn_owner_profile_active": true,
+    "boot_complete": "1",
+    "always_on": "me.vwave.vpn",
+    "blocking": "1",
+    "started_unix": 1792682194.4153001,
+    "probes": {
+      "ipv4": {
+        "success": 20,
+        "failure": 0
+      },
+      "ipv6": {
+        "success": 20,
+        "failure": 0
+      },
+      "dns": {
+        "success": 18,
+        "failure": 0
+      },
+      "direct4": {
+        "success": 20,
+        "failure": 0
+      },
+      "doh": {
+        "success": 20,
+        "failure": 0
+      }
+    },
+    "observation_seconds": 52.5
+  }
+}

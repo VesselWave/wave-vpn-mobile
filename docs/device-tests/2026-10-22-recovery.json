@@ -1,0 +1,98 @@
+{
+  "apk_sha256": "d1a068377b0f88f1a914838b56d8715fccac3a44700e2b3b4c7ca926b39f3fe7",
+  "method": "Independent foreground probe; counts include transition failures and may include requests started before SIGKILL. This is sampled traffic, not packet capture.",
+  "recovery": [
+    {
+      "device": "emulator",
+      "utc": "2026-10-22T03:14:28.015309+00:00",
+      "android_blocking": true,
+      "process_restarted": true,
+      "restart_observed_seconds": 2.11,
+      "checks": {
+        "ipv4": {
+          "FAIL": 1,
+          "OK": 5
+        },
+        "route": {
+          "OK": 8
+        },
+        "dns": {
+          "OK": 7
+        },
+        "direct4": {
+          "OK": 6
+        },
+        "ipv6": {
+          "OK": 5
+        }
+      },
+      "vpn_exits": {
+        "ipv6": [
+          "2001:db8:1::5"
+        ],
+        "ipv4": [
+          "192.0.2.106"
+        ]
+      }
+    },
+    {
+      "device": "pixel7",
+      "utc": "2026-10-22T03:12:23.802744+00:00",
+      "process_restarted": true,
+      "restart_observed_seconds": 2.46,
+      "foreground_connection_service": true,
+      "checks": {
+        "direct4": {
+          "OK": 7,
+          "FAIL": 2
+        },
+        "ipv4": {
+          "OK": 6,
+          "FAIL": 2
+        },
+        "route": {
+          "OK": 9
+        },
+        "ipv6": {
+          "OK": 7,
+          "FAIL": 1
+        },
+        "dns": {
+          "OK": 6
+        }
+      },
+      "vpn_exits": {
+        "ipv4": [
+          "192.0.2.104"
+        ],
+        "ipv6": [
+          "2001:db8:1::3"
+        ]
+      },
+      "android_blocking": true
+    }
+  ],
+  "explicit_disconnect": {
+    "device": "pixel7",
+    "scenario": "explicit-disconnect",
+    "checks": {
+      "route": {
+        "OK": 7
+      },
+      "ipv6": {
+        "FAIL": 7
+      },
+      "ipv4": {
+        "FAIL": 7
+      },
+      "direct4": {
+        "FAIL": 7
+      },
+      "dns": {
+        "FAIL": 6
+      }
+    },
+    "no_connection_service": true
+  },
+  "privacy_note": "VPN exits were replaced with documentation addresses during the 2026-11-03 privacy cleanup; test timings and outcomes are unchanged."
+}

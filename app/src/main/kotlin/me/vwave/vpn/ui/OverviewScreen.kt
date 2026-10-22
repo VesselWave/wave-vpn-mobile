@@ -142,7 +142,7 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
                             textAlign = TextAlign.Center,
                         )
                         state is TunnelState.Stalled -> Text(
-                            "The server stopped answering. Traffic is blocked until it does, or until you disconnect.",
+                            "The server stopped answering. Wave is keeping the tunnel in place while waiting for a response.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = t.muted,
                             textAlign = TextAlign.Center,

@@ -1,0 +1,511 @@
+{
+  "device": "Pixel 7, Android 17/API 37, build 2026101601",
+  "package": "me.vwave.vpn.dev",
+  "apk_sha256": "ceb40f268b0f194d1b3b53cc7ea358160e8d64f8f665ffec779e049b17a17f92",
+  "method": "Independent app UID, foreground service; 2-second delay between completed requests. Completion timestamps can include in-flight requests from before a transition. This is not packet capture.",
+  "scenarios": [
+    {
+      "scenario": "cellular",
+      "start_utc": "2026-10-22T02:50:06.947000+00:00",
+      "duration_seconds": 18.37,
+      "probes": {
+        "ipv4": {
+          "success": 6,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 4,
+          "failure": 1
+        },
+        "direct4": {
+          "success": 6,
+          "failure": 0
+        },
+        "dns": {
+          "success": 5,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.102",
+        "2001:db8:1::1"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "wifi-return",
+      "start_utc": "2026-10-22T02:50:37.777000+00:00",
+      "duration_seconds": 15.29,
+      "probes": {
+        "ipv4": {
+          "success": 6,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 5,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 6,
+          "failure": 0
+        },
+        "dns": {
+          "success": 6,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.102",
+        "2001:db8:1::1"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "airplane",
+      "start_utc": "2026-10-22T02:50:53.861000+00:00",
+      "duration_seconds": 12.14,
+      "probes": {
+        "ipv4": {
+          "success": 1,
+          "failure": 1
+        },
+        "ipv6": {
+          "success": 1,
+          "failure": 2
+        },
+        "direct4": {
+          "success": 1,
+          "failure": 2
+        },
+        "dns": {
+          "success": 0,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.102",
+        "2001:db8:1::1"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "airplane-return",
+      "start_utc": "2026-10-22T02:51:06.373000+00:00",
+      "duration_seconds": 15.32,
+      "probes": {
+        "ipv4": {
+          "success": 4,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 4,
+          "failure": 1
+        },
+        "direct4": {
+          "success": 5,
+          "failure": 1
+        },
+        "dns": {
+          "success": 5,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.102",
+        "2001:db8:1::1"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "process-kill",
+      "start_utc": "2026-10-22T02:51:29.017000+00:00",
+      "duration_seconds": 20.16,
+      "probes": {
+        "ipv4": {
+          "success": 1,
+          "failure": 9
+        },
+        "ipv6": {
+          "success": 0,
+          "failure": 10
+        },
+        "direct4": {
+          "success": 1,
+          "failure": 9
+        },
+        "dns": {
+          "success": 0,
+          "failure": 10
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.102"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "process-kill-extended",
+      "start_utc": "2026-10-22T02:52:01.808000+00:00",
+      "duration_seconds": 15.01,
+      "probes": {
+        "ipv4": {
+          "success": 0,
+          "failure": 8
+        },
+        "ipv6": {
+          "success": 0,
+          "failure": 8
+        },
+        "direct4": {
+          "success": 0,
+          "failure": 8
+        },
+        "dns": {
+          "success": 0,
+          "failure": 8
+        }
+      },
+      "observed_vpn_exits": [],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "manual-reconnect-confirmed",
+      "start_utc": "2026-10-22T02:52:54.593000+00:00",
+      "duration_seconds": 10.01,
+      "probes": {
+        "ipv4": {
+          "success": 3,
+          "failure": 1
+        },
+        "ipv6": {
+          "success": 3,
+          "failure": 1
+        },
+        "direct4": {
+          "success": 3,
+          "failure": 1
+        },
+        "dns": {
+          "success": 4,
+          "failure": 1
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.103",
+        "2001:db8:1::2"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "protected-disconnect",
+      "start_utc": "2026-10-22T02:53:09.144000+00:00",
+      "duration_seconds": 12.0,
+      "probes": {
+        "ipv4": {
+          "success": 1,
+          "failure": 5
+        },
+        "ipv6": {
+          "success": 1,
+          "failure": 5
+        },
+        "direct4": {
+          "success": 1,
+          "failure": 5
+        },
+        "dns": {
+          "success": 0,
+          "failure": 4
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.103",
+        "2001:db8:1::2"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "reconnect-after-disconnect",
+      "start_utc": "2026-10-22T02:53:26.349000+00:00",
+      "duration_seconds": 10.01,
+      "probes": {
+        "ipv4": {
+          "success": 3,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 3,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 3,
+          "failure": 0
+        },
+        "dns": {
+          "success": 3,
+          "failure": 1
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.103",
+        "2001:db8:1::2"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "server-switch-saiph-flegetonte",
+      "start_utc": "2026-10-22T02:54:12.305000+00:00",
+      "duration_seconds": 12.01,
+      "probes": {
+        "ipv4": {
+          "success": 5,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 6,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 5,
+          "failure": 0
+        },
+        "dns": {
+          "success": 5,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.103",
+        "192.0.2.104",
+        "2001:db8:1::2",
+        "2001:db8:1::3"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "rotation",
+      "start_utc": "2026-10-22T02:54:24.860000+00:00",
+      "duration_seconds": 8.23,
+      "probes": {
+        "ipv4": {
+          "success": 4,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 4,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 4,
+          "failure": 0
+        },
+        "dns": {
+          "success": 4,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.104",
+        "2001:db8:1::3"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "screen-off",
+      "start_utc": "2026-10-22T02:54:33.851000+00:00",
+      "duration_seconds": 12.18,
+      "probes": {
+        "ipv4": {
+          "success": 5,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 5,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 5,
+          "failure": 0
+        },
+        "dns": {
+          "success": 6,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.104",
+        "2001:db8:1::3"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "forced-doze",
+      "start_utc": "2026-10-22T02:55:08.884000+00:00",
+      "duration_seconds": 20.64,
+      "probes": {
+        "ipv4": {
+          "success": 8,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 9,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 9,
+          "failure": 0
+        },
+        "dns": {
+          "success": 9,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.104",
+        "2001:db8:1::3"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "wake-from-doze",
+      "start_utc": "2026-10-22T02:55:30.722000+00:00",
+      "duration_seconds": 12.0,
+      "probes": {
+        "ipv4": {
+          "success": 5,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 6,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 5,
+          "failure": 0
+        },
+        "dns": {
+          "success": 5,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.104",
+        "2001:db8:1::3"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "split-excluded-lockdown",
+      "start_utc": "2026-10-22T02:56:36.085000+00:00",
+      "duration_seconds": 12.0,
+      "probes": {
+        "ipv4": {
+          "success": 1,
+          "failure": 5
+        },
+        "ipv6": {
+          "success": 1,
+          "failure": 5
+        },
+        "direct4": {
+          "success": 1,
+          "failure": 5
+        },
+        "dns": {
+          "success": 1,
+          "failure": 5
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.104",
+        "2001:db8:1::3"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "split-included-lockdown",
+      "start_utc": "2026-10-22T02:57:15.548000+00:00",
+      "duration_seconds": 10.0,
+      "probes": {
+        "ipv4": {
+          "success": 3,
+          "failure": 1
+        },
+        "ipv6": {
+          "success": 3,
+          "failure": 1
+        },
+        "direct4": {
+          "success": 3,
+          "failure": 1
+        },
+        "dns": {
+          "success": 4,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.104",
+        "2001:db8:1::3"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "split-restored",
+      "start_utc": "2026-10-22T02:57:38.629000+00:00",
+      "duration_seconds": 8.01,
+      "probes": {
+        "ipv4": {
+          "success": 4,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 4,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 4,
+          "failure": 0
+        },
+        "dns": {
+          "success": 4,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.104",
+        "2001:db8:1::3"
+      ],
+      "unexpected_exit_observations": 0
+    },
+    {
+      "scenario": "reboot-after-unlock",
+      "start_utc": "2026-10-22T02:59:06.468000+00:00",
+      "duration_seconds": 12.01,
+      "probes": {
+        "ipv4": {
+          "success": 5,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 5,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 6,
+          "failure": 0
+        },
+        "dns": {
+          "success": 6,
+          "failure": 0
+        }
+      },
+      "observed_vpn_exits": [
+        "192.0.2.104",
+        "2001:db8:1::3"
+      ],
+      "unexpected_exit_observations": 0
+    }
+  ],
+  "privacy_note": "VPN exits were replaced with documentation addresses during the 2026-11-03 privacy cleanup; test timings and outcomes are unchanged."
+}

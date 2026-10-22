@@ -32,6 +32,22 @@ AEAD and has no independent MAC here; we do not claim otherwise.
 Server selection uses Eddie's base/load/users factors. Android optionally adds
 Wave's measured TCP latency preference; it is not identical to Eddie's scoring.
 
+## Android lifecycle references
+
+Android connection lifecycle work also references the official WireGuard Android
+`com.wireguard.android:tunnel:1.0.20260102` sources (`GoBackend.java`, Apache-2.0,
+copyright 2017-2025 WireGuard LLC). The Maven Central sources JAR SHA-256 is
+`914dfe55d9bcb2a251048086555a31d7707ff78b6a2093304b2439f63c0dc012`.
+The new foreground connection service is independently authored; the dependency's
+VPN service and backend remain unmodified. Android service-unbind behavior was
+checked against AOSP `frameworks/base` commit
+`99b01a65cc4c104933788b3143285ab6bae65827`,
+`services/core/java/com/android/server/am/ActiveServices.java` (Apache-2.0).
+No AOSP implementation was copied. Android's documented `START_STICKY` lifecycle
+and `systemExempted` VPN foreground-service eligibility guide the integration:
+[Service](https://developer.android.com/reference/android/app/Service#START_STICKY),
+[foreground service types](https://developer.android.com/develop/background-work/services/fgs/service-types#system-exempted).
+
 ## Authored presentation reused
 
 The user identifies VesselWave's Android UI and desktop redesign as their work.
@@ -84,3 +100,21 @@ not present in this repository and are not build inputs.
 This app has its own Git history and remote. Protocol reference data and fixtures
 are included locally under `protocol-data/`; no sibling checkout is required.
 The parent workspace's community checklist coordinates both applications.
+
+## Release-test follow-up references
+
+The additional independent QA DoH worker uses the request/response format
+specified by [Cloudflare's JSON DNS API documentation](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/dns-json/).
+It sends HTTPS requests through Android's standard APIs; no Cloudflare source
+code was copied. The capture counters and additional testing notes are authored
+GPL-3.0-or-later QA material and are not shipped in the APK. GrapheneOS release
+notes and its public issue tracker were consulted as context for platform DNS
+behavior, as linked in [the follow-up report](RELEASE-FOLLOWUP.md); no operating
+system or archived application code was imported.
+
+The standalone `tools/vpn-probe/run.py` runner, accessibility instrumentation
+driver, configuration examples and offline evidence-handling tests are authored
+GPL-3.0-or-later QA code. They reproduce the recorded device workflows using
+Android SDK APIs, ADB and standard gateway tools. No implementation or tests were
+copied from the archived apps. They are separate from the shipped application
+and do not depend on the sibling desktop checkout or T3 thread storage.

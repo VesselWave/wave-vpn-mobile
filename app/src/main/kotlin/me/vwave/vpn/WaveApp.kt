@@ -20,7 +20,9 @@ class WaveApp : Application() {
         settings = SettingsStore(this)
         repository = AirRepository(SessionVault(this))
         tunnels = TunnelManager(this, repository, settings, pinger, log, scope)
-        GoBackend.setAlwaysOnCallback { if (repository.isLoggedIn) tunnels.connect() }
+        GoBackend.setAlwaysOnCallback {
+            if (repository.isLoggedIn && !tunnels.isActive) tunnels.connect()
+        }
     }
 }
 val Context.app: WaveApp get() = applicationContext as WaveApp

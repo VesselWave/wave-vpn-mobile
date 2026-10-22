@@ -28,14 +28,35 @@ WAVE_LIVE=1 ./gradlew :core:test --rerun-tasks
 
 The authored screens use a new Eddie-referenced protocol implementation and new
 storage/tunnel adapters. Credentials and account keys are encrypted with Android
-Keystore and excluded from cloud backup. Protocol tests and builds pass; actual
-VPN connections, lifecycle behavior and leak protection still need device testing.
+Keystore and excluded from cloud backup. Protocol tests and builds pass. Live
+VPN connections, dual-stack traffic, network handoffs and post-unlock reboot
+recovery were tested on a Pixel 7. A subsequent process-death recovery fix passed
+targeted checks on both the emulator and physical Pixel without tapping Connect.
+The signed minified release also has runtime coverage on the Pixel and on
+Android 8.0, Android 15 with 16 KB pages, and Android 16 emulators.
 
-Enable **Always-on VPN** and **Block connections without VPN** in Android settings
-for protection while the tunnel is absent or being replaced. Verify application
-exclusions together with those settings before relying on split tunneling.
+Physical IPv4 upstream capture and the current release-test findings are recorded
+in the [follow-up report](docs/RELEASE-FOLLOWUP.md). The older Android 16 emulator
+exposed fresh application DNS names outside the tunnel during process death,
+even with Android blocking enabled. A general leak-free claim is therefore not
+supported. Native IPv6 uplink capture and longer reliability tests remain gates.
+See also the [initial signed-release report](docs/RELEASE-DEVICE-TESTING.md).
+
+The [repeatable device-test runner](tools/vpn-probe/RUNNING.md) automates the
+recorded recovery and traffic-probe scenarios, checks capture positive controls,
+and saves resumable cleanup state. Its [validation record](docs/device-tests/2026-10-22-runner-validation.json)
+distinguishes exercised scenarios from the broader available matrix.
+
+Enable **Always-on VPN** and **Block connections without VPN** in Android settings.
+Protection depends on platform behavior; affected Android versions can expose DNS
+during tunnel changes. Verify application exclusions together with those settings
+before relying on split tunneling.
 
 [Verification record](docs/VERIFICATION.md). This is an unpublished development build.
+
+Security reports: **vesselwave@protonmail.com**. See [security policy](SECURITY.md)
+and [release signing](docs/RELEASE-SIGNING.md) for public verification keys and
+Android release-build configuration.
 
 ## Published history privacy
 

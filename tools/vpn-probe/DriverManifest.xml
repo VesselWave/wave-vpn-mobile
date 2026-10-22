@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="me.vwave.vpnprobe.driver">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="36" />
+    <application android:label="Wave VPN QA driver" android:debuggable="true" android:allowBackup="false" />
+    <instrumentation android:name=".Driver" android:targetPackage="me.vwave.vpnprobe.driver" android:functionalTest="true" />
+</manifest>

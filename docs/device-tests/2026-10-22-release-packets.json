@@ -1,0 +1,642 @@
+{
+  "date_utc": "2026-10-22",
+  "apk": {
+    "package": "me.vwave.vpn",
+    "sha256": "7e25686199ec333a2733425c06ec04aa858768f26df304d7808c000188ff2ea2",
+    "signer_certificate_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+    "signature_verified": true,
+    "minified": true,
+    "zipalign_16kb_verified": true
+  },
+  "capture_device": "Rooted Android 16/API 36 ARM64 emulator; security patch 2025-07-05",
+  "capture_interface": "wlan0",
+  "capture_method": "AF_PACKET Ethernet PCAP; capture/signal control had root access, probe remained a separate ordinary app UID",
+  "positive_control": {
+    "capture": "control-wlan.pcap",
+    "sha256": "096068810f1d874b4ffb1063051bc5423e684068eaa96f09c78d730c08c5e993",
+    "bytes": 73664,
+    "first_packet_unix": 1792649688.279556,
+    "last_packet_unix": 1792649698.053814,
+    "observed_span_seconds": 9.774,
+    "counts": {
+      "packets": 511,
+      "all_dns4_out": 59,
+      "raw_dns4_out": 49,
+      "all_dns6_out": 49,
+      "raw_dns6_out": 49,
+      "dot4_syn": 10,
+      "all_dot4_syn": 10,
+      "dot6_syn": 10,
+      "all_dot6_syn": 10,
+      "system_dns4_out": 10,
+      "direct_https4_syn": 5
+    }
+  },
+  "release_captures": [
+    {
+      "capture": "release-steady.pcap",
+      "sha256": "b9cb6777369c5726b51c395919e72f7705db126e0d86f1429616748c38572252",
+      "bytes": 207682,
+      "observed_span_seconds": 11.997,
+      "counts": {
+        "packets": 858,
+        "wireguard_out": 485
+      },
+      "scenario": "release-steady",
+      "state": {
+        "always_on": "me.vwave.vpn",
+        "blocking": "1"
+      },
+      "probes": {
+        "ipv4": {
+          "success": 5,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 4,
+          "failure": 0
+        },
+        "dns": {
+          "success": 6,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 5,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 11,
+          "failure": 0
+        },
+        "dot6": {
+          "success": 11,
+          "failure": 1
+        }
+      },
+      "first_packet_unix": 1792650215.031367,
+      "last_packet_unix": 1792650227.028433,
+      "marked_probe_escape_packets": 0,
+      "public_background_dns_names": []
+    },
+    {
+      "capture": "release-kill.pcap",
+      "sha256": "2a53744a01ff413c5ee0432e50dbd6c7f63e73c23abc861d604bc4041186d5eb",
+      "bytes": 351486,
+      "observed_span_seconds": 19.822,
+      "counts": {
+        "packets": 1365,
+        "wireguard_out": 730,
+        "all_dns4_out": 2
+      },
+      "scenario": "release-kill",
+      "state": {
+        "always_on": "me.vwave.vpn",
+        "blocking": "1"
+      },
+      "restart_seconds": 1.211,
+      "probes": {
+        "ipv4": {
+          "success": 8,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 5,
+          "failure": 1
+        },
+        "dns": {
+          "success": 7,
+          "failure": 1
+        },
+        "direct4": {
+          "success": 8,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 16,
+          "failure": 2
+        },
+        "dot6": {
+          "success": 17,
+          "failure": 1
+        }
+      },
+      "first_packet_unix": 1792650227.420019,
+      "last_packet_unix": 1792650247.2417,
+      "marked_probe_escape_packets": 0,
+      "public_background_dns_names": [
+        "alt1-mtalk.google.com"
+      ]
+    },
+    {
+      "capture": "release-disconnect.pcap",
+      "sha256": "b20808d84e46758111f33681c9a6224abce0e3dde4aecabcc1712a7c4f01e2a3",
+      "bytes": 240823,
+      "observed_span_seconds": 14.729,
+      "counts": {
+        "packets": 1404,
+        "wireguard_out": 729,
+        "all_dns4_out": 2
+      },
+      "scenario": "release-disconnect",
+      "state": {
+        "always_on": "me.vwave.vpn",
+        "blocking": "1"
+      },
+      "probes": {
+        "ipv4": {
+          "success": 1,
+          "failure": 6
+        },
+        "ipv6": {
+          "success": 1,
+          "failure": 6
+        },
+        "dns": {
+          "success": 2,
+          "failure": 5
+        },
+        "direct4": {
+          "success": 1,
+          "failure": 6
+        },
+        "dot4": {
+          "success": 3,
+          "failure": 12
+        },
+        "dot6": {
+          "success": 3,
+          "failure": 12
+        }
+      },
+      "first_packet_unix": 1792650941.190049,
+      "last_packet_unix": 1792650955.9189,
+      "marked_probe_escape_packets": 0,
+      "public_background_dns_names": [
+        "mtalk.google.com"
+      ]
+    },
+    {
+      "capture": "release-reconnect.pcap",
+      "sha256": "041c1ba513cba6768fa6e58c529364532ced7d18ef3e30b89d534b87fb98698c",
+      "bytes": 377739,
+      "observed_span_seconds": 17.974,
+      "counts": {
+        "packets": 2223,
+        "wireguard_out": 627,
+        "all_dns4_out": 2
+      },
+      "scenario": "release-reconnect",
+      "state": {
+        "always_on": "me.vwave.vpn",
+        "blocking": "1"
+      },
+      "probes": {
+        "ipv4": {
+          "success": 6,
+          "failure": 2
+        },
+        "ipv6": {
+          "success": 6,
+          "failure": 2
+        },
+        "dns": {
+          "success": 6,
+          "failure": 2
+        },
+        "direct4": {
+          "success": 7,
+          "failure": 1
+        },
+        "dot4": {
+          "success": 14,
+          "failure": 3
+        },
+        "dot6": {
+          "success": 14,
+          "failure": 3
+        }
+      },
+      "first_packet_unix": 1792650957.534796,
+      "last_packet_unix": 1792650975.508661,
+      "marked_probe_escape_packets": 0,
+      "public_background_dns_names": [
+        "alt7-mtalk.google.com"
+      ]
+    },
+    {
+      "capture": "release-server-switch.pcap",
+      "sha256": "5076a15ded670a0647b4b275ceb16f910e43563ff5886db51e1db4cc88479926",
+      "bytes": 844876,
+      "observed_span_seconds": 29.979,
+      "counts": {
+        "packets": 4556,
+        "wireguard_out": 2824
+      },
+      "scenario": "release-server-switch",
+      "state": {
+        "always_on": "me.vwave.vpn",
+        "blocking": "1"
+      },
+      "selected_server": "Mintaka",
+      "probes": {
+        "ipv4": {
+          "success": 13,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 12,
+          "failure": 0
+        },
+        "dns": {
+          "success": 14,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 14,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 28,
+          "failure": 0
+        },
+        "dot6": {
+          "success": 28,
+          "failure": 0
+        }
+      },
+      "first_packet_unix": 1792651238.1718,
+      "last_packet_unix": 1792651268.150646,
+      "marked_probe_escape_packets": 0,
+      "public_background_dns_names": []
+    },
+    {
+      "capture": "release-verified-peer-outage.pcap",
+      "sha256": "c8b9a154916a4c87e8f8da3adee267c953a20e6b6737125bef3c2ea0ff7f35cc",
+      "bytes": 591936,
+      "observed_span_seconds": 229.919,
+      "counts": {
+        "packets": 2995,
+        "wireguard_out": 1833
+      },
+      "scenario": "release-verified-peer-outage",
+      "peer_block_seconds": 200,
+      "status_during_outage": [
+        "Disconnect",
+        "Not responding",
+        "The server stopped answering. Traffic is blocked until it does, or until you disconnect.",
+        "1 connection this session"
+      ],
+      "blocking": "1",
+      "first_packet_unix": 1792650601.064932,
+      "last_packet_unix": 1792650830.983577,
+      "marked_probe_escape_packets": 0,
+      "public_background_dns_names": [],
+      "drop_rule_matched_release_uid": true,
+      "dropped_packets_at_first_counter_check": 43
+    },
+    {
+      "capture": "release-force-stop.pcap",
+      "sha256": "b94e74d6723553b5c645d3e6ea22561a4bdc064089c2f15e5e2daf48a0d99a5c",
+      "bytes": 31028,
+      "observed_span_seconds": 14.457,
+      "counts": {
+        "packets": 88,
+        "wireguard_out": 19
+      },
+      "scenario": "release-force-stop",
+      "state": {
+        "always_on": "me.vwave.vpn",
+        "blocking": "1"
+      },
+      "probes": {
+        "ipv4": {
+          "success": 1,
+          "failure": 7
+        },
+        "ipv6": {
+          "success": 0,
+          "failure": 7
+        },
+        "dns": {
+          "success": 1,
+          "failure": 7
+        },
+        "direct4": {
+          "success": 1,
+          "failure": 7
+        },
+        "dot4": {
+          "success": 1,
+          "failure": 14
+        },
+        "dot6": {
+          "success": 1,
+          "failure": 14
+        }
+      },
+      "first_packet_unix": 1792651376.949747,
+      "last_packet_unix": 1792651391.407223,
+      "marked_probe_escape_packets": 0,
+      "public_background_dns_names": []
+    },
+    {
+      "capture": "release-after-force-stop.pcap",
+      "sha256": "e5fce4b3cd1eb23954059c684a454c868ba069341495d7a296c6f64223eed10a",
+      "bytes": 436448,
+      "observed_span_seconds": 19.996,
+      "counts": {
+        "packets": 2414,
+        "wireguard_out": 984
+      },
+      "scenario": "release-after-force-stop",
+      "state": {
+        "always_on": "me.vwave.vpn",
+        "blocking": "1"
+      },
+      "probes": {
+        "ipv4": {
+          "success": 7,
+          "failure": 1
+        },
+        "ipv6": {
+          "success": 6,
+          "failure": 0
+        },
+        "dns": {
+          "success": 8,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 7,
+          "failure": 1
+        },
+        "dot4": {
+          "success": 17,
+          "failure": 1
+        },
+        "dot6": {
+          "success": 16,
+          "failure": 2
+        }
+      },
+      "first_packet_unix": 1792651444.562285,
+      "last_packet_unix": 1792651464.557825,
+      "marked_probe_escape_packets": 0,
+      "public_background_dns_names": []
+    },
+    {
+      "capture": "release-kill-gms-disabled.pcap",
+      "sha256": "61c868503a678d7a7e17ef03d99b7c5b7a8af4e3b91d6d5cde804d36fd05c869",
+      "bytes": 538184,
+      "observed_span_seconds": 17.982,
+      "counts": {
+        "packets": 2807,
+        "wireguard_out": 1600
+      },
+      "scenario": "release-kill-gms-disabled",
+      "state": {
+        "always_on": "me.vwave.vpn",
+        "blocking": "1"
+      },
+      "restart_seconds": 0.333,
+      "probes": {
+        "ipv4": {
+          "success": 7,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 6,
+          "failure": 0
+        },
+        "dns": {
+          "success": 7,
+          "failure": 1
+        },
+        "direct4": {
+          "success": 7,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 16,
+          "failure": 1
+        },
+        "dot6": {
+          "success": 15,
+          "failure": 1
+        }
+      },
+      "first_packet_unix": 1792651302.715069,
+      "last_packet_unix": 1792651320.697487,
+      "marked_probe_escape_packets": 0,
+      "public_background_dns_names": []
+    },
+    {
+      "capture": "release-kill-gms-restored.pcap",
+      "sha256": "7f685364dcf06e2b1d773820644797fe3c3e315986c1c6dc200d5d5e3b07d8f7",
+      "bytes": 329316,
+      "observed_span_seconds": 19.93,
+      "counts": {
+        "packets": 1334,
+        "wireguard_out": 742
+      },
+      "scenario": "release-kill-gms-restored",
+      "state": {
+        "always_on": "me.vwave.vpn",
+        "blocking": "1"
+      },
+      "restart_seconds": 1.219,
+      "probes": {
+        "ipv4": {
+          "success": 6,
+          "failure": 1
+        },
+        "ipv6": {
+          "success": 7,
+          "failure": 0
+        },
+        "dns": {
+          "success": 8,
+          "failure": 1
+        },
+        "direct4": {
+          "success": 7,
+          "failure": 1
+        },
+        "dot4": {
+          "success": 17,
+          "failure": 1
+        },
+        "dot6": {
+          "success": 17,
+          "failure": 1
+        }
+      },
+      "first_packet_unix": 1792651464.837877,
+      "last_packet_unix": 1792651484.767925,
+      "marked_probe_escape_packets": 0,
+      "public_background_dns_names": []
+    },
+    {
+      "capture": "release-underlying-network.pcap",
+      "sha256": "64d19905b843aa2d59999c6d441709b8cf28f329625d62a1bccedc8168c30991",
+      "bytes": 309130,
+      "observed_span_seconds": 17.905,
+      "counts": {
+        "packets": 1214,
+        "wireguard_out": 687
+      },
+      "scenario": "release-underlying-network",
+      "state": {
+        "always_on": "me.vwave.vpn",
+        "blocking": "1"
+      },
+      "probes": {
+        "ipv4": {
+          "success": 7,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 7,
+          "failure": 0
+        },
+        "dns": {
+          "success": 8,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 7,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 16,
+          "failure": 0
+        },
+        "dot6": {
+          "success": 16,
+          "failure": 0
+        }
+      },
+      "first_packet_unix": 1792651559.55143,
+      "last_packet_unix": 1792651577.456884,
+      "marked_probe_escape_packets": 0,
+      "public_background_dns_names": [],
+      "bound_network_probes": {
+        "bound-dns": {
+          "success": 8,
+          "failure": 0
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 8
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 8
+        }
+      }
+    }
+  ],
+  "additional_platforms": {
+    "android8-api26": {
+      "probes": {
+        "ipv4": {
+          "success": 209,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 187,
+          "failure": 1
+        },
+        "dns": {
+          "success": 188,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 0,
+          "failure": 223
+        },
+        "dot4": {
+          "success": 417,
+          "failure": 30
+        },
+        "dot6": {
+          "success": 425,
+          "failure": 24
+        }
+      },
+      "direct_https_errors": [
+        "FAIL SSLHandshakeException",
+        "FAIL SSLHandshakeException java.security.cert.CertPathValidatorException: Trust anchor for certification path not found."
+      ],
+      "signed_release_apk_sha256": "7e25686199ec333a2733425c06ec04aa858768f26df304d7808c000188ff2ea2"
+    },
+    "android15-api35-16k": {
+      "probes": {
+        "ipv4": {
+          "success": 196,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 207,
+          "failure": 0
+        },
+        "dns": {
+          "success": 212,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 203,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 431,
+          "failure": 0
+        },
+        "dot6": {
+          "success": 436,
+          "failure": 0
+        }
+      },
+      "direct_https_errors": [],
+      "signed_release_apk_sha256": "7e25686199ec333a2733425c06ec04aa858768f26df304d7808c000188ff2ea2"
+    }
+  },
+  "reboot": {
+    "scenario": "release-reboot-after-unlock",
+    "automatic_process_present_before_starting_probe": true,
+    "emulator_has_no_unlock_pin": true,
+    "probes": {
+      "ipv4": {
+        "success": 58,
+        "failure": 1
+      },
+      "ipv6": {
+        "success": 50,
+        "failure": 1
+      },
+      "dns": {
+        "success": 68,
+        "failure": 0
+      },
+      "direct4": {
+        "success": 59,
+        "failure": 2
+      },
+      "dot4": {
+        "success": 136,
+        "failure": 4
+      },
+      "dot6": {
+        "success": 136,
+        "failure": 4
+      }
+    }
+  },
+  "limits": [
+    "No physical upstream capture or signed-release Pixel runtime test: forwarded ADB port 5038 was unavailable.",
+    "Marked app probes did not escape; some background Google push-host DNS appeared outside the VPN and its originating UID was not attributed.",
+    "Android 8.0 direct-IP Cloudflare HTTPS check failed certificate-chain validation; no TLS verification bypass was used.",
+    "DNS-over-TLS probes measure TCP reachability on port 853, not a completed DNS-over-TLS exchange.",
+    "This does not cover all applications, profiles, pre-unlock boot traffic or overnight reliability."
+  ]
+}

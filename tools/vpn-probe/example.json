@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "common": {
+    "sdk": "${ANDROID_HOME}",
+    "ndk": "${ANDROID_NDK_HOME}",
+    "apk": "${WAVE_QA_APK}",
+    "package": "me.vwave.vpn",
+    "expected_signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+    "credentials_file": "${WAVE_QA_CREDENTIALS}",
+    "wireguard_port": 1637,
+    "required_probes": ["ipv4", "ipv6", "dns", "direct4", "doh"],
+    "restart_timeout": 30,
+    "peer_outage_seconds": 200,
+    "kill_count": 8,
+    "kill_interval": 7
+  },
+  "profiles": {
+    "emulator": {
+      "adb": {"path": "${ANDROID_HOME}/platform-tools/adb", "host": "127.0.0.1", "port": 5037, "serial": "emulator-5554"},
+      "capture": {"kind": "emulator", "interface": "wlan0"},
+      "scenarios": ["positive-control", "steady", "crash", "disconnect", "reconnect", "peer-outage", "kill-stress", "private-dns", "force-stop", "reboot"]
+    },
+    "pixel": {
+      "adb": {"path": "${ANDROID_HOME}/platform-tools/adb", "host": "127.0.0.1", "port": 5038, "serial": "${WAVE_QA_PIXEL_SERIAL}"},
+      "capture": {
+        "kind": "gateway", "ssh": "${WAVE_QA_GATEWAY_SSH}", "interface": "eth0",
+        "client_ipv4": "${WAVE_QA_PIXEL_IPV4}", "client_ipv6": [],
+        "gateway_ipv4": "${WAVE_QA_GATEWAY_IPV4}", "phone_interface": "wlan0",
+        "manage": true, "configure_wifi": true, "prefix": 24
+      },
+      "scenarios": ["positive-control", "steady", "crash", "disconnect", "reconnect", "peer-outage", "private-dns", "force-stop", "reboot"]
+    },
+    "api26": {
+      "adb": {"path": "${ANDROID_HOME}/platform-tools/adb", "host": "127.0.0.1", "port": 5037, "serial": "emulator-5556"},
+      "avd": "Wave_QA_API26", "capture": {"kind": "none"},
+      "required_probes": ["ipv4", "ipv6", "dns"],
+      "scenarios": ["steady"]
+    },
+    "api35-16k": {
+      "adb": {"path": "${ANDROID_HOME}/platform-tools/adb", "host": "127.0.0.1", "port": 5037, "serial": "emulator-5558"},
+      "avd": "Wave_QA_API35_16K", "require_page_size": 16384,
+      "capture": {"kind": "none"}, "scenarios": ["steady"]
+    }
+  }
+}
