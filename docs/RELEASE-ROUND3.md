@@ -156,3 +156,13 @@ Cleanup completed. This was functional testing without capture, not a privacy pa
 or a signed-candidate result. The runner also now resolves the installed launcher,
 fixing debug application IDs whose activity class uses the production namespace.
 Twenty-six runner tests pass. [Filtered result](device-tests/2026-10-23-split-accessibility.json).
+
+## Subsequent emulator lifecycle investigation — 2026-10-23 UTC
+
+The [correlated lifecycle investigation](RELEASE-LIFECYCLE-INVESTIGATION.md)
+confirmed actual API 37 tunnel teardown with saved blocking still enabled and
+separated the historical eight question packets into ordinary and explicitly
+bound resolver workloads. Three new emulator runs retain their failures; fresh
+marked DNS escape was not reproduced in those samples. No production lifecycle
+fix or exact platform cause is established. Original captures/reports remain
+unchanged. [Filtered evidence](device-tests/2026-10-23-lifecycle.json).

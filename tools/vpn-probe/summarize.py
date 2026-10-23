@@ -91,6 +91,10 @@ def summarize(path, wireguard_port=1637, client_addresses=None):
                     counts['raw_dns' + family + '_out'] += 1
                 if b'probe-' in packet['payload'] and b'sslip' in packet['payload']:
                     counts['system_dns' + family + '_out'] += 1
+                    # Keep the aggregate for existing reports, while distinguishing the
+                    # ordinary resolver workload from explicit underlying-network requests.
+                    workload = 'bound_system_dns' if b'probe-bound-' in packet['payload'] else 'default_system_dns'
+                    counts[workload + family + '_out'] += 1
         if packet['syn']:
             if port == 443:
                 counts['all_https' + family + '_syn'] += 1

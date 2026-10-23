@@ -504,6 +504,8 @@ class Run:
         if 'Disconnect' in labels:
             self.d.tap('Disconnect')
         self.d.wait_labels(lambda labels: 'Connect' in labels, 20)
+        self.wait_for(lambda: not self.active_vpn(), 10,
+                      'Android still reports an active target VPN after UI disconnect')
 
     def vpn_settings(self):
         self.d.shell('am', 'start', '--user', '0', '-f', '0x10008000', '-a', 'android.settings.VPN_SETTINGS')
@@ -582,7 +584,11 @@ class Run:
         probes, rows, late = probe_summary(raw, phase, start, end, changed + 6000 if not action_error else None)
         result = {'scenario': name, 'duration_seconds': round((end - start) / 1000, 1), 'probes': probes,
                   'window_start_unix_ms': start, 'window_end_unix_ms': end,
+                  'action_completed_unix_ms': changed if action and not action_error else None,
                   'vpn_policy_at_window_start': policy,
+                  'vpn_policy_at_window_end': {
+                      'always_on_target_matches': self.d.setting('secure', 'always_on_vpn_app') == self.package,
+                      'blocking_enabled': self.d.setting('secure', 'always_on_vpn_lockdown') == '1'},
                   'capture': captured, 'expected': expected, **detail, 'status': 'pass', 'findings': []}
         if action_error:
             result.update(status='fail', error=action_error)
@@ -1069,6 +1075,7 @@ trap - EXIT
             self.connect(); self.protection(True)
             return self.observe(name, 50, self.crash_action)
         if name == 'disconnect':
+            self.connect()
             self.protection(True)
             return self.observe(name, 35, self.disconnect, expected='blocked')
         if name == 'reconnect':

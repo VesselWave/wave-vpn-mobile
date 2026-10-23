@@ -245,3 +245,19 @@ available but were not all rerun through this new harness; earlier manual result
 are separate evidence. A script cannot recreate a historical packet trace or
 server selection exactly; it repeats the procedure against the supplied APK and
 current network, retaining its own evidence and findings.
+
+Disconnect scenarios first establish a connected tunnel and enable the test's
+Always-on/blocking policy. Completion requires both the idle UI and Android's
+VPN manager reporting the target VPN inactive; an idle button alone is insufficient.
+Reports include the sampled action-completion clock and saved policy values after
+the window as well as before it. These settings snapshots do not prove continuous
+kernel enforcement. The completion clock follows the UI/state checks and is not
+a precise kernel teardown timestamp.
+
+`system_dns4_out` / `system_dns6_out` retain the aggregate marked resolver-packet
+counts. Additive `default_system_dns*` and `bound_system_dns*` counters distinguish
+ordinary resolver requests from requests explicitly bound to an underlying
+network. They count captured question packets, including A/AAAA and repeated
+questions, rather than unique names. Both workloads still produce privacy
+findings. Historical reports and failure states are not rewritten when inspecting
+old captures with the new counters.

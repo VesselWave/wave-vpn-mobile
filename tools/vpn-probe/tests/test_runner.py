@@ -73,6 +73,15 @@ class PacketEvidenceTests(unittest.TestCase):
         findings = runner.capture_findings(self.summary(pcap([frame(payload=b'background.example')])) )
         self.assertTrue(any('origin_not_assumed' in finding for finding in findings))
 
+    def test_default_and_bound_resolver_evidence_stays_separate_and_failing(self):
+        result = self.summary(pcap([
+            frame(payload=b'probe-123.1-1-1-1.sslip.io'),
+            frame(payload=b'probe-bound-456.1-1-1-1.sslip.io')]))
+        self.assertEqual(result['counts']['system_dns4_out'], 2)
+        self.assertEqual(result['counts']['default_system_dns4_out'], 1)
+        self.assertEqual(result['counts']['bound_system_dns4_out'], 1)
+        self.assertIn('probe_escape_ipv4', runner.capture_findings(result))
+
     def test_shared_https_or_dot_endpoint_is_a_finding_without_probe_attribution(self):
         for port in (443, 853):
             findings = runner.capture_findings(self.summary(pcap([frame(port=port, tcp=True)])))
@@ -83,6 +92,32 @@ class PacketEvidenceTests(unittest.TestCase):
 
 
 class RunnerSafetyTests(unittest.TestCase):
+    def test_idle_ui_does_not_prove_android_tunnel_teardown(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run = runner.Run({'package': 'test.package', 'adb': {'serial': 'test-only'},
+                              'capture': {'kind': 'none'}}, temp, runner.parser().parse_args(['run']))
+            run.open_overview = lambda: ['Connect']
+            run.d.wait_labels = lambda *a: ['Connect']
+            run.active_vpn = lambda: True
+            def check(predicate, seconds, reason):
+                runner.require(predicate(), reason)
+            run.wait_for = check
+            with self.assertRaisesRegex(runner.Failure, 'active target VPN'):
+                run.disconnect()
+            run.active_vpn = lambda: False
+            run.disconnect()
+
+    def test_disconnect_scenario_establishes_a_connected_start(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run = runner.Run({'package': 'test.package', 'adb': {'serial': 'test-only'},
+                              'capture': {'kind': 'none'}}, temp, runner.parser().parse_args(['run']))
+            calls = []
+            run.connect = lambda: calls.append('connect')
+            run.protection = lambda enabled: calls.append(('protection', enabled))
+            run.observe = lambda *a, **kw: calls.append(('observe', a[0], kw['expected']))
+            run.run_scenario('disconnect')
+            self.assertEqual(calls, ['connect', ('protection', True), ('observe', 'disconnect', 'blocked')])
+
     def test_debug_launcher_namespace_is_resolved_and_foreign_components_rejected(self):
         device = runner.Device({'adb': {'serial': 'test-only'}})
         calls = []
