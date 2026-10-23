@@ -211,6 +211,25 @@ unperformed release gates such as pre-unlock capture, permission revocation,
 natural memory pressure, every other profile/browser or overnight reliability.
 See [the recorded follow-up](../../docs/RELEASE-FOLLOWUP.md) for those limits.
 
+`traffic-soak` runs a longer active probe/capture window. Set `soak_seconds`
+(60–86400, default 3600) and optionally `soak_max_gap_seconds` (5–300, default 30)
+in the private profile. Every required probe must keep producing successful
+responses within that gap, including the start and end of the window. Earlier
+successes cannot hide a later dead probe or prolonged outage. All capture findings
+still fail the result. This is active traffic coverage, not natural idle; a short
+run does not establish overnight reliability.
+Managed-gateway soaks must finish at least five minutes before the existing
+90-minute automatic cleanup deadline; longer runs need an independently managed
+gateway or emulator capture. The runner refuses a soak that would outlive that lease.
+
+Transport SYNs to the probe's HTTPS/DoT endpoints remain privacy findings, but
+their originating UID is not inferred. In particular, `1.1.1.1:853` is shared
+with platform resolvers, so matching that destination does not identify a QA
+probe. Marked DNS question payloads provide separate workload evidence. Reports
+created before this distinction may call a shared-endpoint SYN `probe_escape`;
+retain their captures and failure status, but do not treat that label as UID
+attribution.
+
 Offline verification of the runner and packet/report handling:
 
 ```sh

@@ -36,3 +36,35 @@ For separately signed download checksums, use the shared OpenPGP public key at
 `414018C0BBB8C0A70A80BF570AA32CCB2C0B3951`. Publish the fingerprint through a
 separately trusted maintainer channel. The private OpenPGP key and APK keystore
 must remain outside the repository. No release is automatically published.
+
+## Packaging a tagged candidate
+
+After selecting a release version (`X.Y.Z` or `X.Y.Z-rc.N`), incrementing the
+version code as appropriate and committing the reviewed source, create its
+`v<VERSION>` tag. From that clean checkout, with the signing environment above:
+
+```sh
+python3 scripts/release.py --sign-key 414018C0BBB8C0A70A80BF570AA32CCB2C0B3951
+```
+
+Requires Python 3.10+, JDK 17, SDK platform 37/build-tools 37.0.0, OpenSSL and
+GnuPG. It runs checks, builds the signed/minified APK, verifies its production
+certificate, package/version and 16 KB alignment, and creates APK/notices and
+source archives, provenance/toolchain records and checksums under
+`app/build/distribution/<revision>/`. An existing output directory is refused.
+It does not publish or establish completion of privacy/device release gates.
+Without `--sign-key`, the APK still requires its production signature, but the
+download checksum manifest is left unsigned.
+
+Verify a signed download set from a separate environment:
+
+```sh
+bash scripts/verify-release.sh wave-vpn-android-VERSION-signing-key.asc \
+  wave-vpn-android-VERSION-SHA256SUMS wave-vpn-android-VERSION-SHA256SUMS.asc \
+  TRUSTED_FULL_FINGERPRINT
+```
+
+The verifier checks the trusted OpenPGP identity, manifest signature and every
+archive hash. Keep the two archives beside the manifest. After extraction, also
+verify the APK certificate with `apksigner` before installation. The standalone
+verifier is maintained in each app; no sibling checkout is needed.

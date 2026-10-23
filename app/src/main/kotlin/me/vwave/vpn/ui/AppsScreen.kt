@@ -4,7 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -78,6 +79,12 @@ fun AppsScreen(vm: AppViewModel, onBack: () -> Unit) {
             color = tokens.muted,
             modifier = Modifier.padding(16.dp),
         )
+        Text(
+            "These settings apply to this Android profile. With Block connections without VPN enabled, apps outside the VPN are blocked.",
+            style = MaterialTheme.typography.bodySmall,
+            color = tokens.muted,
+            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp),
+        )
         if (settings.splitMode == SplitMode.Off) return@Column
 
         SearchField(query, { query = it }, "Search apps", Modifier.fillMaxWidth().padding(horizontal = 16.dp))
@@ -97,9 +104,9 @@ fun AppsScreen(vm: AppViewModel, onBack: () -> Unit) {
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .clickable {
+                        .toggleable(value = checked, role = Role.Checkbox) { selected ->
                             vm.updateSettings {
-                                it.copy(splitApps = if (checked) it.splitApps - app.packageName else it.splitApps + app.packageName)
+                                it.copy(splitApps = if (selected) it.splitApps + app.packageName else it.splitApps - app.packageName)
                             }
                         }
                         .padding(horizontal = 16.dp, vertical = 8.dp),

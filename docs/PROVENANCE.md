@@ -118,3 +118,10 @@ GPL-3.0-or-later QA code. They reproduce the recorded device workflows using
 Android SDK APIs, ADB and standard gateway tools. No implementation or tests were
 copied from the archived apps. They are separate from the shipped application
 and do not depend on the sibling desktop checkout or T3 thread storage.
+
+The later allocation-pressure and direct-boot QA helpers were also authored for
+these tests, with GPL-3.0-or-later headers; their source and raw evidence remain
+in the private evidence directory, not in the application APK. Host troubleshooting
+consulted Google's [AOSP emulator acceleration setup](https://android.googlesource.com/platform/external/qemu/+/refs/heads/emu-32-release/android-qemu2-glue/main.cpp)
+as read-only context for the HVF diagnostic. No emulator source or tests were
+copied, and that reference does not establish a DNS failure mechanism.

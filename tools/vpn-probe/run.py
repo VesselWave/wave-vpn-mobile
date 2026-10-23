@@ -28,7 +28,7 @@ DRIVER = PROBE + '.driver'
 KINDS = ('ipv4', 'ipv6', 'dns', 'direct4', 'doh', 'dot4', 'dot6', 'bound-dns', 'bound-tcp4', 'bound-tcp6')
 SCENARIOS = ('positive-control', 'steady', 'crash', 'disconnect', 'reconnect', 'server-switch',
              'peer-outage', 'kill-stress', 'private-dns', 'split-tunnel', 'screen-off', 'doze',
-             'airplane', 'handoff', 'force-stop', 'reboot')
+             'airplane', 'handoff', 'force-stop', 'reboot', 'traffic-soak')
 SAVED_SETTINGS = [('secure', 'always_on_vpn_app'), ('secure', 'always_on_vpn_lockdown'),
                   ('global', 'private_dns_mode'), ('global', 'private_dns_specifier'),
                   ('global', 'mobile_data'), ('global', 'airplane_mode_on')]
@@ -174,8 +174,19 @@ class Device:
         self.ui('fill', selector=selector, value=value)
 
     def open(self, package, activity=None):
-        activity = activity or package + '.MainActivity'
-        self.shell('am', 'start', '--user', '0', '-f', '0x10008000', '-n', package + '/' + activity)
+        if activity:
+            component = package + '/' + activity
+        else:
+            # Debug application IDs differ from their Kotlin activity namespace.
+            # Resolve the installed launcher instead of guessing a class name.
+            resolved = self.shell('cmd', 'package', 'resolve-activity', '--brief', '--user', '0',
+                                  '-a', 'android.intent.action.MAIN',
+                                  '-c', 'android.intent.category.LAUNCHER', package)
+            matches = [line.strip() for line in resolved.splitlines()
+                       if re.fullmatch(re.escape(package) + r'/[A-Za-z0-9_.$]+', line.strip())]
+            require(len(matches) == 1, 'Could not uniquely resolve the target app launcher')
+            component = matches[0]
+        self.shell('am', 'start', '--user', '0', '-f', '0x10008000', '-n', component)
         time.sleep(1)
 
     def labels(self):
@@ -281,9 +292,12 @@ def capture_findings(result):
     counts = result['counts']
     findings = []
     for family in ('4', '6'):
-        if any(counts.get(key, 0) for key in ('raw_dns' + family + '_out', 'system_dns' + family + '_out',
-                                             'direct_https' + family + '_syn', 'dot' + family + '_syn')):
+        if any(counts.get(key, 0) for key in ('raw_dns' + family + '_out', 'system_dns' + family + '_out')):
             findings.append('probe_escape_ipv' + family)
+        # These endpoints are shared with platform DNS and other applications. A SYN has
+        # no query marker or UID: retain a privacy finding without assigning its origin.
+        if any(counts.get(key, 0) for key in ('direct_https' + family + '_syn', 'dot' + family + '_syn')):
+            findings.append('probe_endpoint_transport_observed_ipv' + family + '_origin_not_assumed')
         if counts.get('all_dns' + family + '_out', 0):
             findings.append('cleartext_dns_observed_ipv' + family + '_origin_not_assumed')
         if counts.get('all_dot' + family + '_syn', 0) > counts.get('dot' + family + '_syn', 0):
@@ -513,7 +527,7 @@ class Run:
     def protection(self, enabled):
         current = self.d.setting('secure', 'always_on_vpn_app')
         blocking = self.d.setting('secure', 'always_on_vpn_lockdown')
-        if (enabled and current == self.package and blocking == '1') or (not enabled and current == 'null' and blocking == '0'):
+        if (enabled and current == self.package and blocking == '1') or (not enabled and current == 'null' and blocking in ('0', 'null')):
             return
         self.vpn_settings()
         if enabled:
@@ -531,17 +545,18 @@ class Run:
                 # This is the verified target app's screen, never another profile's VPN.
                 require(current == self.package, 'Another VPN owns Always-on; restore that policy before testing')
                 self.d.tap('Always-on VPN')
-            require(self.d.setting('secure', 'always_on_vpn_lockdown') == '0', 'Blocking was not disabled')
+            require(self.d.setting('secure', 'always_on_vpn_lockdown') in ('0', 'null'), 'Blocking was not disabled')
 
     def probe_start(self, phase):
         self.d.shell('am', 'force-stop', '--user', '0', PROBE)
         # A new activity instance receives a unique phase; never reuse stale onNewIntent state.
         self.d.shell('am', 'start', '--user', '0', '-f', '0x10008000', '-n', PROBE + '/.Probe', '--es', 'phase', phase)
-        time.sleep(0.5)
-        require(self.d.pid(PROBE), 'Independent probe did not start')
+        self.wait_for(lambda: bool(self.d.pid(PROBE)), 10, 'Independent probe did not start')
 
     def observe(self, name, seconds=18, action=None, expected='working', protected=True, required_override=None):
         phase = self.run_id + '-' + name
+        policy = {'always_on_target_matches': self.d.setting('secure', 'always_on_vpn_app') == self.package,
+                  'blocking_enabled': self.d.setting('secure', 'always_on_vpn_lockdown') == '1'}
         self.probe_start(phase)
         start = self.d.ui('clock')['wall_ms']
         cap = Capture(self, name, seconds).start()
@@ -566,6 +581,8 @@ class Run:
         (self.output / 'private' / (name + '.tsv')).write_text(raw)
         probes, rows, late = probe_summary(raw, phase, start, end, changed + 6000 if not action_error else None)
         result = {'scenario': name, 'duration_seconds': round((end - start) / 1000, 1), 'probes': probes,
+                  'window_start_unix_ms': start, 'window_end_unix_ms': end,
+                  'vpn_policy_at_window_start': policy,
                   'capture': captured, 'expected': expected, **detail, 'status': 'pass', 'findings': []}
         if action_error:
             result.update(status='fail', error=action_error)
@@ -618,7 +635,8 @@ class Run:
             root = '/tmp/wave-vpn-qa-' + self.run_id
             table = 'wave_qa_' + self.run_id
             unit = 'wave-vpn-qa-' + self.run_id
-            self.state.update(gateway_root=root, gateway_table=table, gateway_unit=unit)
+            self.state.update(gateway_root=root, gateway_table=table, gateway_unit=unit,
+                              gateway_cleanup_deadline_unix_ms=int(time.time() * 1000) + 5400 * 1000)
             self.persist()
             # A gateway-wide QA lock prevents two runs restoring each other's sysctls.
             script = '''set -eu
@@ -665,7 +683,7 @@ trap - EXIT
             self.state['wifi_changed'] = True; self.persist()
             self.d.tap('Save')
         expected = gateway.get('gateway_ipv4')
-        if expected and verify_expected:
+        if expected:
             self.wait_for(lambda: ('default via ' + expected + ' dev ' + gateway.get('phone_interface', 'wlan0'))
                           in self.d.shell('ip', 'route', 'show', 'table', 'all'), 25,
                           'Phone is not routed through the configured capture gateway')
@@ -681,9 +699,23 @@ trap - EXIT
         self.d.wait_labels(lambda labels: 'Modify' in labels or 'Advanced options' in labels)
         if 'Modify' in self.d.labels():
             self.d.tap('Modify')
-        self.d.wait_labels(lambda labels: 'Advanced options' in labels)
-        self.d.tap('Advanced options')
+        self.d.wait_labels(lambda labels: 'Advanced options' in labels or 'IP settings' in labels)
+        if 'IP settings' not in self.d.labels():
+            self.d.tap('Advanced options')
         self.d.wait_labels(lambda labels: 'IP settings' in labels)
+
+    def restore_wifi(self):
+        self.wifi_form()
+        labels = self.d.labels()
+        if 'Static' in labels:
+            self.d.tap('Static'); self.d.tap('DHCP'); self.d.tap('Save')
+        else:
+            require('DHCP' in labels, 'Cannot verify the original DHCP configuration')
+            self.d.ui('back')  # A prior restore may have saved DHCP before route convergence timed out.
+        self.wait_for(lambda: 'default via ' + self.capture['gateway_ipv4'] + ' dev' not in
+                      self.d.shell('ip', 'route', 'show', 'table', 'all'), 60,
+                      'Wi-Fi DHCP restoration not verified')
+        self.state.pop('wifi_changed', None)
 
     def fill_id(self, identity, value):
         for attempt in range(5):
@@ -1061,6 +1093,32 @@ trap - EXIT
             self.connect(); return self.observe('force-stop-manual-recovery', 18)
         if name == 'reboot':
             return self.reboot()
+        if name == 'traffic-soak':
+            seconds = int(self.config.get('soak_seconds', 3600))
+            max_gap = int(self.config.get('soak_max_gap_seconds', 30))
+            require(60 <= seconds <= 86400 and 5 <= max_gap <= 300,
+                    'Traffic soak requires 60–86400 seconds and a 5–300 second maximum success gap')
+            if self.capture['kind'] == 'gateway' and self.capture.get('manage'):
+                remaining = self.state.get('gateway_cleanup_deadline_unix_ms', 0) / 1000 - time.time()
+                require(remaining > seconds + 300,
+                        'Traffic soak exceeds the remaining managed-gateway cleanup lease; use a shorter run or an independently managed gateway')
+            self.connect(); self.protection(True)
+            result, rows = self.observe(name, seconds)
+            result['success_gap_limit_seconds'] = max_gap
+            # Include both edges: early successes cannot mask a later outage or a dead probe.
+            start = result['window_start_unix_ms']
+            end = result['window_end_unix_ms']
+            gaps = {}
+            for kind in result['required_probes']:
+                times = [start] + sorted(int(row[0]) for row in rows
+                                         if row[2] == kind and row[3].startswith('OK ')) + [end]
+                gaps[kind] = round(max(b - a for a, b in zip(times, times[1:])) / 1000, 3)
+            result['longest_success_gap_seconds'] = gaps
+            if any(gap > max_gap for gap in gaps.values()):
+                result.update(status='fail', error='Required traffic exceeded the maximum success gap during soak')
+            result['scope_note'] = 'Active independent traffic workload; not natural idle or an overnight claim'
+            self.write_report()
+            return result, rows
         raise Failure('Unknown scenario')
 
     def write_report(self):
@@ -1145,12 +1203,7 @@ trap - EXIT
                 self.d.put('global', key, self.state['settings']['global/' + key])
         attempt('Private DNS', restore_dns)
         if self.state.get('wifi_changed'):
-            def wifi():
-                self.wifi_form(); self.d.tap('Static'); self.d.tap('DHCP'); self.d.tap('Save')
-                self.wait_for(lambda: 'default via ' + self.capture['gateway_ipv4'] + ' dev' not in
-                              self.d.shell('ip', 'route', 'show', 'table', 'all'), 20, 'Wi-Fi DHCP restoration not verified')
-                self.state.pop('wifi_changed', None)
-            attempt('Wi-Fi DHCP (unlock the phone before restore)', wifi)
+            attempt('Wi-Fi DHCP (unlock the phone before restore)', self.restore_wifi)
         if self.state.get('gateway_root'):
             def gateway():
                 root = self.state['gateway_root']; unit = self.state['gateway_unit']
@@ -1191,7 +1244,10 @@ trap - EXIT
             else:
                 raise Failure('Original VPN policy belongs to another package')
             for key in ('always_on_vpn_app', 'always_on_vpn_lockdown'):
-                require(self.d.setting('secure', key) == self.state['settings']['secure/' + key],
+                current = self.d.setting('secure', key)
+                original_value = self.state['settings']['secure/' + key]
+                equivalent_disabled = key == 'always_on_vpn_lockdown' and current in ('0', 'null') and original_value in ('0', 'null')
+                require(current == original_value or equivalent_disabled,
                         'Original VPN policy was not restored')
         attempt('original VPN policy', vpn_policy)
         def remove_captures():

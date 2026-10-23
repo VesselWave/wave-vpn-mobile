@@ -6,6 +6,8 @@ production support or security maintenance promise. See
 
 Known limitation: an Android 16 emulator exposed application DNS names on the
 underlying network during VPN process death despite Always-on VPN and blocking.
+API 37.0 and 37.2 SDK images also exposed fresh probe DNS during disconnect;
+see the [expanded evidence review](docs/RELEASE-ROUND3.md).
 This application does not promise device-wide leak prevention across Android
 versions. See the [release follow-up](docs/RELEASE-FOLLOWUP.md) for evidence,
 physical-device results and remaining gates.

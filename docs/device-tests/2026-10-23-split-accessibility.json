@@ -1,0 +1,235 @@
+{
+  "schema": 1,
+  "source_threads": [
+    "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+    "2a7198b7-2664-4843-897e-2349a08a5be7",
+    "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+  ],
+  "artifact": {
+    "sha256": "2db7ef6194d925c7ec8b1cad82387e0dc9080fce4b0fb781b17c5c0e5b96a0a4",
+    "signer_sha256": "522b203a3989b648a59d9686edf497fed73c7384b70c05065d537c0417063fee",
+    "package": "me.vwave.vpn.dev",
+    "version_code": 2,
+    "version_name": "0.2-dev+debug",
+    "debuggable": true
+  },
+  "device": {
+    "api": 36,
+    "release": "16",
+    "security_patch": "2025-07-05",
+    "page_size": 4096,
+    "abi": "arm64-v8a",
+    "emulator": true
+  },
+  "validated_capture_families": [],
+  "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+  "status": "pass_for_exercised_scope",
+  "capture_kind": "none",
+  "required_probes": [
+    "ipv4",
+    "ipv6",
+    "dns",
+    "direct4",
+    "doh"
+  ],
+  "results": [
+    {
+      "scenario": "steady",
+      "duration_seconds": 18.0,
+      "probes": {
+        "ipv4": {
+          "success": 7,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 5,
+          "failure": 0
+        },
+        "dns": {
+          "success": 7,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 6,
+          "failure": 0
+        },
+        "doh": {
+          "success": 6,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 15,
+          "failure": 0
+        },
+        "dot6": {
+          "success": 15,
+          "failure": 0
+        },
+        "bound-dns": {
+          "success": 7,
+          "failure": 0
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 9
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 9
+        }
+      },
+      "window_start_unix_ms": 1792718973494,
+      "window_end_unix_ms": 1792718991494,
+      "vpn_policy_at_window_start": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "capture": null,
+      "expected": "working",
+      "status": "pass",
+      "findings": [],
+      "privacy_assessed": false,
+      "required_probes": [
+        "ipv4",
+        "ipv6",
+        "dns",
+        "direct4",
+        "doh"
+      ],
+      "wan_exit_observations": 0
+    },
+    {
+      "scenario": "split-bypass",
+      "duration_seconds": 60.0,
+      "probes": {
+        "ipv4": {
+          "success": 3,
+          "failure": 26
+        },
+        "ipv6": {
+          "success": 2,
+          "failure": 27
+        },
+        "dns": {
+          "success": 2,
+          "failure": 24
+        },
+        "direct4": {
+          "success": 3,
+          "failure": 27
+        },
+        "doh": {
+          "success": 3,
+          "failure": 26
+        },
+        "dot4": {
+          "success": 6,
+          "failure": 53
+        },
+        "dot6": {
+          "success": 6,
+          "failure": 52
+        },
+        "bound-dns": {
+          "success": 2,
+          "failure": 24
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 30
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 30
+        }
+      },
+      "window_start_unix_ms": 1792718996140,
+      "window_end_unix_ms": 1792719056140,
+      "vpn_policy_at_window_start": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "capture": null,
+      "expected": "blocked",
+      "status": "pass",
+      "findings": [],
+      "privacy_assessed": false,
+      "required_probes": [
+        "ipv4",
+        "ipv6",
+        "dns",
+        "direct4",
+        "doh"
+      ],
+      "wan_exit_observations": 0
+    },
+    {
+      "scenario": "split-included",
+      "duration_seconds": 60.0,
+      "probes": {
+        "ipv4": {
+          "success": 18,
+          "failure": 3
+        },
+        "ipv6": {
+          "success": 16,
+          "failure": 3
+        },
+        "dns": {
+          "success": 22,
+          "failure": 3
+        },
+        "direct4": {
+          "success": 19,
+          "failure": 3
+        },
+        "doh": {
+          "success": 19,
+          "failure": 3
+        },
+        "dot4": {
+          "success": 45,
+          "failure": 6
+        },
+        "dot6": {
+          "success": 46,
+          "failure": 6
+        },
+        "bound-dns": {
+          "success": 22,
+          "failure": 3
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 30
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 30
+        }
+      },
+      "window_start_unix_ms": 1792719057075,
+      "window_end_unix_ms": 1792719117075,
+      "vpn_policy_at_window_start": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "capture": null,
+      "expected": "working",
+      "status": "pass",
+      "findings": [],
+      "privacy_assessed": false,
+      "required_probes": [
+        "ipv4",
+        "ipv6",
+        "dns",
+        "direct4",
+        "doh"
+      ],
+      "wan_exit_observations": 0
+    }
+  ],
+  "cleanup_complete": true,
+  "scope_note": "Debug APK functional verification on original Android 16 emulator. No capture or new privacy pass. The historical first attempt failed before scenarios and cleaned up; retry used resolved installed launcher activity.",
+  "runner_tests_passed": 26
+}
