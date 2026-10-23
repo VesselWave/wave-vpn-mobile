@@ -166,3 +166,8 @@ bound resolver workloads. Three new emulator runs retain their failures; fresh
 marked DNS escape was not reproduced in those samples. No production lifecycle
 fix or exact platform cause is established. Original captures/reports remain
 unchanged. [Filtered evidence](device-tests/2026-10-23-lifecycle.json).
+
+The final bounded [teardown-order comparison](RELEASE-TEARDOWN-ORDER-EXPERIMENT.md)
+also reproduced ordinary DNS outside the VPN with both current and alternative
+ordering. All six reports failed; no production mitigation was accepted. This
+concludes the requested investigation scope and leaves the privacy gate blocked.
