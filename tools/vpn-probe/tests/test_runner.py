@@ -53,6 +53,29 @@ class PacketEvidenceTests(unittest.TestCase):
         result = self.summary(pcap([frame(src='192.0.2.2')]), client_addresses=['192.0.2.1'])
         self.assertNotIn('raw_dns4_out', result['counts'])
 
+    def test_mac_scope_catches_ipv6_without_a_known_privacy_address(self):
+        mac = bytes.fromhex('021122334455')
+        payload = b'probe-123.1-1-1-1.sslip.io'
+        udp = struct.pack('!HHHH', 12345, 53, 8 + len(payload), 0) + payload
+        ip6 = struct.pack('!IHBB', 6 << 28, len(udp), 17, 64)
+        ip6 += socket.inet_pton(socket.AF_INET6, '2001:db8::1234')
+        ip6 += socket.inet_pton(socket.AF_INET6, '2606:4700:4700::1111')
+        packet = bytes(6) + mac + b'\x86\xdd' + ip6 + udp
+        result = self.summary(pcap([packet]), client_addresses=['192.0.2.1'], client_mac='02:11:22:33:44:55')
+        self.assertEqual(result['counts']['system_dns6_out'], 1)
+        other = self.summary(pcap([packet]), client_mac='02:11:22:33:44:66')
+        self.assertNotIn('system_dns6_out', other['counts'])
+        self.assertNotIn('02:11:22:33:44:55', json.dumps(result))
+
+    def test_exclusive_ap_scope_survives_client_mac_rotation(self):
+        def source(mac):
+            packet = frame()
+            return packet[:6] + bytes.fromhex(mac) + packet[12:]
+        result = self.summary(pcap([source('021122334455'), source('021122334466'),
+                                    source('021122334477')]),
+                              client_addresses=['192.0.2.99'], ap_mac='02:11:22:33:44:77')
+        self.assertEqual(result['counts']['raw_dns4_out'], 2)
+
     def test_transport_port_is_configurable_and_not_called_crypto_validation(self):
         result = self.summary(pcap([frame(port=51820)]), wireguard_port=51820)
         self.assertEqual(result['counts']['wireguard_out'], 1)

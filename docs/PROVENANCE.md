@@ -125,3 +125,12 @@ in the private evidence directory, not in the application APK. Host troubleshoot
 consulted Google's [AOSP emulator acceleration setup](https://android.googlesource.com/platform/external/qemu/+/refs/heads/emu-32-release/android-qemu2-glue/main.cpp)
 as read-only context for the HVF diagnostic. No emulator source or tests were
 copied, and that reference does not establish a DNS failure mechanism.
+
+The temporary hotspot and tunneled dual-stack QA tools are authored
+GPL-3.0-or-later scripts, separate from the APK. The
+[WireGuard namespace documentation](https://www.wireguard.com/netns/) was
+consulted for the transport-socket/namespace behavior, and
+[Tor's SOCKS specification](https://spec.torproject.org/socks-extensions) for its
+UDP limitation. No source or tests were copied. These tools use system networking
+commands and caller-supplied SSH targets; they have no build dependency on the
+personal infrastructure checkout.

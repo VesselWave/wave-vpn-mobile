@@ -33,6 +33,7 @@ def packets(path):
         if len(frame) < 14:
             yield result
             continue
+        result['src_mac'] = ':'.join(f'{b:02x}' for b in frame[6:12])
         kind = struct.unpack_from('!H', frame, 12)[0]
         pos = 14
         if kind == 0x800 and len(frame) >= pos + 20:
@@ -69,7 +70,7 @@ def packets(path):
         yield result
 
 
-def summarize(path, wireguard_port=1637, client_addresses=None):
+def summarize(path, wireguard_port=1637, client_addresses=None, client_mac=None, ap_mac=None):
     counts = collections.Counter()
     start = end = None
     clients = set(client_addresses or [])
@@ -79,7 +80,10 @@ def summarize(path, wireguard_port=1637, client_addresses=None):
         counts['packets'] += 1
         if packet['network_unparsed']:
             counts['unsupported_network_packets'] += 1
-        if 'dport' not in packet or (clients and packet['src'] not in clients):
+        owned = (packet.get('src_mac') == client_mac.lower()) if client_mac else (not clients or packet.get('src') in clients)
+        if ap_mac:
+            owned = packet.get('src_mac') is not None and packet['src_mac'] != ap_mac.lower()
+        if 'dport' not in packet or not owned:
             continue
         family, port = packet['family'], packet['dport']
         if packet['proto'] == 17:

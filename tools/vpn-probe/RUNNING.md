@@ -49,6 +49,19 @@ if the app needs sign-in. The driver sends editable values through a private
 app command file, deletes that file, and never returns editable field contents.
 ADB access and the temporary debuggable helpers must remain trusted.
 
+For a Proton emulator account, run this in your own interactive terminal:
+
+```sh
+python3 tools/vpn-probe/credentials.py
+```
+
+Username and password prompts are hidden. The default destination is
+`/tmp/wave-proton-login/account.json`, inside a mode-0700 directory; the file is
+mode 0600. Existing files, Git checkouts and symbolic-link destinations are
+refused. `--output /another/private-directory/account.json` changes the location.
+The helper prints only the saved path. It does not sign in or store a 2FA code.
+Remove this temporary file when the emulator sign-in tests are finished.
+
 The configured production signing fingerprint must match the APK. For a locally
 signed fork, change `expected_signer_sha256` to your independently verified public
 fingerprint. Debug builds need their own `package`, APK and expected fingerprint.
@@ -236,6 +249,91 @@ Offline verification of the runner and packet/report handling:
 python3 -m unittest discover -s tools/vpn-probe/tests -v
 ```
 
+## Comparing installed VPN applications
+
+`compare.py` uses the same independent workloads, positive controls, capture
+assertions and restoration as `run.py`. It archives and hashes the installed
+base/split APKs without replacing the target or clearing its account. Supply
+the installed base APK as `apk`, its verified signer and package, and a private
+`comparison_ui` configuration. Sign in beforehand, or configure the optional
+authentication selectors below. UI selectors are version
+specific and must be validated on the installed app:
+
+```json
+"comparison_ui": {
+  "overview": [],
+  "connect": [{"text": "Connect"}],
+  "connected": {"prefix": "Connected"},
+  "disconnect": [{"text": "Disconnect"}]
+}
+```
+
+The installed-app adapter supports positive control, steady, disconnect,
+reconnect, crash and force-stop. Other scenarios are explicitly skipped rather
+than applying Wave-specific server/settings/status controls to a vendor app.
+The Wave runner retains its broader scenario set.
+
+Steps are accessibility selectors, not shell commands. Include confirmation
+buttons in the disconnect sequence where needed. A connected label and Android's
+active-VPN state are both required. A retained blocking tunnel fails the teardown
+precondition rather than being counted as a clean disconnect. Restore an
+interrupted comparison with `compare.py restore --state ...`.
+
+For an app that loses its in-memory account when Android revokes its VPN,
+`comparison_ui.authentication` can define `needed` (a selector identifying the
+signed-out screen), `open` (a sequence of selectors opening sign-in), `username`
+and `password` (editable-field selectors), `submit`, and `ready` (a selector only
+present after sign-in). Supply the same mode-0600 `credentials_file` format as
+the Wave runner. Values travel through private stdin command files, never through
+selectors, command arguments or reports. This is used only during explicit
+setup/manual connection; crash recovery still must happen without opening the app.
+After the unprotected positive control, the installed-app adapter explicitly
+restarts the target before establishing the protected baseline. This clears
+service sessions revoked by Android when disabling Always-on. That preparation
+restart is recorded in the positive-control result and is never used to pass
+process-death recovery. Connected-start checks apply independently to stop,
+outage, DNS-mode and lifecycle scenarios; reconnect verifies an inactive start.
+
+`matrix.py` runs profiles sequentially, rotates their order between repetitions,
+and gives each run a separate output directory so no failed capture is replaced:
+
+```sh
+python3 tools/vpn-probe/matrix.py --config /private/path/comparison.json \
+  --profiles wave,eddie,proton --repetitions 3 \
+  --scenarios steady,disconnect,reconnect,crash,force-stop \
+  --output /tmp/vpn-comparison-001
+```
+
+[`comparison.example.json`](comparison.example.json) supplies the exercised
+English UI selectors for Eddie 4.1.0 and Proton 5.20.98.0. It uses the same
+controlled-gateway variables as the Pixel example above. Also set
+`WAVE_QA_EDDIE_BASE_APK`, `WAVE_QA_EDDIE_SIGNER_SHA256`,
+`WAVE_QA_PROTON_BASE_APK` and `WAVE_QA_PROTON_SIGNER_SHA256` to the retained
+installed base APKs and verified certificate digests. Proton must already be
+signed in and on Home; dismiss its first-connection notification suggestion
+before testing. Eddie needs notifications enabled to avoid its launch modal.
+Record and restore permission changes separately. The runner never signs out,
+clears data or replaces a comparison target. App updates may require new selectors
+and new base APKs; a mismatched installed base is rejected.
+
+Profiles with `comparison_ui` use the installed-app adapter; other profiles use
+the Wave runner. Capture is required. Missing prerequisites, incomplete stages
+or pending cleanup stop the matrix before another target starts. Privacy
+failures remain failures while subsequent completed comparisons may proceed.
+Multi-app matrices require starting with no owner-profile Always-on VPN. Save
+and disable the initial policy in Android Settings first, and restore it after
+the matrix. This prerequisite is checked before any run: each child restores
+its starting policy, so an existing Always-on owner would otherwise prevent
+the following app from connecting. Other profiles' policies remain untouched.
+An app lacking IPv6 must retain that functional failure or explicitly declare a
+separate IPv4-only scope; never silently loosen required probes for a comparison.
+These tools do not turn unexercised pre-unlock, memory-pressure, native IPv6 or
+cellular scenarios into passes.
+The matrix copies and hashes its runner before launching any child. It executes
+that snapshot for every run. Ctrl-C/termination is forwarded once to the active
+child and waits for its cleanup instead of immediately killing it; abrupt host
+failure still requires restoring the child's saved state.
+
 The [runner validation record](../../docs/device-tests/2026-10-22-runner-validation.json)
 records the first complete live run: positive control, steady connection,
 process kill, disconnect and reconnect on Android 16. Recovery worked without
@@ -261,3 +359,144 @@ network. They count captured question packets, including A/AAAA and repeated
 questions, rather than unique names. Both workloads still produce privacy
 findings. Historical reports and failure states are not rewritten when inspecting
 old captures with the new counters.
+
+## Temporary lab host hotspot
+
+`hotspot.py` creates a leased WPA2 AP on an **unused, down, unnumbered** Linux
+radio and bridges it to an existing LAN bridge. It never changes the wired
+uplink, persistent network files, DHCP, firewall or forwarding settings. The
+host needs `hostapd`, `iw`, `ip`, systemd and an AP-capable radio; root SSH works
+without sudo, or use `--sudo` for a sudo-enabled account. Inspect the live host
+and confirm these interface names before use:
+
+```sh
+python3 tools/vpn-probe/hotspot.py start --ssh root@SIGMA \
+  --interface wlp0s20f3 --bridge vmbr0 --minutes 90 \
+  --output /tmp/wave-qa-ap-private
+python3 tools/vpn-probe/hotspot.py status --ssh root@SIGMA
+python3 tools/vpn-probe/hotspot.py stop --ssh root@SIGMA
+```
+
+The new output directory is private. `account.json` contains the generated Wi-Fi
+password; keep it outside Git and do not paste it into chat or shell history.
+Connect the test phone to `Wave-QA-Sigma` using those credentials. Only one
+station is allowed. Save its original Wi-Fi network first; after testing, reconnect
+to that network and forget the QA network. AP expiry restores the radio but cannot
+restore a disconnected phone or remove the private local credentials for you.
+A failed start preserves private state; run `stop` before retrying. Expiry leaves
+its runtime directory until `stop`, preventing accidental reuse of stale state.
+
+For a capture profile use `kind: "gateway"`, `ssh: "root@SIGMA"`, `sudo: false`,
+`interface: "wlp0s20f3"`, `manage: false`, `configure_wifi: false`, the DHCP-assigned
+`client_ipv4`, and `gateway_ipv4` equal to the LAN router. Add `client_mac` with
+the phone's **current per-network randomized Wi-Fi MAC**. This captures Ethernet
+traffic for that station and attributes outgoing IPv4/IPv6 by MAC, including
+unknown/changing IPv6 privacy addresses. Without it, all `client_ipv6` addresses
+must be explicitly supplied; IPv4-only capture cannot establish IPv6 protection.
+The parser still reports unsupported fragments/extension headers as findings.
+A MAC change requires a new validated profile and positive control.
+
+A bridged hotspot inherits the LAN's IPv6 capability. Link-local addresses,
+Tailscale ULA addresses, and IPv6 success inside a VPN do not prove an IPv6
+Internet uplink. Native dual-stack, IPv6-only/NAT64 and local hostile RA/DNS tests
+need separately provisioned networks and working unprotected controls. Do not
+inject experimental RA/DHCP into the household bridge. Wi-Fi reconnect/outage,
+MTU/fragmentation and overnight tests can use this capture point, but each needs
+its own exercised scenario and evidence. Cellular traffic is invisible here.
+
+`wifi-reconnect` works for Wave and installed-app comparison profiles. It requires
+mobile data disabled, verifies Wi-Fi really disabled, holds it off for ten
+seconds, then requires reconnection to the same BSSID. The independent probes
+and external capture continue throughout the 60-second window; required traffic
+must recover without opening/reconnecting the VPN app. Saved protection settings
+and usual packet findings still apply. This exercises phone Wi-Fi radio recovery,
+not AP power failure, roaming, cellular capture or DHCP/IPv6-renumbering coverage.
+
+## IPv6 uplink through your VPS
+
+`dualstack_hotspot.py` is an alternative to the bridged AP. It creates a private
+network namespace on lab host, moves only the unused Wi-Fi radio into it, and
+routes IPv4/IPv6 through a temporary WireGuard interface whose transport socket
+stays on lab host's ordinary uplink. An IPv6-capable VPS supplies the public exit.
+The phone receives DHCP IPv4 and an IPv6 SLAAC ULA prefix; the VPS applies NAT44
+and NAT66. This is a **tunneled dual-stack uplink with NAT66**, not native ISP
+IPv6 or a public IPv6 prefix delegated to the phone. Tor cannot substitute for
+this because its SOCKS proxy does not support general UDP forwarding.
+
+Before use, verify the VPS's IPv6 Internet access, uplink interface, SSH host key,
+sudo access and firewall conventions. The implementation currently targets an
+iptables-nft/ufw VPS with an existing IPv4 forwarding setup, and uses temporary
+narrow INPUT/FORWARD rules, its own NAT table, and saved/restored IPv6 forwarding.
+It never flushes a shared ruleset. Both hosts receive independent 90-minute
+cleanup timers. The VPS must have `wg`, `ip`, `iptables`, `ip6tables`, `nft`, `ss`
+and systemd; lab host additionally needs `hostapd`, `dnsmasq`, `iw` and `tcpdump`.
+Stop the bridged hotspot first, confirming the radio is down/unbridged/unnumbered.
+Do not run two QA hotspot owners concurrently.
+
+```sh
+python3 tools/vpn-probe/dualstack_hotspot.py prepare \
+  --sigma-ssh root@SIGMA --vps-ssh user@VPS --vps-ipv4 VPS_IPV4 \
+  --vps-ssh-port 22 --known-hosts /path/to/pinned_known_hosts \
+  --output /tmp/wave-qa-dualstack-private
+python3 tools/vpn-probe/dualstack_hotspot.py start-ap \
+  --output /tmp/wave-qa-dualstack-private
+python3 tools/vpn-probe/dualstack_hotspot.py status \
+  --output /tmp/wave-qa-dualstack-private
+# After the matrix (also required after a partial setup):
+python3 tools/vpn-probe/dualstack_hotspot.py stop \
+  --output /tmp/wave-qa-dualstack-private
+```
+
+The defaults use `wlp0s20f3` / `phy0` on lab host, `eth0` on the VPS, namespace and
+interface `waveqa6`, UDP port 51876, IPv4 `10.77.24.0/24`, and IPv6
+`fd42:77:24:2::/64`. Supply `--radio`, `--phy` and `--vps-interface` as necessary;
+check for subnet/port conflicts before setup. `prepare` requires a fresh private
+output directory. `start-ap` writes `dualstack-account.json`; join the phone
+with those credentials. If replacing a QA network with the same SSID, forget the
+old QA configuration first so an old saved password is not reused. Preserve the
+phone's original household Wi-Fi configuration.
+
+Use `namespace: "waveqa6"` in the gateway capture configuration, `sudo: false`
+for root SSH, `manage: false`, `configure_wifi: false`, `gateway_ipv4:
+"10.77.24.1"`, and the phone's actual DHCP IPv4/MAC. Add
+`required_capture_families: ["ipv4", "ipv6"]` at the profile level. This fails
+setup unless the unprotected capture proves both families (including marked
+raw DNS and DoT plus successful IPv6 application traffic). An IPv6 failure is
+retained instead of silently degrading to an IPv4-only comparison. Capture on
+the Wi-Fi interface **inside the namespace**, before the outer VPN, so inner
+VPN leaks cannot be hidden by the test uplink tunnel. The regular packet
+assertions and unsupported-fragment findings remain unchanged.
+
+`stop` independently attempts both hosts, restores the VPS forwarding value,
+removes only the QA firewall rules/interfaces, returns the radio to managed/down,
+and deletes local tunnel keys and AP credentials after successful cleanup. A
+cleanup failure retains the private state for retry. Expiry leaves runtime
+journals for inspection; invoke `stop` before another setup. Reconnect the phone
+to its original network and forget the QA network. Local private error logs can
+contain configuration; never publish them.
+
+For this tool's exclusive, password-protected one-station AP, prefer
+`ap_mac: "AP_RADIO_MAC"` instead of `client_mac`. Capture then retains all frames
+on the dedicated Wi-Fi interface and classifies outgoing station traffic by
+excluding the AP's own source MAC. This survives per-connection randomized phone
+MACs and DHCP/IPv6 address changes. **Never use this mode on a shared uplink or
+bridge, or an AP with other clients**: its ownership assumption is exactly one
+station. Fixed `client_mac` remains appropriate elsewhere, but Wi-Fi recovery
+must retain that identity or fail. Save the AP's actual radio MAC in the private
+profile; do not substitute the wired bridge MAC.
+
+The isolated AP advertises a 600-second IPv6 router lifetime (the tested phone
+rejects lifetimes below its configured 180-second minimum), uses MTU 1380, and
+clamps forwarded TCP MSS to the tunnel path MTU inside its own namespace. These
+are test-network settings; no phone security sysctl or VPN implementation is
+changed. See the [WireGuard namespace explanation](https://www.wireguard.com/netns/)
+and [Tor's SOCKS protocol limitations](https://spec.torproject.org/socks-extensions).
+
+If another saved Wi-Fi network wins selection after a radio cycle, set
+`wifi_reconnect_credentials_file` to the private hotspot account JSON. The runner
+then explicitly reselects that saved test network after enabling Wi-Fi; it does
+not open or reconnect the VPN app. The result records
+`explicit_wifi_network_selection: true`, so it cannot be mistaken for unattended
+Wi-Fi auto-selection. The password travels over private ADB stdin, not host
+command arguments. Without this option the phone must return to the captured
+BSSID on its own. A different BSSID or a changed fixed capture MAC fails the test.

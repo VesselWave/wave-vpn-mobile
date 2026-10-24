@@ -1,0 +1,4629 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "network_scope": {
+    "kind": "isolated tunneled dual-stack hotspot with NAT44/NAT66",
+    "native_isp_ipv6": false,
+    "phone_public_ipv6_prefix": false,
+    "capture_before_outer_tunnel": true,
+    "maximum_stations": 1,
+    "mtu": 1380,
+    "router_lifetime_seconds": 600,
+    "capture_identity": "exclusive AP interface and AP source MAC; supports station MAC rotation"
+  },
+  "attempts": [
+    {
+      "attempt": "dualstack-final/round-1-pixel",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "3636d6522f23958a511c1b74c00f16cd0c7ac52e7dafb267304f2a3b0f6785b8",
+          "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+          "package": "me.vwave.vpn",
+          "version_code": 2,
+          "version_name": "0.2-dev",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [],
+        "validated_capture_families": [],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "fail",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "setup-or-run",
+            "status": "fail",
+            "error": "Command failed; no successful result recorded"
+          }
+        ],
+        "cleanup_complete": false
+      },
+      "restoration_pending_now": false
+    },
+    {
+      "attempt": "dualstack-final-02/round-1-eddie",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "3db8125ef387955c8698b863accaeb0de297fed9c0054f92e6fe8dc9c6e4fdca",
+          "signer_sha256": "8c4a1c4e8fb410728d0ca15862dccfeea699fe92949e383eafe1f4974d716db9",
+          "package": "org.airvpn.eddie",
+          "version_code": 40,
+          "version_name": "4.1.0",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [
+          "3db8125ef387955c8698b863accaeb0de297fed9c0054f92e6fe8dc9c6e4fdca",
+          "ec9bfde5ebed67d62f11efb4ef67235c1d766b818bbc763e4c005f5e55fa3f03",
+          "6afd8272d9909e450a80b0ba045167ddc12fc89ebb716d063e74dc8025e8d4af",
+          "3a6c7ca69c5935f198b70ce518248507a4cc01cd0f47ce778795125f9823b7ea"
+        ],
+        "validated_capture_families": [
+          "ipv4",
+          "ipv6"
+        ],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "fail",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "positive-control",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 7,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 6,
+                "failure": 0
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 7,
+                "failure": 0
+              },
+              "doh": {
+                "success": 7,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 15,
+                "failure": 1
+              },
+              "dot6": {
+                "success": 16,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 9,
+                "failure": 0
+              },
+              "bound-tcp6": {
+                "success": 9,
+                "failure": 0
+              }
+            },
+            "window_start_unix_ms": 1792826834195,
+            "window_end_unix_ms": 1792826852195,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "capture": {
+              "capture": "positive-control.pcap",
+              "sha256": "a474fbe4c8f451ea42e99eca1bd32a8d9f640e3d53809147ce8a8a2d6c091a7b",
+              "bytes": 205825,
+              "first_packet_unix": 1792826834.711551,
+              "last_packet_unix": 1792826852.026884,
+              "observed_span_seconds": 17.315,
+              "counts": {
+                "packets": 1315,
+                "all_dns6_out": 85,
+                "raw_dns6_out": 85,
+                "all_dns4_out": 115,
+                "raw_dns4_out": 85,
+                "all_https4_syn": 37,
+                "direct_https4_syn": 15,
+                "all_https6_syn": 14,
+                "all_dot6_syn": 15,
+                "dot6_syn": 15,
+                "all_dot4_syn": 15,
+                "dot4_syn": 15,
+                "direct_https6_syn": 8,
+                "system_dns4_out": 30,
+                "bound_system_dns4_out": 14,
+                "default_system_dns4_out": 16
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": false,
+            "required_probes": [
+              "ipv4",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "comparison_restart_after_positive_control": true
+          },
+          {
+            "scenario": "steady",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 6,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 5,
+                "failure": 0
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 7,
+                "failure": 0
+              },
+              "doh": {
+                "success": 6,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 15,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 15,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 9
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792826909425,
+            "window_end_unix_ms": 1792826927425,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "steady.pcap",
+              "sha256": "741632f2738f5046625543f0e78be99c58210fa97afd8113a179c78ab1440ba0",
+              "bytes": 315424,
+              "first_packet_unix": 1792826909.8388,
+              "last_packet_unix": 1792826927.229677,
+              "observed_span_seconds": 17.391,
+              "counts": {
+                "packets": 1268,
+                "wireguard_out": 707,
+                "unsupported_network_packets": 56
+              }
+            },
+            "expected": "working",
+            "status": "fail",
+            "findings": [
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0
+          },
+          {
+            "scenario": "disconnect",
+            "duration_seconds": 35.0,
+            "probes": {
+              "ipv4": {
+                "success": 5,
+                "failure": 11
+              },
+              "ipv6": {
+                "success": 4,
+                "failure": 11
+              },
+              "dns": {
+                "success": 5,
+                "failure": 12
+              },
+              "direct4": {
+                "success": 5,
+                "failure": 11
+              },
+              "doh": {
+                "success": 5,
+                "failure": 11
+              },
+              "dot4": {
+                "success": 10,
+                "failure": 23
+              },
+              "dot6": {
+                "success": 10,
+                "failure": 23
+              },
+              "bound-dns": {
+                "success": 5,
+                "failure": 12
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 17
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 17
+              }
+            },
+            "window_start_unix_ms": 1792826944545,
+            "window_end_unix_ms": 1792826979545,
+            "action_completed_unix_ms": 1792826959051,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "disconnect.pcap",
+              "sha256": "5f3a8a0fb997a1e35d6c572ebc07b54b71e8a7b3baf9a67e8bb396f1d0de45e6",
+              "bytes": 241921,
+              "first_packet_unix": 1792826944.944987,
+              "last_packet_unix": 1792826979.59937,
+              "observed_span_seconds": 34.654,
+              "counts": {
+                "packets": 990,
+                "wireguard_out": 498,
+                "unsupported_network_packets": 36,
+                "all_https4_syn": 1
+              }
+            },
+            "expected": "blocked",
+            "status": "fail",
+            "findings": [
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 7
+            }
+          },
+          {
+            "scenario": "reconnect",
+            "duration_seconds": 45.0,
+            "probes": {
+              "ipv4": {
+                "success": 9,
+                "failure": 5
+              },
+              "ipv6": {
+                "success": 10,
+                "failure": 5
+              },
+              "dns": {
+                "success": 14,
+                "failure": 5
+              },
+              "direct4": {
+                "success": 12,
+                "failure": 5
+              },
+              "doh": {
+                "success": 12,
+                "failure": 5
+              },
+              "dot4": {
+                "success": 29,
+                "failure": 11
+              },
+              "dot6": {
+                "success": 25,
+                "failure": 15
+              },
+              "bound-dns": {
+                "success": 13,
+                "failure": 5
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 23
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 23
+              }
+            },
+            "window_start_unix_ms": 1792827008160,
+            "window_end_unix_ms": 1792827053160,
+            "action_completed_unix_ms": 1792827022377,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "reconnect.pcap",
+              "sha256": "74575801d61d6395b3baa98e1a3cce5b1645c792d2a554039aa6ae66d670cfc6",
+              "bytes": 646438,
+              "first_packet_unix": 1792827010.963093,
+              "last_packet_unix": 1792827052.659384,
+              "observed_span_seconds": 41.696,
+              "counts": {
+                "packets": 2561,
+                "wireguard_out": 1455,
+                "unsupported_network_packets": 102
+              }
+            },
+            "expected": "working",
+            "status": "fail",
+            "findings": [
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "doh": 9,
+              "route": 12,
+              "dot6": 16,
+              "dot4": 20,
+              "dns": 10,
+              "ipv6": 7,
+              "bound-dns": 8,
+              "direct4": 8,
+              "ipv4": 7
+            }
+          },
+          {
+            "scenario": "wifi-reconnect",
+            "duration_seconds": 60.0,
+            "probes": {
+              "ipv4": {
+                "success": 12,
+                "failure": 2
+              },
+              "ipv6": {
+                "success": 10,
+                "failure": 5
+              },
+              "dns": {
+                "success": 9,
+                "failure": 1
+              },
+              "direct4": {
+                "success": 13,
+                "failure": 5
+              },
+              "doh": {
+                "success": 12,
+                "failure": 1
+              },
+              "dot4": {
+                "success": 31,
+                "failure": 18
+              },
+              "dot6": {
+                "success": 30,
+                "failure": 19
+              },
+              "bound-dns": {
+                "success": 10,
+                "failure": 8
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 30
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 30
+              }
+            },
+            "window_start_unix_ms": 1792827070015,
+            "window_end_unix_ms": 1792827130015,
+            "action_completed_unix_ms": 1792827089270,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "wifi-reconnect.pcap",
+              "sha256": "2824bf4bbcdd8880495c03722e2842b4d62ae85e80e5f4ad4e8de5daab4180b5",
+              "bytes": 745966,
+              "first_packet_unix": 1792827070.551573,
+              "last_packet_unix": 1792827129.849952,
+              "observed_span_seconds": 59.298,
+              "counts": {
+                "packets": 2942,
+                "wireguard_out": 1541,
+                "unsupported_network_packets": 77,
+                "all_dns4_out": 8,
+                "all_https4_syn": 1,
+                "all_https6_syn": 5
+              }
+            },
+            "expected": "working",
+            "wifi_disabled_verified": true,
+            "wifi_off_seconds": 10,
+            "mobile_data_disabled": true,
+            "explicit_wifi_network_selection": true,
+            "status": "fail",
+            "findings": [
+              "cleartext_dns_observed_ipv4_origin_not_assumed",
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "dot6": 26,
+              "dot4": 28,
+              "ipv6": 10,
+              "route": 17,
+              "direct4": 12,
+              "doh": 10,
+              "ipv4": 10,
+              "dns": 8,
+              "bound-dns": 8
+            }
+          },
+          {
+            "scenario": "crash",
+            "duration_seconds": 50.0,
+            "probes": {
+              "ipv4": {
+                "success": 0,
+                "failure": 24
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 24
+              },
+              "dns": {
+                "success": 1,
+                "failure": 24
+              },
+              "direct4": {
+                "success": 0,
+                "failure": 24
+              },
+              "doh": {
+                "success": 0,
+                "failure": 24
+              },
+              "dot4": {
+                "success": 1,
+                "failure": 48
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 49
+              },
+              "bound-dns": {
+                "success": 1,
+                "failure": 24
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 25
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 25
+              }
+            },
+            "window_start_unix_ms": 1792827148114,
+            "window_end_unix_ms": 1792827198114,
+            "action_completed_unix_ms": 1792827157563,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "crash.pcap",
+              "sha256": "00de9dddcac823d3d4c1e0225c802e6cbd9a1c40604a356dbf1f3b5defc94420",
+              "bytes": 106930,
+              "first_packet_unix": 1792827148.517181,
+              "last_packet_unix": 1792827197.319403,
+              "observed_span_seconds": 48.802,
+              "counts": {
+                "packets": 267,
+                "wireguard_out": 59,
+                "unsupported_network_packets": 84
+              }
+            },
+            "expected": "working",
+            "death_method": "system-induced Java crash",
+            "restart_seconds": 6.953,
+            "wave_opened_to_recover": false,
+            "status": "fail",
+            "findings": [
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "error": "Required application traffic did not recover",
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 17
+            }
+          },
+          {
+            "scenario": "force-stop",
+            "status": "fail",
+            "error": "Comparison VPN did not become active"
+          }
+        ],
+        "cleanup_complete": true
+      },
+      "restoration_pending_now": false
+    },
+    {
+      "attempt": "dualstack-final-02/round-1-pixel",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "3636d6522f23958a511c1b74c00f16cd0c7ac52e7dafb267304f2a3b0f6785b8",
+          "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+          "package": "me.vwave.vpn",
+          "version_code": 2,
+          "version_name": "0.2-dev",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [],
+        "validated_capture_families": [
+          "ipv4",
+          "ipv6"
+        ],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "fail",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "positive-control",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 6,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 5,
+                "failure": 0
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 7,
+                "failure": 0
+              },
+              "doh": {
+                "success": 7,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 16,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 16,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 9,
+                "failure": 0
+              },
+              "bound-tcp6": {
+                "success": 9,
+                "failure": 0
+              }
+            },
+            "window_start_unix_ms": 1792825912137,
+            "window_end_unix_ms": 1792825930137,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "capture": {
+              "capture": "positive-control.pcap",
+              "sha256": "36e4a460aa80fddfe9886a146f5052b74bc93412c00e333008c7004cb492f3c2",
+              "bytes": 200975,
+              "first_packet_unix": 1792825912.307471,
+              "last_packet_unix": 1792825929.669607,
+              "observed_span_seconds": 17.362,
+              "counts": {
+                "packets": 1288,
+                "all_dns6_out": 85,
+                "raw_dns6_out": 85,
+                "all_dns4_out": 117,
+                "raw_dns4_out": 85,
+                "all_https4_syn": 29,
+                "direct_https4_syn": 15,
+                "all_https6_syn": 14,
+                "direct_https6_syn": 8,
+                "system_dns4_out": 32,
+                "default_system_dns4_out": 16,
+                "bound_system_dns4_out": 16,
+                "all_dot6_syn": 16,
+                "dot6_syn": 16,
+                "all_dot4_syn": 15,
+                "dot4_syn": 15
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": false,
+            "required_probes": [
+              "ipv4",
+              "dns",
+              "direct4",
+              "doh"
+            ]
+          },
+          {
+            "scenario": "steady",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 5,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 5,
+                "failure": 0
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 6,
+                "failure": 0
+              },
+              "doh": {
+                "success": 5,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 13,
+                "failure": 1
+              },
+              "dot6": {
+                "success": 15,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 9
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792825971232,
+            "window_end_unix_ms": 1792825989232,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "steady.pcap",
+              "sha256": "82065cc018d366d434d46cf7da829f34256b39a8168990bd81294854b17a512d",
+              "bytes": 263151,
+              "first_packet_unix": 1792825971.656173,
+              "last_packet_unix": 1792825989.061801,
+              "observed_span_seconds": 17.406,
+              "counts": {
+                "packets": 1116,
+                "wireguard_out": 641
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0
+          },
+          {
+            "scenario": "disconnect",
+            "duration_seconds": 35.0,
+            "probes": {
+              "ipv4": {
+                "success": 2,
+                "failure": 14
+              },
+              "ipv6": {
+                "success": 2,
+                "failure": 14
+              },
+              "dns": {
+                "success": 3,
+                "failure": 14
+              },
+              "direct4": {
+                "success": 2,
+                "failure": 14
+              },
+              "doh": {
+                "success": 2,
+                "failure": 14
+              },
+              "dot4": {
+                "success": 4,
+                "failure": 29
+              },
+              "dot6": {
+                "success": 4,
+                "failure": 29
+              },
+              "bound-dns": {
+                "success": 3,
+                "failure": 14
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 18
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 18
+              }
+            },
+            "window_start_unix_ms": 1792826002999,
+            "window_end_unix_ms": 1792826037999,
+            "action_completed_unix_ms": 1792826013041,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "disconnect.pcap",
+              "sha256": "a6593c14739cd4c1566087ff4a3c5f4fb6768c7e4444cf4f22859d610ab9df5d",
+              "bytes": 287300,
+              "first_packet_unix": 1792826003.48013,
+              "last_packet_unix": 1792826033.004177,
+              "observed_span_seconds": 29.524,
+              "counts": {
+                "packets": 1930,
+                "wireguard_out": 804,
+                "all_https4_syn": 91
+              }
+            },
+            "expected": "blocked",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 10
+            }
+          },
+          {
+            "scenario": "reconnect",
+            "duration_seconds": 45.0,
+            "probes": {
+              "ipv4": {
+                "success": 12,
+                "failure": 3
+              },
+              "ipv6": {
+                "success": 12,
+                "failure": 3
+              },
+              "dns": {
+                "success": 17,
+                "failure": 3
+              },
+              "direct4": {
+                "success": 13,
+                "failure": 3
+              },
+              "doh": {
+                "success": 13,
+                "failure": 3
+              },
+              "dot4": {
+                "success": 31,
+                "failure": 6
+              },
+              "dot6": {
+                "success": 31,
+                "failure": 6
+              },
+              "bound-dns": {
+                "success": 17,
+                "failure": 3
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 23
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 23
+              }
+            },
+            "window_start_unix_ms": 1792826062314,
+            "window_end_unix_ms": 1792826107314,
+            "action_completed_unix_ms": 1792826074082,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "reconnect.pcap",
+              "sha256": "17af4cf4120c08995293fb8d266e8876b8fb9608bdf4d3f9dc9201a102b4c4fe",
+              "bytes": 803816,
+              "first_packet_unix": 1792826063.464733,
+              "last_packet_unix": 1792826106.884767,
+              "observed_span_seconds": 43.42,
+              "counts": {
+                "packets": 4366,
+                "all_https4_syn": 251,
+                "wireguard_out": 1597,
+                "unsupported_network_packets": 42
+              }
+            },
+            "expected": "working",
+            "status": "fail",
+            "findings": [
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "dot4": 22,
+              "dot6": 22,
+              "dns": 12,
+              "bound-dns": 12,
+              "route": 13,
+              "direct4": 9,
+              "doh": 9,
+              "ipv4": 8,
+              "ipv6": 8
+            }
+          },
+          {
+            "scenario": "wifi-reconnect",
+            "duration_seconds": 60.0,
+            "probes": {
+              "ipv4": {
+                "success": 12,
+                "failure": 2
+              },
+              "ipv6": {
+                "success": 11,
+                "failure": 5
+              },
+              "dns": {
+                "success": 15,
+                "failure": 1
+              },
+              "direct4": {
+                "success": 12,
+                "failure": 5
+              },
+              "doh": {
+                "success": 13,
+                "failure": 1
+              },
+              "dot4": {
+                "success": 32,
+                "failure": 14
+              },
+              "dot6": {
+                "success": 32,
+                "failure": 14
+              },
+              "bound-dns": {
+                "success": 18,
+                "failure": 7
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 30
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 30
+              }
+            },
+            "window_start_unix_ms": 1792826122032,
+            "window_end_unix_ms": 1792826182032,
+            "action_completed_unix_ms": 1792826141368,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "wifi-reconnect.pcap",
+              "sha256": "3a0b7453e7b8dd0b70fa19ca5fefd8b75160ad298a900eca7e359abf08f86980",
+              "bytes": 649511,
+              "first_packet_unix": 1792826122.522004,
+              "last_packet_unix": 1792826181.774779,
+              "observed_span_seconds": 59.253,
+              "counts": {
+                "packets": 2769,
+                "wireguard_out": 1510,
+                "unsupported_network_packets": 34,
+                "all_dns4_out": 6,
+                "all_https4_syn": 1,
+                "all_https6_syn": 1
+              }
+            },
+            "expected": "working",
+            "wifi_disabled_verified": true,
+            "wifi_off_seconds": 10,
+            "mobile_data_disabled": true,
+            "explicit_wifi_network_selection": true,
+            "status": "fail",
+            "findings": [
+              "cleartext_dns_observed_ipv4_origin_not_assumed",
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "dot6": 28,
+              "doh": 12,
+              "ipv6": 11,
+              "dns": 15,
+              "ipv4": 11,
+              "dot4": 27,
+              "route": 17,
+              "bound-dns": 15,
+              "direct4": 11
+            }
+          },
+          {
+            "scenario": "crash",
+            "duration_seconds": 50.0,
+            "probes": {
+              "ipv4": {
+                "success": 15,
+                "failure": 1
+              },
+              "ipv6": {
+                "success": 15,
+                "failure": 1
+              },
+              "dns": {
+                "success": 21,
+                "failure": 1
+              },
+              "direct4": {
+                "success": 15,
+                "failure": 1
+              },
+              "doh": {
+                "success": 15,
+                "failure": 1
+              },
+              "dot4": {
+                "success": 38,
+                "failure": 2
+              },
+              "dot6": {
+                "success": 37,
+                "failure": 2
+              },
+              "bound-dns": {
+                "success": 21,
+                "failure": 1
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 25
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 25
+              }
+            },
+            "window_start_unix_ms": 1792826197006,
+            "window_end_unix_ms": 1792826247006,
+            "action_completed_unix_ms": 1792826201736,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "crash.pcap",
+              "sha256": "4dcd4077495d4f142190ae47bbb9b86be37d263611431eecf50407a936f2a681",
+              "bytes": 768732,
+              "first_packet_unix": 1792826197.522654,
+              "last_packet_unix": 1792826246.481293,
+              "observed_span_seconds": 48.959,
+              "counts": {
+                "packets": 3270,
+                "wireguard_out": 1858,
+                "unsupported_network_packets": 30
+              }
+            },
+            "expected": "working",
+            "death_method": "system-induced Java crash",
+            "restart_seconds": 2.221,
+            "wave_opened_to_recover": false,
+            "status": "fail",
+            "findings": [
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "direct4": 13,
+              "dot6": 31,
+              "doh": 13,
+              "ipv4": 13,
+              "ipv6": 13,
+              "dot4": 31,
+              "dns": 17,
+              "bound-dns": 17,
+              "route": 19
+            }
+          },
+          {
+            "scenario": "force-stop",
+            "duration_seconds": 25.0,
+            "probes": {
+              "ipv4": {
+                "success": 0,
+                "failure": 12
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 12
+              },
+              "dns": {
+                "success": 0,
+                "failure": 10
+              },
+              "direct4": {
+                "success": 0,
+                "failure": 12
+              },
+              "doh": {
+                "success": 0,
+                "failure": 12
+              },
+              "dot4": {
+                "success": 0,
+                "failure": 24
+              },
+              "dot6": {
+                "success": 1,
+                "failure": 24
+              },
+              "bound-dns": {
+                "success": 0,
+                "failure": 10
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 13
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 13
+              }
+            },
+            "window_start_unix_ms": 1792826261273,
+            "window_end_unix_ms": 1792826286273,
+            "action_completed_unix_ms": 1792826263841,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "force-stop.pcap",
+              "sha256": "42d8dafd9c47e194541a49d1381a50c18fe01098fc0e6161db3d6698bc0131d7",
+              "bytes": 12646,
+              "first_packet_unix": 1792826261.70014,
+              "last_packet_unix": 1792826283.271401,
+              "observed_span_seconds": 21.571,
+              "counts": {
+                "packets": 58,
+                "wireguard_out": 15
+              }
+            },
+            "expected": "blocked",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 9
+            }
+          },
+          {
+            "scenario": "force-stop-manual-recovery",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 5,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 5,
+                "failure": 0
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 6,
+                "failure": 0
+              },
+              "doh": {
+                "success": 6,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 14,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 14,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 9
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792826302430,
+            "window_end_unix_ms": 1792826320430,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "force-stop-manual-recovery.pcap",
+              "sha256": "a38f64b2e408418d102cbacd2f0ac463d25bf9d454ea9777803c0cd91dac173a",
+              "bytes": 249980,
+              "first_packet_unix": 1792826302.567417,
+              "last_packet_unix": 1792826319.938688,
+              "observed_span_seconds": 17.371,
+              "counts": {
+                "packets": 1102,
+                "wireguard_out": 642
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0
+          }
+        ],
+        "cleanup_complete": true
+      },
+      "restoration_pending_now": false
+    },
+    {
+      "attempt": "dualstack-final-02/round-1-proton",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "af2bf8b7341017a42da0ecd2720ed9a5f8a007ed62205385e3255a4c81ecc009",
+          "signer_sha256": "dcc9439ec1a6c6a8d0203f3423ee42bcc8b970628e53cb73a0393f398dd5b853",
+          "package": "ch.protonvpn.android",
+          "version_code": 605209800,
+          "version_name": "5.20.98.0",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [
+          "af2bf8b7341017a42da0ecd2720ed9a5f8a007ed62205385e3255a4c81ecc009",
+          "37192b4a9b18435e821db20452545ddbbd938a1493610f82b638083ba3c24371",
+          "2fb015b03c53d43535ca0a29d35b721227a7268504bc0bfda54add0fe0124788"
+        ],
+        "validated_capture_families": [
+          "ipv4",
+          "ipv6"
+        ],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "fail",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "positive-control",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 6,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 5,
+                "failure": 0
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 7,
+                "failure": 0
+              },
+              "doh": {
+                "success": 7,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 15,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 16,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 9,
+                "failure": 0
+              },
+              "bound-tcp6": {
+                "success": 9,
+                "failure": 0
+              }
+            },
+            "window_start_unix_ms": 1792826375816,
+            "window_end_unix_ms": 1792826393816,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "capture": {
+              "capture": "positive-control.pcap",
+              "sha256": "e7c8536a8e352572fe9eef323cd6b5ee5aeb77ea1fc7c0ba8d3f53db726d3edf",
+              "bytes": 204290,
+              "first_packet_unix": 1792826376.385149,
+              "last_packet_unix": 1792826393.729102,
+              "observed_span_seconds": 17.344,
+              "counts": {
+                "packets": 1315,
+                "all_https4_syn": 30,
+                "direct_https4_syn": 16,
+                "all_https6_syn": 15,
+                "direct_https6_syn": 9,
+                "all_dns4_out": 117,
+                "system_dns4_out": 32,
+                "default_system_dns4_out": 16,
+                "bound_system_dns4_out": 16,
+                "raw_dns4_out": 85,
+                "all_dns6_out": 85,
+                "raw_dns6_out": 85,
+                "all_dot6_syn": 16,
+                "dot6_syn": 16,
+                "all_dot4_syn": 16,
+                "dot4_syn": 16
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": false,
+            "required_probes": [
+              "ipv4",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "comparison_restart_after_positive_control": true
+          },
+          {
+            "scenario": "steady",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 6,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 9
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 7,
+                "failure": 0
+              },
+              "doh": {
+                "success": 7,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 16,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 14
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 9
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792826432742,
+            "window_end_unix_ms": 1792826450742,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "steady.pcap",
+              "sha256": "2844885975510e690f8943e0bd441a7fc0d37e119146fc5414b21d64cc1d5509",
+              "bytes": 157826,
+              "first_packet_unix": 1792826433.358399,
+              "last_packet_unix": 1792826450.618568,
+              "observed_span_seconds": 17.26,
+              "counts": {
+                "packets": 691
+              }
+            },
+            "expected": "working",
+            "status": "fail",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "error": "Required application traffic did not recover",
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0
+          },
+          {
+            "scenario": "disconnect",
+            "duration_seconds": 35.0,
+            "probes": {
+              "ipv4": {
+                "success": 1,
+                "failure": 16
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 18
+              },
+              "dns": {
+                "success": 2,
+                "failure": 16
+              },
+              "direct4": {
+                "success": 2,
+                "failure": 15
+              },
+              "doh": {
+                "success": 2,
+                "failure": 15
+              },
+              "dot4": {
+                "success": 4,
+                "failure": 30
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 33
+              },
+              "bound-dns": {
+                "success": 2,
+                "failure": 16
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 18
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 18
+              }
+            },
+            "window_start_unix_ms": 1792826462880,
+            "window_end_unix_ms": 1792826497880,
+            "action_completed_unix_ms": 1792826469482,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "disconnect.pcap",
+              "sha256": "2d7780207154b3028406988fa15c4d4f8a482ec335f23e826de166917848c073",
+              "bytes": 79992,
+              "first_packet_unix": 1792826463.36533,
+              "last_packet_unix": 1792826496.992286,
+              "observed_span_seconds": 33.627,
+              "counts": {
+                "packets": 299,
+                "all_https4_syn": 2
+              }
+            },
+            "expected": "blocked",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 11
+            }
+          },
+          {
+            "scenario": "reconnect",
+            "duration_seconds": 45.0,
+            "probes": {
+              "ipv4": {
+                "success": 15,
+                "failure": 3
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 23
+              },
+              "dns": {
+                "success": 18,
+                "failure": 3
+              },
+              "direct4": {
+                "success": 15,
+                "failure": 3
+              },
+              "doh": {
+                "success": 15,
+                "failure": 3
+              },
+              "dot4": {
+                "success": 34,
+                "failure": 6
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 35
+              },
+              "bound-dns": {
+                "success": 18,
+                "failure": 3
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 23
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 23
+              }
+            },
+            "window_start_unix_ms": 1792826516181,
+            "window_end_unix_ms": 1792826561181,
+            "action_completed_unix_ms": 1792826526362,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "reconnect.pcap",
+              "sha256": "361ba955ff0cb39301d62c568bafdb211f257b2c069ed47c5ed19d0b34653ebc",
+              "bytes": 483243,
+              "first_packet_unix": 1792826517.383072,
+              "last_packet_unix": 1792826560.598175,
+              "observed_span_seconds": 43.215,
+              "counts": {
+                "packets": 1859,
+                "all_https4_syn": 1,
+                "unsupported_network_packets": 14
+              }
+            },
+            "expected": "working",
+            "status": "fail",
+            "findings": [
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "error": "Required application traffic did not recover",
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 15,
+              "dot4": 25,
+              "dns": 13,
+              "doh": 11,
+              "direct4": 11,
+              "bound-dns": 13,
+              "ipv4": 11
+            }
+          },
+          {
+            "scenario": "wifi-reconnect",
+            "duration_seconds": 60.0,
+            "probes": {
+              "ipv4": {
+                "success": 14,
+                "failure": 2
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 30
+              },
+              "dns": {
+                "success": 17,
+                "failure": 2
+              },
+              "direct4": {
+                "success": 14,
+                "failure": 5
+              },
+              "doh": {
+                "success": 15,
+                "failure": 3
+              },
+              "dot4": {
+                "success": 35,
+                "failure": 15
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 45
+              },
+              "bound-dns": {
+                "success": 18,
+                "failure": 8
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 30
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 30
+              }
+            },
+            "window_start_unix_ms": 1792826573453,
+            "window_end_unix_ms": 1792826633453,
+            "action_completed_unix_ms": 1792826592864,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "wifi-reconnect.pcap",
+              "sha256": "bcb5198bded9d375003768a24adfe8580e1a95beefb8a3f0c48fac575b25194d",
+              "bytes": 505664,
+              "first_packet_unix": 1792826573.861414,
+              "last_packet_unix": 1792826633.21566,
+              "observed_span_seconds": 59.354,
+              "counts": {
+                "packets": 1971,
+                "unsupported_network_packets": 19,
+                "all_dns4_out": 8,
+                "all_https4_syn": 1,
+                "all_https6_syn": 1
+              }
+            },
+            "expected": "working",
+            "wifi_disabled_verified": true,
+            "wifi_off_seconds": 10,
+            "mobile_data_disabled": true,
+            "explicit_wifi_network_selection": true,
+            "status": "fail",
+            "findings": [
+              "cleartext_dns_observed_ipv4_origin_not_assumed",
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "error": "Required application traffic did not recover",
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "doh": 14,
+              "dot4": 31,
+              "bound-dns": 16,
+              "ipv4": 13,
+              "route": 17,
+              "dns": 16,
+              "direct4": 13
+            }
+          },
+          {
+            "scenario": "crash",
+            "duration_seconds": 50.0,
+            "probes": {
+              "ipv4": {
+                "success": 0,
+                "failure": 24
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 25
+              },
+              "dns": {
+                "success": 1,
+                "failure": 24
+              },
+              "direct4": {
+                "success": 0,
+                "failure": 24
+              },
+              "doh": {
+                "success": 0,
+                "failure": 24
+              },
+              "dot4": {
+                "success": 1,
+                "failure": 48
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 50
+              },
+              "bound-dns": {
+                "success": 1,
+                "failure": 24
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 25
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 25
+              }
+            },
+            "window_start_unix_ms": 1792826645760,
+            "window_end_unix_ms": 1792826695760,
+            "action_completed_unix_ms": 1792826649162,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "crash.pcap",
+              "sha256": "57ca5a327fe7bb5cf9386678fd6749604d700f8fd81c1f2b1cbb2867b91ef5b8",
+              "bytes": 59272,
+              "first_packet_unix": 1792826646.308417,
+              "last_packet_unix": 1792826695.178218,
+              "observed_span_seconds": 48.87,
+              "counts": {
+                "packets": 186
+              }
+            },
+            "expected": "working",
+            "death_method": "system-induced Java crash",
+            "restart_seconds": 0.771,
+            "wave_opened_to_recover": false,
+            "status": "fail",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "error": "Required application traffic did not recover",
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 20
+            }
+          },
+          {
+            "scenario": "force-stop",
+            "duration_seconds": 25.0,
+            "probes": {
+              "ipv4": {
+                "success": 0,
+                "failure": 12
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 13
+              },
+              "dns": {
+                "success": 1,
+                "failure": 11
+              },
+              "direct4": {
+                "success": 0,
+                "failure": 12
+              },
+              "doh": {
+                "success": 0,
+                "failure": 12
+              },
+              "dot4": {
+                "success": 1,
+                "failure": 23
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 25
+              },
+              "bound-dns": {
+                "success": 1,
+                "failure": 11
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 13
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 13
+              }
+            },
+            "window_start_unix_ms": 1792826710012,
+            "window_end_unix_ms": 1792826735012,
+            "action_completed_unix_ms": 1792826712557,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "force-stop.pcap",
+              "sha256": "5ed781cecd211bd00d2988d7abe4cccdfe1c399a2a1884a41d6f282cd6ee203f",
+              "bytes": 14780,
+              "first_packet_unix": 1792826710.493781,
+              "last_packet_unix": 1792826734.862347,
+              "observed_span_seconds": 24.369,
+              "counts": {
+                "packets": 60,
+                "unsupported_network_packets": 2
+              }
+            },
+            "expected": "blocked",
+            "status": "fail",
+            "findings": [
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 9
+            }
+          },
+          {
+            "scenario": "force-stop-manual-recovery",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 6,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 9
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 7,
+                "failure": 0
+              },
+              "doh": {
+                "success": 7,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 16,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 14
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 9
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792826748626,
+            "window_end_unix_ms": 1792826766626,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "force-stop-manual-recovery.pcap",
+              "sha256": "76318f33508a019a20f3e3cf40d26112a99fcf1c1310e6fb71072358f9805475",
+              "bytes": 159101,
+              "first_packet_unix": 1792826749.181899,
+              "last_packet_unix": 1792826766.496822,
+              "observed_span_seconds": 17.315,
+              "counts": {
+                "packets": 701
+              }
+            },
+            "expected": "working",
+            "status": "fail",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "error": "Required application traffic did not recover",
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0
+          }
+        ],
+        "cleanup_complete": true
+      },
+      "restoration_pending_now": false
+    },
+    {
+      "attempt": "dualstack-matrix/round-1-eddie",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "3db8125ef387955c8698b863accaeb0de297fed9c0054f92e6fe8dc9c6e4fdca",
+          "signer_sha256": "8c4a1c4e8fb410728d0ca15862dccfeea699fe92949e383eafe1f4974d716db9",
+          "package": "org.airvpn.eddie",
+          "version_code": 40,
+          "version_name": "4.1.0",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [
+          "3db8125ef387955c8698b863accaeb0de297fed9c0054f92e6fe8dc9c6e4fdca",
+          "ec9bfde5ebed67d62f11efb4ef67235c1d766b818bbc763e4c005f5e55fa3f03",
+          "6afd8272d9909e450a80b0ba045167ddc12fc89ebb716d063e74dc8025e8d4af",
+          "3a6c7ca69c5935f198b70ce518248507a4cc01cd0f47ce778795125f9823b7ea"
+        ],
+        "validated_capture_families": [],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "incomplete",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "interrupted",
+            "status": "incomplete",
+            "error": "Operator interrupted; cleanup attempted"
+          }
+        ],
+        "cleanup_complete": true
+      },
+      "restoration_pending_now": false
+    },
+    {
+      "attempt": "dualstack-matrix/round-1-pixel",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "3636d6522f23958a511c1b74c00f16cd0c7ac52e7dafb267304f2a3b0f6785b8",
+          "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+          "package": "me.vwave.vpn",
+          "version_code": 2,
+          "version_name": "0.2-dev",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [],
+        "validated_capture_families": [
+          "ipv4"
+        ],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "fail",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "positive-control",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 0,
+                "failure": 2
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 9
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 0,
+                "failure": 4
+              },
+              "doh": {
+                "success": 7,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 16,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 18
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 9,
+                "failure": 0
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792825121654,
+            "window_end_unix_ms": 1792825139654,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "capture": {
+              "capture": "positive-control.pcap",
+              "sha256": "e6949a1b3d4e3c779d0e134548eba3414a23b8ec3d46fabc24381c7524b2245b",
+              "bytes": 81412,
+              "first_packet_unix": 1792825122.148307,
+              "last_packet_unix": 1792825139.414288,
+              "observed_span_seconds": 17.266,
+              "counts": {
+                "packets": 569,
+                "all_https4_syn": 25,
+                "direct_https4_syn": 13,
+                "all_dns4_out": 101,
+                "system_dns4_out": 16,
+                "default_system_dns4_out": 8,
+                "bound_system_dns4_out": 8,
+                "raw_dns4_out": 85,
+                "all_dot4_syn": 16,
+                "dot4_syn": 16
+              }
+            },
+            "expected": "working",
+            "status": "fail",
+            "findings": [],
+            "privacy_assessed": false,
+            "required_probes": [
+              "ipv4",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "error": "Required application traffic did not recover"
+          },
+          {
+            "scenario": "steady",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          },
+          {
+            "scenario": "disconnect",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          },
+          {
+            "scenario": "reconnect",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          },
+          {
+            "scenario": "wifi-reconnect",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          },
+          {
+            "scenario": "crash",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          },
+          {
+            "scenario": "force-stop",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          }
+        ],
+        "cleanup_complete": true
+      },
+      "restoration_pending_now": false
+    },
+    {
+      "attempt": "dualstack-matrix/round-1-proton",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "af2bf8b7341017a42da0ecd2720ed9a5f8a007ed62205385e3255a4c81ecc009",
+          "signer_sha256": "dcc9439ec1a6c6a8d0203f3423ee42bcc8b970628e53cb73a0393f398dd5b853",
+          "package": "ch.protonvpn.android",
+          "version_code": 605209800,
+          "version_name": "5.20.98.0",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [
+          "af2bf8b7341017a42da0ecd2720ed9a5f8a007ed62205385e3255a4c81ecc009",
+          "37192b4a9b18435e821db20452545ddbbd938a1493610f82b638083ba3c24371",
+          "2fb015b03c53d43535ca0a29d35b721227a7268504bc0bfda54add0fe0124788"
+        ],
+        "validated_capture_families": [
+          "ipv4"
+        ],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "fail",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "positive-control",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 0,
+                "failure": 2
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 9
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 4,
+                "failure": 2
+              },
+              "doh": {
+                "success": 1,
+                "failure": 2
+              },
+              "dot4": {
+                "success": 15,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 18
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792825181142,
+            "window_end_unix_ms": 1792825199142,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "capture": {
+              "capture": "positive-control.pcap",
+              "sha256": "2dbca584683404ee64f7733a9cf12abf7d458c90c352e98c7926b3ce0fed8dcf",
+              "bytes": 83166,
+              "first_packet_unix": 1792825181.679395,
+              "last_packet_unix": 1792825198.986593,
+              "observed_span_seconds": 17.307,
+              "counts": {
+                "packets": 567,
+                "all_dns4_out": 100,
+                "raw_dns4_out": 84,
+                "all_https4_syn": 27,
+                "direct_https4_syn": 13,
+                "system_dns4_out": 16,
+                "bound_system_dns4_out": 8,
+                "default_system_dns4_out": 8,
+                "all_dot4_syn": 15,
+                "dot4_syn": 15
+              }
+            },
+            "expected": "working",
+            "status": "fail",
+            "findings": [],
+            "privacy_assessed": false,
+            "required_probes": [
+              "ipv4",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "error": "Required application traffic did not recover"
+          },
+          {
+            "scenario": "steady",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          },
+          {
+            "scenario": "disconnect",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          },
+          {
+            "scenario": "reconnect",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          },
+          {
+            "scenario": "wifi-reconnect",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          },
+          {
+            "scenario": "crash",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          },
+          {
+            "scenario": "force-stop",
+            "status": "skip",
+            "error": "Positive-control stage did not complete"
+          }
+        ],
+        "cleanup_complete": true
+      },
+      "restoration_pending_now": false
+    },
+    {
+      "attempt": "dualstack-matrix-02/round-1-pixel",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "3636d6522f23958a511c1b74c00f16cd0c7ac52e7dafb267304f2a3b0f6785b8",
+          "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+          "package": "me.vwave.vpn",
+          "version_code": 2,
+          "version_name": "0.2-dev",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [],
+        "validated_capture_families": [
+          "ipv4",
+          "ipv6"
+        ],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "fail",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "positive-control",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 7,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 5,
+                "failure": 0
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 7,
+                "failure": 0
+              },
+              "doh": {
+                "success": 7,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 16,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 16,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 9,
+                "failure": 0
+              },
+              "bound-tcp6": {
+                "success": 9,
+                "failure": 0
+              }
+            },
+            "window_start_unix_ms": 1792825343003,
+            "window_end_unix_ms": 1792825361003,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "capture": {
+              "capture": "positive-control.pcap",
+              "sha256": "1e615bd465e3c0253905797f3b6e4c47774e8af481b3013d89969ecd94f6de9d",
+              "bytes": 205128,
+              "first_packet_unix": 1792825343.39988,
+              "last_packet_unix": 1792825360.764509,
+              "observed_span_seconds": 17.365,
+              "counts": {
+                "packets": 1314,
+                "all_https6_syn": 15,
+                "direct_https6_syn": 9,
+                "all_https4_syn": 30,
+                "direct_https4_syn": 16,
+                "all_dns4_out": 118,
+                "system_dns4_out": 32,
+                "default_system_dns4_out": 16,
+                "bound_system_dns4_out": 16,
+                "raw_dns4_out": 85,
+                "all_dns6_out": 85,
+                "raw_dns6_out": 85,
+                "all_dot6_syn": 16,
+                "dot6_syn": 16,
+                "all_dot4_syn": 16,
+                "dot4_syn": 16
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": false,
+            "required_probes": [
+              "ipv4",
+              "dns",
+              "direct4",
+              "doh"
+            ]
+          },
+          {
+            "scenario": "steady",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 5,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 5,
+                "failure": 0
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 6,
+                "failure": 0
+              },
+              "doh": {
+                "success": 5,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 14,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 14,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 9
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792825402252,
+            "window_end_unix_ms": 1792825420252,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "steady.pcap",
+              "sha256": "585304cc40a5b62b1c028d538515f760b69773b7b1a688e36925482da1b046f8",
+              "bytes": 253448,
+              "first_packet_unix": 1792825402.875181,
+              "last_packet_unix": 1792825420.161773,
+              "observed_span_seconds": 17.287,
+              "counts": {
+                "packets": 1112,
+                "wireguard_out": 643
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0
+          },
+          {
+            "scenario": "disconnect",
+            "duration_seconds": 35.0,
+            "probes": {
+              "ipv4": {
+                "success": 2,
+                "failure": 14
+              },
+              "ipv6": {
+                "success": 2,
+                "failure": 14
+              },
+              "dns": {
+                "success": 3,
+                "failure": 14
+              },
+              "direct4": {
+                "success": 2,
+                "failure": 14
+              },
+              "doh": {
+                "success": 2,
+                "failure": 14
+              },
+              "dot4": {
+                "success": 5,
+                "failure": 28
+              },
+              "dot6": {
+                "success": 5,
+                "failure": 28
+              },
+              "bound-dns": {
+                "success": 3,
+                "failure": 14
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 18
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 18
+              }
+            },
+            "window_start_unix_ms": 1792825434242,
+            "window_end_unix_ms": 1792825469242,
+            "action_completed_unix_ms": 1792825444917,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "disconnect.pcap",
+              "sha256": "2e9779337bbab1cb67f0355ce5456931b99336f5bd8cf27ce77504548550996c",
+              "bytes": 299936,
+              "first_packet_unix": 1792825434.661589,
+              "last_packet_unix": 1792825456.014681,
+              "observed_span_seconds": 21.353,
+              "counts": {
+                "packets": 1954,
+                "wireguard_out": 894,
+                "all_https4_syn": 73
+              }
+            },
+            "expected": "blocked",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 10
+            }
+          },
+          {
+            "scenario": "reconnect",
+            "duration_seconds": 45.0,
+            "probes": {
+              "ipv4": {
+                "success": 12,
+                "failure": 3
+              },
+              "ipv6": {
+                "success": 12,
+                "failure": 3
+              },
+              "dns": {
+                "success": 17,
+                "failure": 3
+              },
+              "direct4": {
+                "success": 13,
+                "failure": 3
+              },
+              "doh": {
+                "success": 13,
+                "failure": 3
+              },
+              "dot4": {
+                "success": 30,
+                "failure": 7
+              },
+              "dot6": {
+                "success": 31,
+                "failure": 6
+              },
+              "bound-dns": {
+                "success": 17,
+                "failure": 3
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 23
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 23
+              }
+            },
+            "window_start_unix_ms": 1792825493311,
+            "window_end_unix_ms": 1792825538311,
+            "action_completed_unix_ms": 1792825505071,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "reconnect.pcap",
+              "sha256": "2ebb565f1db43a5749d6f9eb4be7b61b5ff12136ec95e6260a5329867521887e",
+              "bytes": 827132,
+              "first_packet_unix": 1792825494.170272,
+              "last_packet_unix": 1792825537.732386,
+              "observed_span_seconds": 43.562,
+              "counts": {
+                "packets": 4417,
+                "all_https4_syn": 254,
+                "wireguard_out": 1594,
+                "unsupported_network_packets": 48,
+                "all_dns4_out": 4
+              }
+            },
+            "expected": "working",
+            "status": "fail",
+            "findings": [
+              "cleartext_dns_observed_ipv4_origin_not_assumed",
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "dot4": 21,
+              "dot6": 22,
+              "dns": 12,
+              "bound-dns": 12,
+              "route": 14,
+              "direct4": 9,
+              "doh": 9,
+              "ipv4": 8,
+              "ipv6": 8
+            }
+          },
+          {
+            "scenario": "interrupted",
+            "status": "incomplete",
+            "error": "Operator interrupted; cleanup attempted"
+          }
+        ],
+        "cleanup_complete": true
+      },
+      "restoration_pending_now": false
+    },
+    {
+      "attempt": "matrix/round-1-pixel",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "3636d6522f23958a511c1b74c00f16cd0c7ac52e7dafb267304f2a3b0f6785b8",
+          "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+          "package": "me.vwave.vpn",
+          "version_code": 2,
+          "version_name": "0.2-dev",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [],
+        "validated_capture_families": [],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "fail",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "setup-or-run",
+            "status": "fail",
+            "error": "Command failed; no successful result recorded"
+          }
+        ],
+        "cleanup_complete": true
+      },
+      "restoration_pending_now": false
+    },
+    {
+      "attempt": "matrix-02/round-1-eddie",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "3db8125ef387955c8698b863accaeb0de297fed9c0054f92e6fe8dc9c6e4fdca",
+          "signer_sha256": "8c4a1c4e8fb410728d0ca15862dccfeea699fe92949e383eafe1f4974d716db9",
+          "package": "org.airvpn.eddie",
+          "version_code": 40,
+          "version_name": "4.1.0",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [
+          "3db8125ef387955c8698b863accaeb0de297fed9c0054f92e6fe8dc9c6e4fdca",
+          "ec9bfde5ebed67d62f11efb4ef67235c1d766b818bbc763e4c005f5e55fa3f03",
+          "6afd8272d9909e450a80b0ba045167ddc12fc89ebb716d063e74dc8025e8d4af",
+          "3a6c7ca69c5935f198b70ce518248507a4cc01cd0f47ce778795125f9823b7ea"
+        ],
+        "validated_capture_families": [],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "incomplete",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "interrupted",
+            "status": "incomplete",
+            "error": "Operator interrupted; cleanup attempted"
+          }
+        ],
+        "cleanup_complete": true
+      },
+      "restoration_pending_now": false
+    },
+    {
+      "attempt": "matrix-02/round-1-pixel",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "3636d6522f23958a511c1b74c00f16cd0c7ac52e7dafb267304f2a3b0f6785b8",
+          "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+          "package": "me.vwave.vpn",
+          "version_code": 2,
+          "version_name": "0.2-dev",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [],
+        "validated_capture_families": [
+          "ipv4"
+        ],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "pass_for_exercised_scope",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "positive-control",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 8,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 9
+              },
+              "dns": {
+                "success": 9,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 8,
+                "failure": 0
+              },
+              "doh": {
+                "success": 8,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 18,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 18
+              },
+              "bound-dns": {
+                "success": 9,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 9,
+                "failure": 0
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792824224487,
+            "window_end_unix_ms": 1792824242487,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "capture": {
+              "capture": "positive-control.pcap",
+              "sha256": "bbdf6a9332aa5b056d8ed2004d0237d461179be44514e4d364d1c4cd308da3d9",
+              "bytes": 130306,
+              "first_packet_unix": 1792824224.959085,
+              "last_packet_unix": 1792824242.349224,
+              "observed_span_seconds": 17.39,
+              "counts": {
+                "packets": 843,
+                "all_dns4_out": 112,
+                "system_dns4_out": 18,
+                "bound_system_dns4_out": 9,
+                "default_system_dns4_out": 9,
+                "raw_dns4_out": 85,
+                "all_https4_syn": 32,
+                "direct_https4_syn": 16,
+                "all_dot4_syn": 17,
+                "dot4_syn": 17
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": false,
+            "required_probes": [
+              "ipv4",
+              "dns",
+              "direct4",
+              "doh"
+            ]
+          },
+          {
+            "scenario": "steady",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 8,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 8,
+                "failure": 0
+              },
+              "dns": {
+                "success": 9,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 8,
+                "failure": 0
+              },
+              "doh": {
+                "success": 8,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 17,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 17,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 9,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 9
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792824283335,
+            "window_end_unix_ms": 1792824301335,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "steady.pcap",
+              "sha256": "946b434046a9ef058a1adf63d8f9ae404b78039513e179e5bef679d73ab94f06",
+              "bytes": 301238,
+              "first_packet_unix": 1792824283.796041,
+              "last_packet_unix": 1792824301.167221,
+              "observed_span_seconds": 17.371,
+              "counts": {
+                "packets": 1313,
+                "wireguard_out": 739
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0
+          },
+          {
+            "scenario": "disconnect",
+            "duration_seconds": 35.0,
+            "probes": {
+              "ipv4": {
+                "success": 3,
+                "failure": 14
+              },
+              "ipv6": {
+                "success": 3,
+                "failure": 14
+              },
+              "dns": {
+                "success": 3,
+                "failure": 15
+              },
+              "direct4": {
+                "success": 3,
+                "failure": 14
+              },
+              "doh": {
+                "success": 3,
+                "failure": 14
+              },
+              "dot4": {
+                "success": 6,
+                "failure": 28
+              },
+              "dot6": {
+                "success": 5,
+                "failure": 29
+              },
+              "bound-dns": {
+                "success": 3,
+                "failure": 14
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 18
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 18
+              }
+            },
+            "window_start_unix_ms": 1792824315173,
+            "window_end_unix_ms": 1792824350173,
+            "action_completed_unix_ms": 1792824325427,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "disconnect.pcap",
+              "sha256": "7fb2f18c8d49d69e4a50bc197fa177814db6ca3ad1053f9bcbb39464b02709a3",
+              "bytes": 338486,
+              "first_packet_unix": 1792824315.632936,
+              "last_packet_unix": 1792824331.230925,
+              "observed_span_seconds": 15.598,
+              "counts": {
+                "packets": 1973,
+                "wireguard_out": 1262
+              }
+            },
+            "expected": "blocked",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 10
+            }
+          },
+          {
+            "scenario": "reconnect",
+            "duration_seconds": 45.0,
+            "probes": {
+              "ipv4": {
+                "success": 17,
+                "failure": 3
+              },
+              "ipv6": {
+                "success": 17,
+                "failure": 3
+              },
+              "dns": {
+                "success": 19,
+                "failure": 3
+              },
+              "direct4": {
+                "success": 18,
+                "failure": 3
+              },
+              "doh": {
+                "success": 17,
+                "failure": 3
+              },
+              "dot4": {
+                "success": 37,
+                "failure": 6
+              },
+              "dot6": {
+                "success": 37,
+                "failure": 6
+              },
+              "bound-dns": {
+                "success": 19,
+                "failure": 3
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 23
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 23
+              }
+            },
+            "window_start_unix_ms": 1792824374278,
+            "window_end_unix_ms": 1792824419278,
+            "action_completed_unix_ms": 1792824385989,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "reconnect.pcap",
+              "sha256": "88b95f0498b7f0231a739793de26f7f6826d38e8ec61a8f060279d074817ace9",
+              "bytes": 881288,
+              "first_packet_unix": 1792824375.472741,
+              "last_packet_unix": 1792824418.806243,
+              "observed_span_seconds": 43.334,
+              "counts": {
+                "packets": 4635,
+                "all_https4_syn": 251,
+                "wireguard_out": 1746
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "dot4": 26,
+              "direct4": 13,
+              "doh": 12,
+              "dot6": 26,
+              "ipv4": 12,
+              "ipv6": 12,
+              "route": 14,
+              "dns": 13,
+              "bound-dns": 13
+            }
+          },
+          {
+            "scenario": "crash",
+            "duration_seconds": 50.0,
+            "probes": {
+              "ipv4": {
+                "success": 21,
+                "failure": 1
+              },
+              "ipv6": {
+                "success": 21,
+                "failure": 1
+              },
+              "dns": {
+                "success": 21,
+                "failure": 1
+              },
+              "direct4": {
+                "success": 22,
+                "failure": 1
+              },
+              "doh": {
+                "success": 22,
+                "failure": 1
+              },
+              "dot4": {
+                "success": 46,
+                "failure": 2
+              },
+              "dot6": {
+                "success": 45,
+                "failure": 2
+              },
+              "bound-dns": {
+                "success": 23,
+                "failure": 1
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 25
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 25
+              }
+            },
+            "window_start_unix_ms": 1792824433067,
+            "window_end_unix_ms": 1792824483067,
+            "action_completed_unix_ms": 1792824438445,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "crash.pcap",
+              "sha256": "73775b2b7ba1d62a0cae3676b5d93b0a1acfcf87fc1ea9d5d8936178415787f6",
+              "bytes": 895570,
+              "first_packet_unix": 1792824433.445206,
+              "last_packet_unix": 1792824482.567097,
+              "observed_span_seconds": 49.122,
+              "counts": {
+                "packets": 3764,
+                "wireguard_out": 2105
+              }
+            },
+            "expected": "working",
+            "death_method": "system-induced Java crash",
+            "restart_seconds": 2.888,
+            "wave_opened_to_recover": false,
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "direct4": 18,
+              "doh": 18,
+              "dot4": 37,
+              "dot6": 36,
+              "ipv6": 17,
+              "route": 19,
+              "dns": 16,
+              "bound-dns": 18,
+              "ipv4": 17
+            }
+          },
+          {
+            "scenario": "force-stop",
+            "duration_seconds": 25.0,
+            "probes": {
+              "ipv4": {
+                "success": 1,
+                "failure": 11
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 12
+              },
+              "dns": {
+                "success": 1,
+                "failure": 12
+              },
+              "direct4": {
+                "success": 1,
+                "failure": 11
+              },
+              "doh": {
+                "success": 1,
+                "failure": 11
+              },
+              "dot4": {
+                "success": 1,
+                "failure": 24
+              },
+              "dot6": {
+                "success": 1,
+                "failure": 24
+              },
+              "bound-dns": {
+                "success": 1,
+                "failure": 12
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 13
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 13
+              }
+            },
+            "window_start_unix_ms": 1792824496747,
+            "window_end_unix_ms": 1792824521747,
+            "action_completed_unix_ms": 1792824499281,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "force-stop.pcap",
+              "sha256": "d57e94dacf3d1865702ad9dd423064e01b6960b1a4075e8c80b8fb04b54ae614",
+              "bytes": 34936,
+              "first_packet_unix": 1792824497.169787,
+              "last_packet_unix": 1792824510.630979,
+              "observed_span_seconds": 13.461,
+              "counts": {
+                "packets": 138,
+                "wireguard_out": 55
+              }
+            },
+            "expected": "blocked",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 9
+            }
+          },
+          {
+            "scenario": "force-stop-manual-recovery",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 8,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 8,
+                "failure": 0
+              },
+              "dns": {
+                "success": 9,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 8,
+                "failure": 0
+              },
+              "doh": {
+                "success": 8,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 17,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 17,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 9,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 9
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792824537027,
+            "window_end_unix_ms": 1792824555027,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "force-stop-manual-recovery.pcap",
+              "sha256": "c6e42e0e60403cb42506a3a7fbe6c0d85ace4c10090be9b05521e0e64a824a71",
+              "bytes": 300112,
+              "first_packet_unix": 1792824537.181864,
+              "last_packet_unix": 1792824554.542636,
+              "observed_span_seconds": 17.361,
+              "counts": {
+                "packets": 1303,
+                "wireguard_out": 740
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0
+          }
+        ],
+        "cleanup_complete": true
+      },
+      "restoration_pending_now": false
+    },
+    {
+      "attempt": "matrix-02/round-1-proton",
+      "report": {
+        "schema": 1,
+        "source_threads": [
+          "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+          "2a7198b7-2664-4843-897e-2349a08a5be7",
+          "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+        ],
+        "artifact": {
+          "sha256": "af2bf8b7341017a42da0ecd2720ed9a5f8a007ed62205385e3255a4c81ecc009",
+          "signer_sha256": "dcc9439ec1a6c6a8d0203f3423ee42bcc8b970628e53cb73a0393f398dd5b853",
+          "package": "ch.protonvpn.android",
+          "version_code": 605209800,
+          "version_name": "5.20.98.0",
+          "debuggable": false
+        },
+        "device": {
+          "api": 37,
+          "release": "17",
+          "security_patch": "2026-10-05",
+          "page_size": 4096,
+          "abi": "arm64-v8a",
+          "emulator": false
+        },
+        "installed_apk_sha256": [
+          "af2bf8b7341017a42da0ecd2720ed9a5f8a007ed62205385e3255a4c81ecc009",
+          "37192b4a9b18435e821db20452545ddbbd938a1493610f82b638083ba3c24371",
+          "2fb015b03c53d43535ca0a29d35b721227a7268504bc0bfda54add0fe0124788"
+        ],
+        "validated_capture_families": [
+          "ipv4"
+        ],
+        "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+        "status": "fail",
+        "capture_kind": "gateway",
+        "required_probes": [
+          "ipv4",
+          "ipv6",
+          "dns",
+          "direct4",
+          "doh"
+        ],
+        "results": [
+          {
+            "scenario": "positive-control",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 8,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 9
+              },
+              "dns": {
+                "success": 9,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 8,
+                "failure": 0
+              },
+              "doh": {
+                "success": 8,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 18,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 0,
+                "failure": 18
+              },
+              "bound-dns": {
+                "success": 9,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 9,
+                "failure": 0
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792824614494,
+            "window_end_unix_ms": 1792824632494,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": false,
+              "blocking_enabled": false
+            },
+            "capture": {
+              "capture": "positive-control.pcap",
+              "sha256": "409b21aeb1de42dd2cf9049ec8234164714eb9240679c95817767cfa3d54fb0a",
+              "bytes": 131535,
+              "first_packet_unix": 1792824614.969731,
+              "last_packet_unix": 1792824632.326606,
+              "observed_span_seconds": 17.357,
+              "counts": {
+                "packets": 854,
+                "all_dns4_out": 111,
+                "system_dns4_out": 18,
+                "default_system_dns4_out": 9,
+                "bound_system_dns4_out": 9,
+                "raw_dns4_out": 85,
+                "all_https4_syn": 32,
+                "direct_https4_syn": 16,
+                "all_dot4_syn": 17,
+                "dot4_syn": 17
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": false,
+            "required_probes": [
+              "ipv4",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "comparison_restart_after_positive_control": true
+          },
+          {
+            "scenario": "steady",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 8,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 8,
+                "failure": 0
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 8,
+                "failure": 0
+              },
+              "doh": {
+                "success": 8,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 18,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 18,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 9
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792824669036,
+            "window_end_unix_ms": 1792824687036,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "steady.pcap",
+              "sha256": "5c79e1c370f611f2a85733346c9da79f14e05ae01bff10f69d15a81bdd5825cd",
+              "bytes": 298072,
+              "first_packet_unix": 1792824669.497101,
+              "last_packet_unix": 1792824686.855661,
+              "observed_span_seconds": 17.359,
+              "counts": {
+                "packets": 1275
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0
+          },
+          {
+            "scenario": "disconnect",
+            "duration_seconds": 35.0,
+            "probes": {
+              "ipv4": {
+                "success": 2,
+                "failure": 15
+              },
+              "ipv6": {
+                "success": 2,
+                "failure": 15
+              },
+              "dns": {
+                "success": 2,
+                "failure": 16
+              },
+              "direct4": {
+                "success": 2,
+                "failure": 15
+              },
+              "doh": {
+                "success": 2,
+                "failure": 15
+              },
+              "dot4": {
+                "success": 4,
+                "failure": 31
+              },
+              "dot6": {
+                "success": 4,
+                "failure": 31
+              },
+              "bound-dns": {
+                "success": 2,
+                "failure": 15
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 18
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 18
+              }
+            },
+            "window_start_unix_ms": 1792824699034,
+            "window_end_unix_ms": 1792824734034,
+            "action_completed_unix_ms": 1792824705382,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "disconnect.pcap",
+              "sha256": "76027b282c84c4f9b92a8f33224d9187088526090ce3fe8ea34ce21ee0c106b0",
+              "bytes": 84830,
+              "first_packet_unix": 1792824699.617183,
+              "last_packet_unix": 1792824731.192208,
+              "observed_span_seconds": 31.575,
+              "counts": {
+                "packets": 358,
+                "all_https4_syn": 2
+              }
+            },
+            "expected": "blocked",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 12
+            }
+          },
+          {
+            "scenario": "reconnect",
+            "duration_seconds": 45.0,
+            "probes": {
+              "ipv4": {
+                "success": 18,
+                "failure": 3
+              },
+              "ipv6": {
+                "success": 18,
+                "failure": 3
+              },
+              "dns": {
+                "success": 18,
+                "failure": 3
+              },
+              "direct4": {
+                "success": 18,
+                "failure": 3
+              },
+              "doh": {
+                "success": 18,
+                "failure": 3
+              },
+              "dot4": {
+                "success": 38,
+                "failure": 6
+              },
+              "dot6": {
+                "success": 38,
+                "failure": 6
+              },
+              "bound-dns": {
+                "success": 18,
+                "failure": 3
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 23
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 23
+              }
+            },
+            "window_start_unix_ms": 1792824751599,
+            "window_end_unix_ms": 1792824796599,
+            "action_completed_unix_ms": 1792824761829,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "reconnect.pcap",
+              "sha256": "18ec2870531714af650f7a4b1b5b950ba0ae65276b10bdcae5b91eded6dfdaae",
+              "bytes": 828066,
+              "first_packet_unix": 1792824752.799174,
+              "last_packet_unix": 1792824795.767632,
+              "observed_span_seconds": 42.968,
+              "counts": {
+                "packets": 3243,
+                "all_https4_syn": 1,
+                "unsupported_network_packets": 2
+              }
+            },
+            "expected": "working",
+            "status": "fail",
+            "findings": [
+              "unsupported_packet_forms_not_assessed"
+            ],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "dot6": 28,
+              "dot4": 28,
+              "route": 15,
+              "bound-dns": 13,
+              "direct4": 13,
+              "doh": 13,
+              "dns": 13,
+              "ipv6": 13,
+              "ipv4": 13
+            }
+          },
+          {
+            "scenario": "crash",
+            "duration_seconds": 50.0,
+            "probes": {
+              "ipv4": {
+                "success": 1,
+                "failure": 24
+              },
+              "ipv6": {
+                "success": 1,
+                "failure": 24
+              },
+              "dns": {
+                "success": 1,
+                "failure": 24
+              },
+              "direct4": {
+                "success": 1,
+                "failure": 24
+              },
+              "doh": {
+                "success": 1,
+                "failure": 24
+              },
+              "dot4": {
+                "success": 2,
+                "failure": 48
+              },
+              "dot6": {
+                "success": 2,
+                "failure": 48
+              },
+              "bound-dns": {
+                "success": 1,
+                "failure": 24
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 25
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 25
+              }
+            },
+            "window_start_unix_ms": 1792824807782,
+            "window_end_unix_ms": 1792824857782,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "crash.pcap",
+              "sha256": "4be48595ab7527671616b1d98f30680991f8f7c3ee55589e904ed5fcef516a2f",
+              "bytes": 42454,
+              "first_packet_unix": 1792824808.089828,
+              "last_packet_unix": 1792824856.12412,
+              "observed_span_seconds": 48.034,
+              "counts": {
+                "packets": 186
+              }
+            },
+            "expected": "working",
+            "status": "fail",
+            "findings": [],
+            "error": "Required application traffic did not recover",
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0
+          },
+          {
+            "scenario": "force-stop",
+            "duration_seconds": 25.0,
+            "probes": {
+              "ipv4": {
+                "success": 0,
+                "failure": 12
+              },
+              "ipv6": {
+                "success": 0,
+                "failure": 12
+              },
+              "dns": {
+                "success": 1,
+                "failure": 12
+              },
+              "direct4": {
+                "success": 1,
+                "failure": 11
+              },
+              "doh": {
+                "success": 1,
+                "failure": 11
+              },
+              "dot4": {
+                "success": 1,
+                "failure": 24
+              },
+              "dot6": {
+                "success": 1,
+                "failure": 24
+              },
+              "bound-dns": {
+                "success": 1,
+                "failure": 12
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 13
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 13
+              }
+            },
+            "window_start_unix_ms": 1792824871443,
+            "window_end_unix_ms": 1792824896443,
+            "action_completed_unix_ms": 1792824874011,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "force-stop.pcap",
+              "sha256": "c4ff026a2a1c7847122875bd6b7132e771451713aae28cb896becfce46b5968a",
+              "bytes": 44593,
+              "first_packet_unix": 1792824871.926494,
+              "last_packet_unix": 1792824893.85705,
+              "observed_span_seconds": 21.931,
+              "counts": {
+                "packets": 161
+              }
+            },
+            "expected": "blocked",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0,
+            "independent_reinspection_success_after_action_grace": {
+              "route": 9
+            }
+          },
+          {
+            "scenario": "force-stop-manual-recovery",
+            "duration_seconds": 18.0,
+            "probes": {
+              "ipv4": {
+                "success": 8,
+                "failure": 0
+              },
+              "ipv6": {
+                "success": 8,
+                "failure": 0
+              },
+              "dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "direct4": {
+                "success": 8,
+                "failure": 0
+              },
+              "doh": {
+                "success": 8,
+                "failure": 0
+              },
+              "dot4": {
+                "success": 18,
+                "failure": 0
+              },
+              "dot6": {
+                "success": 18,
+                "failure": 0
+              },
+              "bound-dns": {
+                "success": 8,
+                "failure": 0
+              },
+              "bound-tcp4": {
+                "success": 0,
+                "failure": 9
+              },
+              "bound-tcp6": {
+                "success": 0,
+                "failure": 9
+              }
+            },
+            "window_start_unix_ms": 1792824910161,
+            "window_end_unix_ms": 1792824928161,
+            "action_completed_unix_ms": null,
+            "vpn_policy_at_window_start": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "vpn_policy_at_window_end": {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            },
+            "capture": {
+              "capture": "force-stop-manual-recovery.pcap",
+              "sha256": "f469a4c1ecc41ea0df39f9a9df9c2856b4f15093aacdcf63fe3e1f0062f23a57",
+              "bytes": 298888,
+              "first_packet_unix": 1792824910.670026,
+              "last_packet_unix": 1792824928.069372,
+              "observed_span_seconds": 17.399,
+              "counts": {
+                "packets": 1276
+              }
+            },
+            "expected": "working",
+            "status": "pass",
+            "findings": [],
+            "privacy_assessed": true,
+            "required_probes": [
+              "ipv4",
+              "ipv6",
+              "dns",
+              "direct4",
+              "doh"
+            ],
+            "doh_endpoint_syn_outside": 0,
+            "wan_exit_observations": 0
+          }
+        ],
+        "cleanup_complete": true
+      },
+      "restoration_pending_now": false
+    }
+  ],
+  "fragment_inspections": [
+    {
+      "app": "wave",
+      "capture": "reconnect.pcap",
+      "sha256": "17af4cf4120c08995293fb8d266e8876b8fb9608bdf4d3f9dc9201a102b4c4fe",
+      "complete_ipv4_udp_datagrams": 21,
+      "all_fragments_from_ap": true,
+      "wireguard_transport_format_datagrams": 21,
+      "marked_payload_datagrams": 0,
+      "other_ipv6_extension_headers": [],
+      "scope": "Independent offline header/reassembly inspection; no cryptographic authentication, originating-app attribution or automatic rewriting of original verdicts"
+    },
+    {
+      "app": "wave",
+      "capture": "wifi-reconnect.pcap",
+      "sha256": "3a0b7453e7b8dd0b70fa19ca5fefd8b75160ad298a900eca7e359abf08f86980",
+      "complete_ipv4_udp_datagrams": 14,
+      "all_fragments_from_ap": true,
+      "wireguard_transport_format_datagrams": 14,
+      "marked_payload_datagrams": 0,
+      "other_ipv6_extension_headers": [
+        {
+          "first_next_header": 0,
+          "after_extension": 58,
+          "icmpv6_type": 143,
+          "packets": 6
+        }
+      ],
+      "scope": "Independent offline header/reassembly inspection; no cryptographic authentication, originating-app attribution or automatic rewriting of original verdicts"
+    },
+    {
+      "app": "wave",
+      "capture": "crash.pcap",
+      "sha256": "4dcd4077495d4f142190ae47bbb9b86be37d263611431eecf50407a936f2a681",
+      "complete_ipv4_udp_datagrams": 15,
+      "all_fragments_from_ap": true,
+      "wireguard_transport_format_datagrams": 15,
+      "marked_payload_datagrams": 0,
+      "other_ipv6_extension_headers": [],
+      "scope": "Independent offline header/reassembly inspection; no cryptographic authentication, originating-app attribution or automatic rewriting of original verdicts"
+    },
+    {
+      "app": "proton",
+      "capture": "reconnect.pcap",
+      "sha256": "361ba955ff0cb39301d62c568bafdb211f257b2c069ed47c5ed19d0b34653ebc",
+      "complete_ipv4_udp_datagrams": 7,
+      "all_fragments_from_ap": true,
+      "wireguard_transport_format_datagrams": 6,
+      "marked_payload_datagrams": 0,
+      "other_ipv6_extension_headers": [],
+      "scope": "Independent offline header/reassembly inspection; no cryptographic authentication, originating-app attribution or automatic rewriting of original verdicts"
+    },
+    {
+      "app": "proton",
+      "capture": "wifi-reconnect.pcap",
+      "sha256": "bcb5198bded9d375003768a24adfe8580e1a95beefb8a3f0c48fac575b25194d",
+      "complete_ipv4_udp_datagrams": 7,
+      "all_fragments_from_ap": true,
+      "wireguard_transport_format_datagrams": 6,
+      "marked_payload_datagrams": 0,
+      "other_ipv6_extension_headers": [
+        {
+          "first_next_header": 0,
+          "after_extension": 58,
+          "icmpv6_type": 143,
+          "packets": 5
+        }
+      ],
+      "scope": "Independent offline header/reassembly inspection; no cryptographic authentication, originating-app attribution or automatic rewriting of original verdicts"
+    },
+    {
+      "app": "proton",
+      "capture": "force-stop.pcap",
+      "sha256": "5ed781cecd211bd00d2988d7abe4cccdfe1c399a2a1884a41d6f282cd6ee203f",
+      "complete_ipv4_udp_datagrams": 1,
+      "all_fragments_from_ap": true,
+      "wireguard_transport_format_datagrams": 0,
+      "marked_payload_datagrams": 0,
+      "other_ipv6_extension_headers": [],
+      "scope": "Independent offline header/reassembly inspection; no cryptographic authentication, originating-app attribution or automatic rewriting of original verdicts"
+    },
+    {
+      "app": "eddie",
+      "capture": "steady.pcap",
+      "sha256": "741632f2738f5046625543f0e78be99c58210fa97afd8113a179c78ab1440ba0",
+      "complete_ipv4_udp_datagrams": 28,
+      "all_fragments_from_ap": true,
+      "wireguard_transport_format_datagrams": 28,
+      "marked_payload_datagrams": 0,
+      "other_ipv6_extension_headers": [],
+      "scope": "Independent offline header/reassembly inspection; no cryptographic authentication, originating-app attribution or automatic rewriting of original verdicts"
+    },
+    {
+      "app": "eddie",
+      "capture": "disconnect.pcap",
+      "sha256": "5f3a8a0fb997a1e35d6c572ebc07b54b71e8a7b3baf9a67e8bb396f1d0de45e6",
+      "complete_ipv4_udp_datagrams": 18,
+      "all_fragments_from_ap": true,
+      "wireguard_transport_format_datagrams": 18,
+      "marked_payload_datagrams": 0,
+      "other_ipv6_extension_headers": [],
+      "scope": "Independent offline header/reassembly inspection; no cryptographic authentication, originating-app attribution or automatic rewriting of original verdicts"
+    },
+    {
+      "app": "eddie",
+      "capture": "reconnect.pcap",
+      "sha256": "74575801d61d6395b3baa98e1a3cce5b1645c792d2a554039aa6ae66d670cfc6",
+      "complete_ipv4_udp_datagrams": 51,
+      "all_fragments_from_ap": true,
+      "wireguard_transport_format_datagrams": 51,
+      "marked_payload_datagrams": 0,
+      "other_ipv6_extension_headers": [],
+      "scope": "Independent offline header/reassembly inspection; no cryptographic authentication, originating-app attribution or automatic rewriting of original verdicts"
+    },
+    {
+      "app": "eddie",
+      "capture": "wifi-reconnect.pcap",
+      "sha256": "2824bf4bbcdd8880495c03722e2842b4d62ae85e80e5f4ad4e8de5daab4180b5",
+      "complete_ipv4_udp_datagrams": 36,
+      "all_fragments_from_ap": true,
+      "wireguard_transport_format_datagrams": 36,
+      "marked_payload_datagrams": 0,
+      "other_ipv6_extension_headers": [
+        {
+          "first_next_header": 0,
+          "after_extension": 58,
+          "icmpv6_type": 143,
+          "packets": 5
+        }
+      ],
+      "scope": "Independent offline header/reassembly inspection; no cryptographic authentication, originating-app attribution or automatic rewriting of original verdicts"
+    },
+    {
+      "app": "eddie",
+      "capture": "crash.pcap",
+      "sha256": "00de9dddcac823d3d4c1e0225c802e6cbd9a1c40604a356dbf1f3b5defc94420",
+      "complete_ipv4_udp_datagrams": 42,
+      "all_fragments_from_ap": true,
+      "wireguard_transport_format_datagrams": 42,
+      "marked_payload_datagrams": 0,
+      "other_ipv6_extension_headers": [],
+      "scope": "Independent offline header/reassembly inspection; no cryptographic authentication, originating-app attribution or automatic rewriting of original verdicts"
+    }
+  ],
+  "offline_tests_passed": 57,
+  "dns_question_correlation": {
+    "radio_window_question_packets": {
+      "wave": 6,
+      "proton": 8,
+      "eddie": 8
+    },
+    "shared_question_names_across_all_three": 3,
+    "grapheneos_connectivity_endpoint_question_packets_per_app": 2,
+    "originating_uid_proven": false,
+    "probe_fixed_http_endpoint_questions_observed": false
+  },
+  "current_automation_sha256": {
+    "tools/vpn-probe/matrix.py": "c17fb1bb7307ba196d2a8812b3093ddd92d08873ae001ea9e62f3e677f8740fc",
+    "tools/vpn-probe/run.py": "7c5dc42bcb5ef5e2b6bdd63056c438eedd2010c1d05dc53f31d95f9b48421cbc",
+    "tools/vpn-probe/credentials.py": "4dfb8a85e1f1a3ec61a44ef7df389875327898b364ec1029f1b46ac8a41b4649",
+    "tools/vpn-probe/dualstack_hotspot.py": "db5b838f0bfd67bafe84fe3095e29c27b9645883e11058ee4ae08af03ae9766c",
+    "tools/vpn-probe/summarize.py": "3d5c5eed6137e23685151e9a4c92f4ce00cee9aa481a42904b89a2644377b601",
+    "tools/vpn-probe/hotspot.py": "e63788621361951e3929b18f53aaee0f443a04b6eb595199e743b60f27b5db5a",
+    "tools/vpn-probe/compare.py": "eadcaad0ed9565fc655297e1a4f814e453e361111aaa4c88618bab89300328a2"
+  },
+  "final_cleanup": {
+    "original_wifi_restored": true,
+    "qa_saved_networks_removed": true,
+    "eddie_notification_permission_restored": true,
+    "phone_saved_settings_match_initial": true,
+    "qa_helpers_absent": true,
+    "owner_vpn_inactive": true,
+    "eddie_notification_permission_denied": true,
+    "pixel_installed_apk_set_unchanged": true,
+    "proton_installed_apk_set_unchanged": true,
+    "eddie_installed_apk_set_unchanged": true,
+    "all_attempts_restored": true,
+    "temporary_local_ap_and_tunnel_secrets_removed": true,
+    "sigma_radio_namespace_routes_and_services_restored": true,
+    "vps_tunnel_firewall_forwarding_restored_and_ipv6_egress_works": true,
+    "reusable_command_prepare_ap_ipv4_ipv6_and_stop_live_verified": true,
+    "offline_tests_passed": 57,
+    "temporary_dnsmasq_global_pid_file_removed": true
+  },
+  "runner_source_hashes": {
+    ".gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "AndroidManifest.xml": "22e4ec071c1a58b335216f30c72c585d1cdc83694f7b02905aa42fbec60d78b0",
+    "Driver.java": "cfd20e9bf94a1ccd503377418d65bfe68fa3aedaa4a97a688610d4606f3d9823",
+    "DriverManifest.xml": "3ae2cedfdec30912a08add70c45e8c11138f97acaf22d942f3db75a451497a67",
+    "KeepAlive.java": "f75a2c94a46671913ab3701418c18c5a784232dfec7e58c658782a7fecb90c38",
+    "Probe.java": "b568b92301a14b12fc2b9d8888effab914774974599a1846d9d54e9ca3cc012c",
+    "README.md": "a7e6a0cfb792ea1a52b555d5a8aee71d52d26166a3e8134bea2d06a268c4967f",
+    "RUNNING.md": "7058c7b9f89b022f69d5ca8958f0d784540f4962ac50f8805e5ca0d6e8d864c6",
+    "build.sh": "ec41433444db1125f12a3c7d01300e9ee8ccc45c50cf5d2cf8a13462d89fdc69",
+    "capture.c": "9478cf935343403fc08128c32e22fc342d054bf3990c045b627efb3d8f17081b",
+    "compare.py": "eadcaad0ed9565fc655297e1a4f814e453e361111aaa4c88618bab89300328a2",
+    "comparison.example.json": "d7e43fc6a4f2c028af6be1ed497ccbc65d602c6502d6936e4e1973997b99a121",
+    "credentials.py": "4dfb8a85e1f1a3ec61a44ef7df389875327898b364ec1029f1b46ac8a41b4649",
+    "dualstack_hotspot.py": "00b5f6ff1357b59a4f0e17b455ed70af255a724bf4e24c7002ffac960d4ea60c",
+    "example.json": "80015fde1aee3eaf4dfdfd9489b5e5143ec8db35858a6434f8dfb2b025a8f83d",
+    "hotspot.py": "e63788621361951e3929b18f53aaee0f443a04b6eb595199e743b60f27b5db5a",
+    "matrix.py": "c17fb1bb7307ba196d2a8812b3093ddd92d08873ae001ea9e62f3e677f8740fc",
+    "run.py": "7c5dc42bcb5ef5e2b6bdd63056c438eedd2010c1d05dc53f31d95f9b48421cbc",
+    "summarize.py": "3d5c5eed6137e23685151e9a4c92f4ce00cee9aa481a42904b89a2644377b601",
+    "tests/test_compare.py": "35d27906f6809fc485e9754be08c438b251616484d8ac43ad7873b052684d5ad",
+    "tests/test_credentials.py": "da008f6eabb4e0d3fe787ca19548040823ff7c8c45ad0b166d8365c07210208e",
+    "tests/test_dualstack_hotspot.py": "a5aa7827cbdffaa796d109466e9b4a6a98dd273975d61c573b0943528ff0835e",
+    "tests/test_hotspot.py": "9df1327c25fa72bc0952930a8c60e6ee81f61879a9c1e28f992af8038ca6891b",
+    "tests/test_matrix.py": "c8c51cc450085ae503582a1677b03f2cccb5619a4345628852208140afa48aed",
+    "tests/test_runner.py": "3b8ea9e6eed71121ee660124dd4fddc5ec71d8d19e992f7a0a6c9776e2d1ceae",
+    "tests/test_stage_completion.py": "18220845c634c33b534850e68b5cf649c6405def22cf6d4eeab8180a9a5adacb",
+    "tests/test_wifi_reconnect.py": "152e1e71e6d41761f8c404983305535ef142c7bad149a4d57d018a1e8dfc8065"
+  }
+}

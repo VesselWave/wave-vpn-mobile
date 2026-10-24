@@ -26,7 +26,7 @@ REPO = HERE.parents[1]
 PROBE = 'me.vwave.vpnprobe'
 DRIVER = PROBE + '.driver'
 KINDS = ('ipv4', 'ipv6', 'dns', 'direct4', 'doh', 'dot4', 'dot6', 'bound-dns', 'bound-tcp4', 'bound-tcp6')
-SCENARIOS = ('positive-control', 'steady', 'crash', 'disconnect', 'reconnect', 'server-switch',
+SCENARIOS = ('positive-control', 'steady', 'crash', 'disconnect', 'reconnect', 'wifi-reconnect', 'server-switch',
              'peer-outage', 'kill-stress', 'private-dns', 'split-tunnel', 'screen-off', 'doze',
              'airplane', 'handoff', 'force-stop', 'reboot', 'traffic-soak')
 SAVED_SETTINGS = [('secure', 'always_on_vpn_app'), ('secure', 'always_on_vpn_lockdown'),
@@ -101,12 +101,22 @@ def load_config(path, profile):
     if capture['kind'] != 'none':
         require(re.fullmatch(r'[A-Za-z0-9_.-]{1,15}', capture.get('interface', '')), 'Invalid capture interface')
     if capture['kind'] == 'gateway':
+        require(isinstance(capture.get('sudo', True), bool), 'capture.sudo must be boolean')
+        if capture.get('namespace'):
+            require(re.fullmatch(r'[A-Za-z0-9_-]{1,32}', capture['namespace']), 'Invalid capture namespace')
         require(re.fullmatch(r'[A-Za-z0-9_@.:-]+', capture.get('ssh', '')), 'Invalid SSH target')
         require(not capture['ssh'].startswith('-'), 'Invalid SSH target')
         ipaddress.IPv4Address(capture['client_ipv4'])
+        require(not (capture.get('client_mac') and capture.get('ap_mac')), 'Use client_mac or exclusive-AP ap_mac, not both')
+        for field in ('client_mac', 'ap_mac'):
+            if capture.get(field):
+                require(re.fullmatch(r'(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}', capture[field]), 'Invalid capture MAC')
         for address in capture.get('client_ipv6', []):
             ipaddress.IPv6Address(address)
     port = config.get('wireguard_port', 1637)
+    families = config.get('required_capture_families', ['ipv4'])
+    require(isinstance(families, list) and families and all(f in ('ipv4', 'ipv6') for f in families),
+            'required_capture_families must list ipv4 and/or ipv6')
     require(isinstance(port, int) and 0 < port < 65536, 'Invalid WireGuard port')
     return config
 
@@ -226,8 +236,15 @@ class Capture:
         else:
             addresses = self.run.client_addresses()
             expression = ' or '.join('host ' + address for address in addresses)
-            argv = self.run.ssh_argv() + [shlex.join(['sudo', '-n', 'timeout', str(self.seconds),
-                    'tcpdump', '-n', '-i', self.run.capture['interface'], '-U', '-s', '0', '-w', '-', expression])]
+            if self.run.capture.get('client_mac'):
+                expression = 'ether host ' + self.run.capture['client_mac']
+            if self.run.capture.get('ap_mac'):
+                expression = None  # Dedicated one-station AP only: retain rotating client MACs.
+            namespace = self.run.capture.get('namespace')
+            prefix = ['ip', 'netns', 'exec', namespace] if namespace else []
+            argv = self.run.ssh_argv() + [shlex.join(self.run.gateway_privilege() + prefix + ['timeout', str(self.seconds),
+                    'tcpdump', '-n', '-i', self.run.capture['interface'], '-U', '-s', '0', '-w', '-'] +
+                    ([expression] if expression else []))]
         self.process = subprocess.Popen(argv, stdout=self.file, stderr=subprocess.PIPE)
         self.run.active_capture = self
         time.sleep(0.7)
@@ -248,7 +265,8 @@ class Capture:
             if self.kind == 'emulator':
                 self.run.d.call('pull', self.remote, str(self.path))
                 self.run.d.shell('rm', '-f', self.remote)
-            return summarize(self.path, self.run.config.get('wireguard_port', 1637), self.run.client_addresses())
+            return summarize(self.path, self.run.config.get('wireguard_port', 1637), self.run.client_addresses(),
+                             self.run.capture.get('client_mac'), self.run.capture.get('ap_mac'))
         finally:
             self.run.active_capture = None
             if self.process.poll() is None:
@@ -339,12 +357,26 @@ class Run:
         return ['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', self.capture['ssh']]
 
     def remote(self, script):
-        return command(self.ssh_argv() + ['sudo -n sh -s'], data=script.encode(), timeout=30).stdout.decode().strip()
+        return command(self.ssh_argv() + [shlex.join(self.gateway_privilege() + ['sh', '-s'])],
+                       data=script.encode(), timeout=30).stdout.decode().strip()
+
+    def gateway_privilege(self):
+        return ['sudo', '-n'] if self.capture.get('sudo', True) else []
 
     def client_addresses(self):
         if self.capture['kind'] == 'gateway':
             return [self.capture['client_ipv4']] + self.capture.get('client_ipv6', [])
         return []
+
+    def client_packet(self, packet):
+        ap_mac = self.capture.get('ap_mac')
+        if ap_mac:
+            return packet.get('src_mac') is not None and packet['src_mac'] != ap_mac.lower()
+        mac = self.capture.get('client_mac')
+        if mac:
+            return packet.get('src_mac') == mac.lower()
+        clients = self.client_addresses()
+        return not clients or packet.get('src') in clients
 
     def artifact(self, path, verify_expected=True):
         path = Path(path).resolve()
@@ -386,7 +418,7 @@ class Run:
             ndk = self.config.get('ndk') or os.environ.get('ANDROID_NDK_HOME', '')
             require(ndk and Path(ndk).is_dir(), 'Emulator capture needs a valid Android NDK directory')
         if self.capture['kind'] == 'gateway':
-            command(self.ssh_argv() + ['sudo -n true'])
+            command(self.ssh_argv() + [shlex.join(self.gateway_privilege() + ['true'])])
             command(self.ssh_argv() + ['command -v tcpdump'])
         current = self.d.setting('secure', 'always_on_vpn_app')
         require(current in ('null', self.package), 'Another VPN owns the owner-profile Always-on policy')
@@ -613,9 +645,8 @@ class Run:
                             doh_endpoints.add(str(ipaddress.ip_address(candidate)))
                         except ValueError:
                             pass
-            clients = set(self.client_addresses())
             escaped = sum(p.get('syn', False) and p.get('dport') == 443 and p.get('dst') in doh_endpoints
-                          and (not clients or p.get('src') in clients) for p in packets(cap.path))
+                          and self.client_packet(p) for p in packets(cap.path))
             result['doh_endpoint_syn_outside'] = escaped
             if escaped:
                 result['findings'].append('doh_endpoint_transport_observed_outside_origin_not_assumed')
@@ -741,6 +772,9 @@ trap - EXIT
             time.sleep(0.5)
         raise Failure(reason)
 
+    def after_positive_control(self):
+        pass
+
     def positive_control(self):
         require(self.capture['kind'] != 'none', 'Positive control needs packet capture')
         original_mode = self.d.setting('global', 'private_dns_mode')
@@ -758,12 +792,15 @@ trap - EXIT
                 if family == '4' or result['probes']['ipv6']['success'] > 0:
                     self.validated_families.append('ipv' + family)
         require('ipv4' in self.validated_families, 'IPv4 positive control did not detect all expected packet types')
+        require(set(self.config.get('required_capture_families', ['ipv4'])) <= set(self.validated_families),
+                'Required uplink capture families lack a successful positive control')
         require(counts.get('system_dns4_out', 0) > 0, 'Positive control could not see fresh system probe DNS')
         self.wan_exits = {r[3][3:].strip() for r in rows if r[2] == 'ipv4' and r[3].startswith('OK ')}
         require(self.wan_exits, 'Positive control did not establish an underlying IPv4 exit')
         self.state['validated_families'] = self.validated_families
         self.state['wan_exits'] = sorted(self.wan_exits)
         self.persist()
+        self.after_positive_control()
         self.connect(); self.protection(True)
 
     def crash_action(self):
@@ -837,7 +874,7 @@ trap - EXIT
         peer = None
         if self.capture['kind'] == 'gateway':
             cap = Capture(self, 'peer-identification', 5).start(); cap.finish()
-            found = {p['dst'] for p in packets(cap.path) if p.get('src') in self.client_addresses()
+            found = {p['dst'] for p in packets(cap.path) if self.client_packet(p)
                      and p.get('proto') == 17 and p.get('dport') == self.config.get('wireguard_port', 1637)}
             require(len(found) == 1, 'Capture did not identify exactly one peer; other-profile traffic cannot be assumed')
             peer = found.pop()
@@ -1005,6 +1042,45 @@ trap - EXIT
         self.state.pop('split_changed', None); self.persist()
 
     def lifecycle(self, name):
+        if name == 'wifi-reconnect':
+            require(self.d.setting('global', 'mobile_data') == '0',
+                    'Wi-Fi-only recovery requires mobile data disabled; cellular is outside this capture')
+            initial_wifi = self.d.shell('cmd', 'wifi', 'status')
+            require('Wifi is connected' in initial_wifi,
+                    'Wi-Fi recovery requires an initially connected network')
+            bssid = re.search(r'BSSID: ([0-9a-fA-F:]{17})', initial_wifi)
+            require(bssid is not None, 'Wi-Fi recovery needs an identifiable initial AP')
+            def same_ap():
+                status = self.d.shell('cmd', 'wifi', 'status')
+                connected = 'Wifi is connected' in status and 'BSSID: ' + bssid.group(1) in status
+                if self.capture.get('client_mac'):
+                    client = re.search(r'\bMAC: ([0-9a-fA-F:]{17})', status)
+                    connected = connected and client is not None and client.group(1).lower() == self.capture['client_mac'].lower()
+                return connected
+            def action():
+                self.state['radios_changed'] = True; self.persist()
+                self.d.shell('svc', 'wifi', 'disable')
+                self.wait_for(lambda: 'Wifi is disabled' in self.d.shell('cmd', 'wifi', 'status'),
+                              10, 'Wi-Fi did not disable')
+                time.sleep(10)
+                self.d.shell('svc', 'wifi', 'enable')
+                wifi_credentials = self.config.get('wifi_reconnect_credentials_file')
+                if wifi_credentials:
+                    path = Path(wifi_credentials)
+                    require(not stat.S_IMODE(path.stat().st_mode) & 0o077, 'Wi-Fi credentials must be private')
+                    account = json.loads(path.read_text())
+                    script = shlex.join(['cmd', 'wifi', 'connect-network', account['ssid'],
+                                         'wpa2', account['password']]) + '\n'
+                    self.d.call('shell', '-T', 'sh', data=script.encode())
+                    del account, script
+                self.wait_for(same_ap, 20, 'Wi-Fi did not reconnect to the captured AP')
+                return {'wifi_disabled_verified': True, 'wifi_off_seconds': 10,
+                        'mobile_data_disabled': True, 'explicit_wifi_network_selection': bool(wifi_credentials)}
+            try:
+                return self.observe(name, 60, action)
+            finally:
+                self.d.shell('svc', 'wifi', 'enable')
+                self.state.pop('radios_changed', None); self.persist()
         if name == 'screen-off':
             def action():
                 self.state['screen_changed'] = True; self.persist()
@@ -1066,6 +1142,10 @@ trap - EXIT
                 self.state.pop('radios_changed', None); self.persist()
 
     def run_scenario(self, name):
+        if name in ('server-switch', 'peer-outage', 'kill-stress', 'private-dns', 'split-tunnel',
+                    'screen-off', 'doze', 'airplane', 'handoff', 'wifi-reconnect', 'force-stop', 'reboot'):
+            self.connect()
+            self.protection(True)
         if name == 'positive-control':
             return self.positive_control()
         if name == 'steady':
@@ -1079,6 +1159,7 @@ trap - EXIT
             self.protection(True)
             return self.observe(name, 35, self.disconnect, expected='blocked')
         if name == 'reconnect':
+            self.connect(); self.protection(True); self.disconnect()
             return self.observe(name, 45, self.connect)
         if name == 'server-switch':
             if not self.config.get('switch_server') or not self.config.get('restore_target'):
@@ -1093,7 +1174,7 @@ trap - EXIT
             return self.private_dns()
         if name == 'split-tunnel':
             return self.split_tunnel()
-        if name in ('screen-off', 'doze', 'airplane', 'handoff'):
+        if name in ('screen-off', 'doze', 'airplane', 'handoff', 'wifi-reconnect'):
             return self.lifecycle(name)
         if name == 'force-stop':
             self.observe(name, 25, lambda: self.d.shell('am', 'force-stop', '--user', '0', self.package) and {}, expected='blocked')
@@ -1134,13 +1215,14 @@ trap - EXIT
         report = {'schema': 1, 'source_threads': ['fd5dd284-969f-435f-9afa-b1814ce8e6ef',
                   '2a7198b7-2664-4843-897e-2349a08a5be7', '240d3f84-ccf8-4071-b4fd-19554f697ec1'],
                   'artifact': self.state.get('artifact'), 'device': self.state.get('device'),
+                  'installed_apk_sha256': [item['sha256'] for item in self.state.get('installed_apks', [])],
                   'validated_capture_families': self.validated_families,
                   'scope': 'Observed application probes and capture windows; never a device-wide leak-free certification',
                   'status': 'fail' if failed else ('incomplete' if incomplete else 'pass_for_exercised_scope'),
                   'capture_kind': self.capture['kind'], 'required_probes': self.config.get('required_probes', ['ipv4', 'dns', 'direct4', 'doh']), 'results': self.results,
                   'cleanup_complete': not self.state.get('pending_cleanup', True)}
         save(self.output / 'report.json', report)
-        lines = ['# Wave Android device test run', '', 'Result: **' + report['status'] + '**.', '', report['scope'], '',
+        lines = ['# Android VPN device test run', '', 'Result: **' + report['status'] + '**.', '', report['scope'], '',
                  'Capture families with a successful positive control: ' + (', '.join(self.validated_families) or 'none'), '']
         lines += ['- ' + r['scenario'] + ': **' + r['status'] + '**' +
                   (' — ' + '; '.join(r.get('findings', [])) if r.get('findings') else '') +
@@ -1358,6 +1440,7 @@ def main(argv=None):
     require(not (args.scenarios and any(n not in SCENARIOS for n in args.scenarios.split(','))), 'Unknown requested scenario')
     selected = args.scenarios.split(',') if args.scenarios else config.get('scenarios', ['steady', 'crash', 'disconnect', 'reconnect'])
     require(selected and all(n in SCENARIOS for n in selected), 'Invalid scenario list')
+    require(len(selected) == len(set(selected)), 'Scenario names must be unique; repeat with matrix.py')
     if run.capture['kind'] != 'none' and 'positive-control' not in selected:
         selected.insert(0, 'positive-control')
     elif 'positive-control' in selected:
@@ -1381,11 +1464,12 @@ def main(argv=None):
             except Skipped as error:
                 run.results.append({'scenario': name, 'status': 'skip', 'error': str(error)})
             except Failure as error:
-                if len(run.results) == before:
-                    run.results.append({'scenario': name, 'status': 'fail', 'error': str(error)})
+                if len(run.results) == before or all(r['status'] == 'pass' for r in run.results[before:]):
+                    run.results.append({'scenario': name + ('-completion' if len(run.results) > before else ''),
+                                        'status': 'fail', 'error': str(error)})
                 if name == 'positive-control':
                     for remaining in selected[1:]:
-                        run.results.append({'scenario': remaining, 'status': 'skip', 'error': 'Capture positive control did not pass'})
+                        run.results.append({'scenario': remaining, 'status': 'skip', 'error': 'Positive-control stage did not complete'})
                     break
             run.write_report()
     except (Failure, OSError, ValueError, KeyError) as error:
@@ -1398,6 +1482,7 @@ def main(argv=None):
         exit_code = 130
     finally:
         run.log('Restoring device and capture settings…')
+        run.write_report()  # Preserve failures even if cleanup is later interrupted.
         errors = run.cleanup()
         run.write_report()
         if errors:
