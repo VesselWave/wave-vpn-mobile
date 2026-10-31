@@ -437,6 +437,9 @@ class Run:
                 self.d.call('pull', remote, str(backup))
                 old = self.artifact(backup, verify_expected=False)
                 self.state['original_artifact'] = old
+                if old['sha256'] == self.state['artifact']['sha256']:
+                    self.persist()
+                    return  # Exact target already installed; preserve its data and avoid installer prompts.
                 require(old['signer_sha256'] == self.state['artifact']['signer_sha256'] or self.args.allow_replace,
                         'Existing app has another signer; replacement requires --allow-replace (owner app data is lost)')
                 if old['signer_sha256'] != self.state['artifact']['signer_sha256']:
@@ -542,20 +545,27 @@ class Run:
     def vpn_settings(self):
         self.d.shell('am', 'start', '--user', '0', '-f', '0x10008000', '-a', 'android.settings.VPN_SETTINGS')
         time.sleep(1)
-        # Try fresh Settings buttons; verify the app version before toggling anything.
+        # OEMs may label the button with the application name. Still verify
+        # the installed version and policy screen before changing any setting.
+        names = self.config.get('vpn_settings_buttons', ['Settings'])
         for ordinal in range(8):
             nodes = self.d.nodes()
-            buttons = [n for n in nodes if n['visible'] and (n['description'] == 'Settings' or n['label'] == 'Settings')]
+            buttons = [n for n in nodes if n['visible'] and (n['description'] in names or n['label'] in names)]
             if ordinal >= len(buttons):
                 break
+            node = buttons[ordinal]
+            button = node['description'] if node['description'] in names else node['label']
+            occurrence = sum(1 for n in buttons[:ordinal] if button in (n['description'], n['label']))
             try:
-                self.d.tap(description='Settings', ordinal=ordinal)
+                self.d.tap(description=button, ordinal=occurrence)
             except Failure:
-                self.d.tap('Settings', ordinal=ordinal)
-            labels = self.d.labels()
-            if self.state['artifact']['version_name'] in labels and 'Always-on VPN' in labels:
+                self.d.tap(button, ordinal=occurrence)
+            try:
+                self.d.wait_labels(lambda labels: self.state['artifact']['version_name'] in labels
+                                   and 'Always-on VPN' in labels, 5)
                 return
-            self.d.ui('back'); time.sleep(0.5)
+            except Failure:
+                self.d.ui('back'); time.sleep(0.5)
         raise Failure('Could not identify the target app VPN settings by its installed version')
 
     def protection(self, enabled):

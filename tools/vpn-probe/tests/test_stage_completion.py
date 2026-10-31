@@ -13,6 +13,38 @@ import run
 
 
 class StageCompletionTests(unittest.TestCase):
+    def test_oem_vpn_button_still_requires_matching_installed_version(self):
+        for version, accepted in [('0.2-dev', True), ('another-version', False)]:
+            device = Mock()
+            device.nodes.return_value = [{'visible': True, 'description': 'Wave VPN Settings', 'label': ''}]
+            def wait_for_screen(predicate, timeout):
+                labels = [version, 'Always-on VPN']
+                if not predicate(labels):
+                    raise run.Failure('Wrong settings screen')
+                return labels
+            device.wait_labels.side_effect = wait_for_screen
+            owner = types.SimpleNamespace(config={'vpn_settings_buttons': ['Wave VPN Settings', 'Wave VPN Connected Settings']},
+                d=device, state={'artifact': {'version_name': '0.2-dev'}})
+            with patch.object(run.time, 'sleep'):
+                if accepted:
+                    run.Run.vpn_settings(owner)
+                else:
+                    with self.assertRaisesRegex(run.Failure, 'identify the target'):
+                        run.Run.vpn_settings(owner)
+            device.put.assert_not_called()
+
+    def test_identical_target_is_preserved_without_installing_again(self):
+        device = Mock()
+        device.installed.return_value = True
+        device.shell.return_value = 'package:/data/app/example/base.apk'
+        artifact = {'sha256': 'same-apk', 'signer_sha256': 'trusted'}
+        owner = types.SimpleNamespace(d=device, output=Path('/private/qa'),
+            state={'artifact': artifact}, artifact=Mock(return_value=artifact), persist=Mock())
+        run.Run.install(owner, 'me.vwave.vpn', '/private/target.apk')
+        self.assertEqual(device.call.call_count, 1)  # Backup pull only; no installer.
+        self.assertEqual(device.call.call_args.args[0], 'pull')
+        self.assertFalse(owner.state['target_created'])
+
     def test_required_ipv6_uplink_cannot_silently_degrade_to_ipv4(self):
         device = Mock()
         device.setting.return_value = 'hostname'
