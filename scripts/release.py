@@ -50,6 +50,17 @@ def digest(path):
     return value.hexdigest()
 
 
+def public_build_record(text):
+    return text.replace(str(REPO), '/path/to/android').replace(str(Path.home()), '$HOME')
+
+
+def public_archive_member(member):
+    member.uid = member.gid = 0
+    member.uname = member.gname = 'root'
+    member.pax_headers = {}
+    return member
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sign-key', help='optional full OpenPGP fingerprint for the checksum manifest')
@@ -107,11 +118,11 @@ def main():
                   'build_tools': '37.0.0'}
         (package / 'SOURCE.json').write_text(json.dumps(record, indent=2) + '\n')
         (package / 'APK-SIGNATURE.txt').write_text(signer)
-        (package / 'TOOLCHAIN.txt').write_text(run('./gradlew', '--no-configuration-cache', '--version', capture=True))
-        (package / 'DEPENDENCIES.txt').write_text(run('./gradlew', '--no-configuration-cache',
-            ':app:dependencies', '--configuration', 'releaseRuntimeClasspath', capture=True))
+        (package / 'TOOLCHAIN.txt').write_text(public_build_record(run('./gradlew', '--no-configuration-cache', '--version', capture=True)))
+        (package / 'DEPENDENCIES.txt').write_text(public_build_record(run('./gradlew', '--no-configuration-cache',
+            ':app:dependencies', '--configuration', 'releaseRuntimeClasspath', capture=True)))
         with tarfile.open(output / f'{name}.tar.gz', 'w:gz') as archive:
-            archive.add(package, arcname=name)
+            archive.add(package, arcname=name, filter=public_archive_member)
     run('git', '-C', str(REPO), 'archive', '--format=tar.gz', f'--prefix={name}-source/',
         f'--output={output / (name + "-source.tar.gz")}', 'HEAD')
     shutil.copy2(apk, output / f'{name}.apk')
