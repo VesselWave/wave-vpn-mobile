@@ -14,11 +14,16 @@ as community software not developed by AirVPN. No approval or endorsement is cla
   visibility was PRIVATE when checked on 2026-11-02. See [visibility preparation](PUBLIC-VISIBILITY-REVIEW.md). Review history, assets,
   licenses, workflows and contact details before changing visibility; then verify
   source/download links without repository membership.
-- [ ] Confirm private security inbox receipt and recoverable backups of both
-  signing identities; publish fingerprints through an independently trusted channel.
-- [ ] Complete the exact shipped artifact's basic install/connect/disconnect/recovery
+- [x] Confirm private security inbox receipt and recoverable backups of both
+  signing identities (maintainer confirmed 2026-11-02: controls and receives the
+  security inbox; encrypted backups exist for the OpenPGP and APK signing keys).
+- [x] Publish signing fingerprints through an independently trusted channel:
+  keys.openpgp.org (email identity verified) and https://vpn.vwave.me/#verify.
+- [x] Complete the exact shipped artifact's basic install/connect/disconnect/recovery
   smoke test and record its hash, platform, failures and cleanup. Historical builds
-  are not substitutes for this test.
+  are not substitutes for this test. Passed on an Android 17 emulator; see
+  [emulator smoke test](RELEASE-EMULATOR-SMOKE.md), including its crash-gap caveat.
+  A physical-device smoke test is still recommended.
 - [ ] Review the forum introduction, support ownership and acceptable experimental
   privacy scope with the maintainer. Post only after explicit authorization;
   request staff guidance if a listing/subforum requires it.
