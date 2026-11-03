@@ -1,5 +1,7 @@
 # Platform investigation review — 2026-10-22 UTC
 
+> **In short:** What an Android VPN app can and can't control, from device configuration and earlier captures. No new captures; the release gates stay open.
+
 The delegated investigation confirmed device access, inspected current VPN/profile
 configuration and reran offline checks. It did not produce new packet captures,
 profile-attributed traffic, permission-revocation runs, memory-pressure evidence

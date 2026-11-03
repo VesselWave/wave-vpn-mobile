@@ -1,5 +1,7 @@
 # Controlled emulator teardown comparison — 2026-10-23 UTC
 
+> **In short:** Tested whether changing the order of stopping the service and the tunnel stops DNS leaks on disconnect. It doesn't, so no app change was made.
+
 The release remains **blocked**. Reversing foreground-service/tunnel teardown
 order did not eliminate marked ordinary DNS outside the VPN. No production app
 change is justified by this bounded experiment. Candidate source remains

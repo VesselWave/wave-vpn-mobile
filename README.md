@@ -1,64 +1,81 @@
-# Wave VPN for Android
+<p align="center">
+  <img src="docs/brand/cover.png" alt="Wave VPN: an open-source WireGuard client for AirVPN on Android and Linux." width="100%">
+</p>
 
-Unofficial WireGuard client for AirVPN, built with Kotlin and Jetpack Compose.
-Licensed under GPLv3 or later; not affiliated with AirVPN.
+<p align="center">
+  <a href="https://github.com/VesselWave/wave-vpn-mobile/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/VesselWave/wave-vpn-mobile?include_prereleases&amp;style=flat-square&amp;color=2f6bff"></a>
+  <a href="LICENSE"><img alt="License: GPL-3.0-or-later" src="https://img.shields.io/badge/license-GPL--3.0--or--later-2f6bff?style=flat-square"></a>
+  <img alt="Android 8+" src="https://img.shields.io/badge/Android-8%2B-2f6bff?style=flat-square">
+</p>
 
-This repository builds independently. See [provenance](docs/PROVENANCE.md) for
-pinned Eddie references and the authored UI retained during the backend rewrite.
+An unofficial WireGuard client for [AirVPN](https://airvpn.org). Sign in with your AirVPN account, pick a server and connect: no config files to copy around. Open source, signed releases, and an honest account of what it protects and what it doesn't.
 
-## Build
+**[Download from vpn.vwave.me](https://vpn.vwave.me)** · [Release notes](docs/RELEASE-v0.1.0.md) · [Linux app](https://github.com/VesselWave/wave-vpn-desktop)
 
-Requires JDK 17 and Android SDK 37. Set `ANDROID_HOME`, or put your SDK path in
-`local.properties` (`sdk.dir=/your/android/sdk`).
+<p align="center">
+  <img src="docs/screenshots/overview.png" alt="Overview: connected to a Toronto server, with live download and upload rates and session totals" width="32%">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/servers.png" alt="Servers: search, favorites and countries, with load, ping and a Best server choice" width="32%">
+</p>
+
+- Sign in with your AirVPN account; each device gets its own WireGuard key
+- Best-server choice, or search every server by name, country or city, with ping, load and favorites
+- Split tunneling: route every app, bypass chosen apps, or tunnel only chosen apps
+- Works with Android's Always-on VPN and Block connections without VPN
+- Quick Settings tile, live traffic stats and connection log
+- Choice of WireGuard port, and optional IPv6 server entry
+- Credentials encrypted with Android Keystore and excluded from cloud backups
+
+> [!WARNING]
+> **v0.1.0 is an experimental test build, not production-qualified VPN protection.**
+> On stock Samsung Android 16, DNS was observed outside the tunnel during a crash, Wi-Fi recovery and force-stop, even with Always-on VPN and blocking enabled. The exact origin is unproven, and the investigation found no app-side fix. Don't rely on this build where that exposure is unacceptable. Details: [known limits](docs/RELEASE-v0.1.0.md).
+
+## Setup
+
+1. Download the APK from [vpn.vwave.me](https://vpn.vwave.me) and [verify it](#verify-your-download) (Android 8 or newer).
+2. Open Wave VPN, sign in with your AirVPN username and password, and accept Android's VPN prompt.
+3. Tap the power button. Wave VPN picks the best server; use **Servers** to choose another.
+4. For the strongest protection, open **Settings → Open Android VPN settings** and turn on **Always-on VPN** and **Block connections without VPN**.
+
+If you pressed Disconnect or the app was closed after repeated crashes, Android keeps blocking traffic while Wave VPN shows Disconnected. Open the app and tap Connect. More in [installation and support](docs/SUPPORT.md).
+
+## Verify your download
+
+Every release ships signed SHA-256 checksums. The release key is on [keys.openpgp.org](https://keys.openpgp.org/search?q=414018C0BBB8C0A70A80BF570AA32CCB2C0B3951) and [vpn.vwave.me](https://vpn.vwave.me/#verify):
+
+```text
+OpenPGP release key   4140 18C0 BBB8 C0A7 0A80  BF57 0AA3 2CCB 2C0B 3951
+APK certificate       29:95:0A:57:56:87:67:59:B2:89:84:A0:E6:B4:4A:27:6E:FD:94:8F:8E:70:08:C3:FF:F4:71:D4:AD:41:88:21
+```
+
+```sh
+gpg --recv-keys 414018C0BBB8C0A70A80BF570AA32CCB2C0B3951
+gpg --verify wave-vpn-android-0.1.0-SHA256SUMS.asc wave-vpn-android-0.1.0-SHA256SUMS
+sha256sum --ignore-missing -c wave-vpn-android-0.1.0-SHA256SUMS
+apksigner verify --print-certs wave-vpn-android-0.1.0.apk
+```
+
+If any fingerprint differs from these, from [SECURITY.md](SECURITY.md) and from the website, don't install; report it privately. See [release signing](docs/RELEASE-SIGNING.md).
+
+## Privacy
+
+- Wave VPN talks only to AirVPN: its sign-in and server-list API, the WireGuard servers, and AirVPN's connection-check service. No analytics, ads or third-party trackers.
+- Your username, password and account keys are stored on the phone, encrypted with Android Keystore, and never included in backups.
+- The app keeps its log on the device. Nothing is uploaded.
+
+## Building
+
+Needs JDK 17 and Android SDK 37. Set `ANDROID_HOME` or put `sdk.dir=…` in `local.properties`.
 
 ```sh
 ./gradlew :core:test :app:lintDebug :app:assembleDebug
 ```
 
-The debug APK is `app/build/outputs/apk/debug/app-debug.apk` and installs as
-`me.vwave.vpn.dev`, separately from the production app.
+The debug APK installs as `me.vwave.vpn.dev`, next to a release install. The protocol layer lives in `core/` and follows AirVPN's official Eddie client; the UI is Kotlin and Jetpack Compose. More in [CONTRIBUTING.md](CONTRIBUTING.md); test evidence is indexed in [docs/](docs/README.md).
 
-For the optional live bootstrap test (synthetic invalid credentials only):
+---
 
-```sh
-WAVE_LIVE=1 ./gradlew :core:test --rerun-tasks
-```
-
-## Status
-
-The authored screens use a new Eddie-referenced protocol implementation and new
-storage/tunnel adapters. Credentials and account keys are encrypted with Android
-Keystore and excluded from cloud backup. Protocol tests and builds pass. Live
-VPN connections, dual-stack traffic, network handoffs and post-unlock reboot
-recovery were tested on a Pixel 7. A subsequent process-death recovery fix passed
-targeted checks on both the emulator and physical Pixel without tapping Connect.
-The signed minified release also has runtime coverage on the Pixel and on
-Android 8.0, Android 15 with 16 KB pages, and Android 16 emulators.
-
-Physical IPv4 upstream capture and the release-test findings are recorded in the
-[follow-up report](docs/RELEASE-FOLLOWUP.md) and [expanded review](docs/RELEASE-ROUND3.md).
-The older Android 16 emulator exposed fresh application DNS during process death;
-newer API 37.0 and 37.2 SDK images also exposed fresh probe DNS during disconnect.
-Physical capture contains additional DNS/transport observations without originating
-UID/profile attribution. A general leak-free claim is not supported. Native IPv6
-uplink/cellular capture and longer reliability tests remain gates.
-See also the [initial signed-release report](docs/RELEASE-DEVICE-TESTING.md).
-
-The [repeatable device-test runner](tools/vpn-probe/RUNNING.md) automates the
-recorded recovery and traffic-probe scenarios, checks capture positive controls,
-and saves resumable cleanup state. Its [validation record](docs/device-tests/2026-10-22-runner-validation.json)
-distinguishes exercised scenarios from the broader available matrix.
-
-Enable **Always-on VPN** and **Block connections without VPN** in Android settings.
-Protection depends on platform behavior; affected Android versions can expose DNS
-during tunnel changes. Verify application exclusions together with those settings
-before relying on split tunneling.
-
-[Verification record](docs/VERIFICATION.md). Version 0.1.0 is an experimental prerelease. See [release notes](docs/RELEASE-v0.1.0.md) for known failures and qualification limits.
-
-Security reports: **vesselwave@protonmail.com**. See [security policy](SECURITY.md)
-and [release signing](docs/RELEASE-SIGNING.md) for public verification keys and
-Android release-build configuration.
+GPL-3.0-or-later. Independent project, not affiliated with or endorsed by AirVPN. Report security issues privately to **vesselwave@protonmail.com** ([security policy](SECURITY.md)).
 
 ## Published history privacy
 

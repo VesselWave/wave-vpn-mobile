@@ -1,5 +1,7 @@
 # Signed release and packet checks — 2026-10-22 UTC
 
+> **In short:** First checks of the production-signed 0.2-dev build. Historical: the [follow-up](RELEASE-FOLLOWUP.md) supersedes its open items and found DNS escapes it didn't.
+
 This is the initial round's historical record. The
 [follow-up report](RELEASE-FOLLOWUP.md) supersedes its open physical-device blocker
 and its negative application-DNS result: physical signed-release capture is now
@@ -19,7 +21,7 @@ DNS queries outside the tunnel. No general leak-free result is claimed.
   subsequently rerun; the opt-in live test was skipped. Existing warnings remain.
 - `zipalign -c -P 16 4` passed. No release was published.
 - Production application code was not changed during this testing round. The
-  added [independent QA tools](../tools/vpn-probe/README.md) are outside app modules
+  added [independent QA tools](../../tools/vpn-probe/README.md) are outside app modules
   and are not shipped or required by either app's build.
 
 [Filtered evidence](device-tests/2026-10-22-release-packets.json) contains packet

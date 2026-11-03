@@ -1,5 +1,7 @@
 # Hotspot and tunneled IPv6 follow-up — 2026-10-24
 
+> **In short:** A dedicated hotspot gave a repeatable external capture point and working IPv6. It adds dual-stack evidence but doesn't resolve the earlier DNS escapes.
+
 The release remains blocked for an unrestricted privacy claim. The new hotspot
 provides a reproducible external capture point and a working IPv6 Internet path;
 it does not resolve the earlier stock-Android marked DNS escapes or establish
@@ -44,7 +46,7 @@ criterion, distinct from a marked escape or unassigned packet finding.
 
 ## Automation
 
-[Running instructions](../tools/vpn-probe/RUNNING.md) cover the leased bridged AP,
+[Running instructions](../../tools/vpn-probe/RUNNING.md) cover the leased bridged AP,
 isolated dual-stack VPS tunnel, independent cleanup, namespace capture, required
 capture families and installed-app matrix. The new `wifi-reconnect` scenario
 verifies Wi-Fi disabled, holds it off for ten seconds, re-enables it, and requires

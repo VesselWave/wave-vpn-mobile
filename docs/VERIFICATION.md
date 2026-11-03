@@ -1,4 +1,37 @@
-# Replacement verification
+# Verification
+
+What has been tested on Wave VPN for Android, what failed, and what hasn't been covered yet. The dated log below is the evidence; the [qa reports](README.md#how-it-was-tested) have the full detail.
+
+## Summary
+
+**Passes**
+
+- Protocol and security unit tests, lint and builds; live sign-in bootstrap against AirVPN
+- Pixel 7 (GrapheneOS, Android 17): connections, dual-stack traffic, network handoffs, recovery after reboot (once unlocked) and after the app's process dies
+- Signed, minified release build on the Pixel and on Android 8, 15 (16 KB pages) and 16 emulators
+- Released v0.1.0 APK on an Android 17 emulator: install, connect, disconnect, crash recovery with and without Always-on ([report](qa/RELEASE-EMULATOR-SMOKE.md))
+
+**Fails**
+
+- Stock Samsung Android 16: DNS outside the tunnel during crash, Wi-Fi recovery and force-stop ([report](qa/RELEASE-SAMSUNG-STOCK.md))
+- Android 16 emulator: app DNS escaped while the VPN process was dead, despite Always-on and blocking
+- Android 17 (API 37.0 and 37.2) emulator images: probe DNS during disconnect ([review](qa/RELEASE-ROUND3.md))
+
+**Not yet covered**
+
+- The v0.1.0 APK on a physical device
+- Native IPv6 uplinks and captured mobile data
+- Boot before first unlock, and overnight or long-running reliability
+
+## Log, newest first
+
+- [Physical release and DNS investigation follow-up — 2026-10-22 UTC](#physical-release-and-dns-investigation-follow-up--2026-10-22-utc)
+- [Signed release and captured traffic — 2026-10-22 UTC](#signed-release-and-captured-traffic--2026-10-22-utc)
+- [Physical Android verification — 2026-10-22 UTC](#physical-android-verification--2026-10-22-utc)
+- [Release identity setup — 2026-10-22 UTC](#release-identity-setup--2026-10-22-utc)
+- [Initial replacement check](#initial-replacement-check)
+
+## Initial replacement check
 
 2026-10-21 UTC, macOS development host.
 
@@ -62,8 +95,8 @@ Only public verification material is included in either repository.
 
 ## Physical Android verification — 2026-10-22 UTC
 
-[Device test results](DEVICE-TESTING.md) and
-[filtered scenario evidence](device-tests/2026-10-22-pixel7.json) cover an Android
+[Device test results](qa/DEVICE-TESTING.md) and
+[filtered scenario evidence](qa/device-tests/2026-10-22-pixel7.json) cover an Android
 17/API 37 Pixel 7, with additional Android 16 emulator connection checks.
 Authenticated WireGuard, IPv4/IPv6, fresh DNS resolution, Wi-Fi/cellular handoffs,
 airplane-mode recovery, protected disconnect, server switching, short screen-off
@@ -89,16 +122,16 @@ on both the Android 16 emulator and physical Android 17 Pixel 7. With Android
 blocking enabled, independent IPv4/IPv6/DNS/direct-IP probes recover without
 opening Wave or tapping Connect. Pixel explicit Disconnect still stops recovery
 and retains blocking. Timings, interruption counts, APK hash and limitations are
-in [the targeted device repeat](DEVICE-TESTING.md#process-death-fix-and-targeted-repeat--2026-10-22-utc)
-and [filtered recovery evidence](device-tests/2026-10-22-recovery.json).
+in [the targeted device repeat](qa/DEVICE-TESTING.md#process-death-fix-and-targeted-repeat--2026-10-22-utc)
+and [filtered recovery evidence](qa/device-tests/2026-10-22-recovery.json).
 Core tests were freshly rerun; debug build and lint pass. Full physical packet
 capture, the signed release runtime matrix and broader reliability gates remain
 pending. The original failure above is retained as historical evidence.
 
 ## Signed release and captured traffic — 2026-10-22 UTC
 
-The [signed-release packet report](RELEASE-DEVICE-TESTING.md) and
-[filtered evidence](device-tests/2026-10-22-release-packets.json) record the
+The [signed-release packet report](qa/RELEASE-DEVICE-TESTING.md) and
+[filtered evidence](qa/device-tests/2026-10-22-release-packets.json) record the
 production-signed minified APK, its certificate check and 16 KB alignment check.
 Runtime connection checks passed on Android 8.0/API 26, Android 15/API 35 with
 verified 16 KB pages, and Android 16/API 36. The API 26 image rejected the
@@ -119,8 +152,8 @@ Only QA tools and documentation were added; production app code was unchanged.
 
 ## Physical release and DNS investigation follow-up — 2026-10-22 UTC
 
-See [the follow-up report](RELEASE-FOLLOWUP.md) and
-[filtered evidence](device-tests/2026-10-22-followup.json). The exact original
+See [the follow-up report](qa/RELEASE-FOLLOWUP.md) and
+[filtered evidence](qa/device-tests/2026-10-22-followup.json). The exact original
 production-signed APK was installed on the GrapheneOS Android 17 Pixel after
 explicit authorization to remove its differently signed legacy production app.
 A controlled IPv4 gateway capture passed an unprotected positive control, then

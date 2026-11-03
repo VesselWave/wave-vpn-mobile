@@ -1,5 +1,7 @@
 # Physical release capture and DNS follow-up — 2026-10-22 UTC
 
+> **In short:** Physical Pixel capture: the signed build carried probe traffic through the tunnel, but other DNS appeared during an outage, and an Android 16 emulator leaked app DNS while the VPN process was dead. No general leak-free claim.
+
 The forwarded Pixel connection was restored and physical upstream capture is now
 available. The production-signed release carried protected probe traffic in the
 exercised physical IPv4 captures, while non-probe DNS still appeared during an
@@ -17,7 +19,7 @@ Raw captures, device/account details and probe results remain private.
 The initial physical matrix used exactly the previously tested minified release
 APK, SHA-256
 `7e25686199ec333a2733425c06ec04aa858768f26df304d7808c000188ff2ea2`.
-Its certificate SHA-256 matches the [published production identity](../SECURITY.md).
+Its certificate SHA-256 matches the [published production identity](../../SECURITY.md).
 The existing production package had a different legacy certificate. After the
 user explicitly authorized replacement, it was uninstalled and this APK was
 installed as `me.vwave.vpn`. The development package was retained.
