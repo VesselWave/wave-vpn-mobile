@@ -1,5 +1,11 @@
 # Published history privacy
 
+Both GitHub repositories were subsequently deleted and recreated under their
+existing names from the cleaned main branch and release tag. The new repositories
+do not inherit the old pull requests. The cleaned commit/tag identities and
+signed release asset bytes were preserved. Private rollback backups remain
+outside the published repositories.
+
 On 2026-11-03, published branch/tag history and release packages were sanitized.
 Lab access details were generalized and recorded VPN exits were replaced with
 documentation addresses. Test timing, outcomes and known failures were retained.
