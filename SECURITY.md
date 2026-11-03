@@ -1,6 +1,6 @@
 # Security status
 
-Wave VPN is an unpublished development application. No version currently has a
+Wave VPN 0.1.0 is an experimental prerelease. No version currently has a
 production support or security maintenance promise. See
 [verification](docs/VERIFICATION.md) for tested behavior and outstanding device tests.
 

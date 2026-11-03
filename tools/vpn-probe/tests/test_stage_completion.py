@@ -13,6 +13,89 @@ import run
 
 
 class StageCompletionTests(unittest.TestCase):
+    def test_disconnect_requires_live_sink_even_with_stale_session_name(self):
+        sink = ('NetworkAgentInfo{network{257} ni{VPN CONNECTED extra: VPN:me.vwave.vpn} '
+                'LinkAddresses: [ 192.0.2.1/32,fd00:7761:7665::1/128 ] '
+                'DnsAddresses: [ /192.0.2.2,/fd00:7761:7665::2 ] '
+                'Routes: [ 0.0.0.0/0 -> 0.0.0.0 tun0,::/0 -> :: tun0 ] '
+                'sessionId=wave, bypassable=false}')
+        cases = [(sink, '1', True), (sink, '0', False),
+                 (sink.replace('192.0.2.1/32', '10.0.0.1/32'), '1', False),
+                 (sink.replace('/192.0.2.2', '/10.0.0.2'), '1', False),
+                 (sink.replace('::/0 ->', 'fd00::/64 ->'), '1', False),
+                 (sink.replace('VPN:me.vwave.vpn}', 'VPN:other.app}'), '1', False),
+                 (sink.replace('bypassable=false', 'bypassable=true'), '1', False)]
+        for network, lockdown, accepted in cases:
+            with self.subTest(network=network, lockdown=lockdown):
+                device = Mock()
+                device.setting.return_value = lockdown
+                device.shell.side_effect = lambda *args: (network if args[-1] == 'connectivity' else
+                    '  0: me.vwave.vpn\n    sessionId=wave, bypassable=false\n')
+                def wait_for(predicate, seconds, message):
+                    if not predicate():
+                        raise run.Failure(message)
+                owner = types.SimpleNamespace(config={'blocking_vpn_session': 'Wave — blocking traffic'},
+                    package='me.vwave.vpn', d=device, open_overview=lambda: ['Disconnect'],
+                    active_vpn=lambda: True, wait_for=wait_for)
+                if accepted:
+                    self.assertTrue(run.Run.disconnect(owner)['active_vpn_after_disconnect'])
+                else:
+                    with self.assertRaises(run.Failure):
+                        run.Run.disconnect(owner)
+
+    def test_missing_vpn_does_not_prove_blocking_handoff(self):
+        device = Mock()
+        device.setting.return_value = '1'
+        def wait_for(predicate, seconds, message):
+            if not predicate():
+                raise run.Failure(message)
+        owner = types.SimpleNamespace(config={'blocking_vpn_session': 'Wave — blocking traffic'},
+            package='me.vwave.vpn', d=device, open_overview=lambda: ['Connect'],
+            active_vpn=lambda: False, wait_for=wait_for)
+        with self.assertRaises(run.Failure):
+            run.Run.disconnect(owner)
+
+    def test_capture_ap_pin_rejects_roaming(self):
+        owner = types.SimpleNamespace(config={'expected_wifi_bssid': 'AA:BB:CC:DD:EE:FF'}, d=Mock())
+        owner.d.shell.return_value = 'Wifi is connected\nBSSID: aa:bb:cc:dd:ee:ff'
+        self.assertTrue(run.Run.capture_network_matches(owner))
+        owner.d.shell.return_value = 'Wifi is connected\nBSSID: 00:11:22:33:44:55'
+        self.assertFalse(run.Run.capture_network_matches(owner))
+        owner.d.shell.return_value = 'Wifi is disabled'
+        self.assertFalse(run.Run.capture_network_matches(owner))
+
+    def test_dns_baseline_is_explicit_and_validated(self):
+        for baseline, expected in [(None, None), ('off', 'off'), ('automatic', 'opportunistic')]:
+            owner = types.SimpleNamespace(config={'private_dns_baseline': baseline}, d=Mock())
+            run.Run.after_positive_control(owner)
+            if expected is None:
+                owner.d.put.assert_not_called()
+            else:
+                owner.d.put.assert_called_once_with('global', 'private_dns_mode', expected)
+        owner = types.SimpleNamespace(config={'private_dns_baseline': 'unknown'}, d=Mock())
+        with self.assertRaises(run.Failure):
+            run.Run.after_positive_control(owner)
+        owner.d.put.assert_not_called()
+
+    def test_selected_dns_modes_restore_settings_after_failure(self):
+        device = Mock()
+        device.setting.side_effect = ['opportunistic', 'saved-provider']
+        observed = []
+        def observe(name, seconds, action):
+            action()
+            observed.append(name)
+            if name.endswith('strict'):
+                raise run.Failure('capture failed')
+        owner = types.SimpleNamespace(config={'private_dns_modes': ['automatic', 'strict']},
+                                      d=device, observe=observe)
+        with self.assertRaises(run.Failure):
+            run.Run.private_dns(owner)
+        self.assertEqual(observed, ['private-dns-automatic', 'private-dns-strict'])
+        self.assertNotIn(unittest.mock.call('global', 'private_dns_mode', 'off'), device.put.call_args_list)
+        self.assertEqual(device.put.call_args_list[-2:], [
+            unittest.mock.call('global', 'private_dns_mode', 'opportunistic'),
+            unittest.mock.call('global', 'private_dns_specifier', 'saved-provider')])
+
     def test_oem_vpn_button_still_requires_matching_installed_version(self):
         for version, accepted in [('0.2-dev', True), ('another-version', False)]:
             device = Mock()

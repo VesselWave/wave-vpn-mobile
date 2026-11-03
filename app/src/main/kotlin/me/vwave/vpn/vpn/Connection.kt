@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package me.vwave.vpn.vpn
 
+import android.content.ComponentName
+import android.content.ServiceConnection
+import android.os.IBinder
 import android.content.Context
 import android.content.Intent
 import android.net.VpnService
@@ -63,6 +66,31 @@ class TunnelManager(private val context: Context, private val repository: AirRep
     private val log: EventLog, private val scope: CoroutineScope) {
     private val backend by lazy { GoBackend(context.applicationContext) }
     private val lock = Mutex()
+    private var serviceBinding: ServiceConnection? = null
+    private var boundService: CompletableDeferred<WaveVpnService>? = null
+    private suspend fun vpnService(): WaveVpnService {
+        boundService?.let { return it.await() }
+        val ready = CompletableDeferred<WaveVpnService>()
+        val binding = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName, binder: IBinder) {
+                val service = WaveVpnService.instance
+                if (service != null) ready.complete(service)
+                else ready.completeExceptionally(IllegalStateException("VPN service unavailable"))
+            }
+            override fun onServiceDisconnected(name: ComponentName) {
+                ready.completeExceptionally(IllegalStateException("VPN service disconnected"))
+            }
+        }
+        serviceBinding = binding
+        boundService = ready
+        if (!context.bindService(Intent(context, WaveVpnService::class.java)
+                .setAction(VpnService.SERVICE_INTERFACE), binding, Context.BIND_AUTO_CREATE)) {
+            serviceBinding = null
+            boundService = null
+            error("Cannot bind VPN service")
+        }
+        return ready.await()
+    }
     private var operation: Job? = null
     private val status = MutableStateFlow<TunnelState>(TunnelState.Down)
     private val counters = MutableStateFlow<TunnelStats?>(null)
@@ -72,6 +100,8 @@ class TunnelManager(private val context: Context, private val repository: AirRep
     val stats = counters.asStateFlow()
     val connectedSince = since.asStateFlow()
     val connectionCount = count.asStateFlow()
+    @Volatile var shouldReconnect = true
+        private set
     val isActive get() = state.value is TunnelState.Connected || state.value is TunnelState.Connecting || state.value is TunnelState.Stalled
     private val tunnel = object : Tunnel {
         override fun getName() = "wave"
@@ -82,16 +112,40 @@ class TunnelManager(private val context: Context, private val repository: AirRep
     }
     fun permissionIntent() = VpnService.prepare(context)
     fun connect(target: Target = preferences.current.target) {
+        shouldReconnect = true
         context.startForegroundService(Intent(context, ConnectionService::class.java))
         operation?.cancel()
         operation = scope.launch { lock.withLock { connection(target) } }
     }
     fun disconnect() {
-        context.stopService(Intent(context, ConnectionService::class.java))
+        shouldReconnect = false
+        val previousState = status.value
         operation?.cancel()
         operation = scope.launch { lock.withLock {
-            try { withContext(Dispatchers.IO) { backend.setState(tunnel, Tunnel.State.DOWN, null) } }
-            catch (_: Exception) { log.warn("Android could not stop the tunnel") }
+            try { withContext(Dispatchers.IO) {
+                val service = WaveVpnService.instance
+                val lockdown = permissionIntent() == null &&
+                    runCatching { backend.isLockdownEnabled }.getOrDefault(false)
+                log.info("Stopping tunnel; lockdown=$lockdown, service=${service != null}")
+                if (lockdown) {
+                    checkNotNull(service) { "VPN service unavailable" }.block()
+                    log.info("Blocking interface established")
+                }
+                backend.setState(tunnel, Tunnel.State.DOWN, null)
+                if (!lockdown) {
+                    context.stopService(Intent(context, ConnectionService::class.java))
+                    service?.releaseBlock()
+                    serviceBinding?.let { context.unbindService(it) }
+                    serviceBinding = null
+                    boundService = null
+                }
+            } }
+            catch (e: CancellationException) { throw e }
+            catch (e: Exception) {
+                log.warn("Android could not stop the tunnel (${e.javaClass.simpleName})")
+                status.value = previousState
+                return@withLock
+            }
             status.value = TunnelState.Down; since.value = null; counters.value = null
         } }
     }
@@ -102,7 +156,10 @@ class TunnelManager(private val context: Context, private val repository: AirRep
         status.value = TunnelState.Connecting(null)
         since.value = null; counters.value = null
         try {
-            try { repository.refresh() } catch (e: CancellationException) { throw e }
+            vpnService()
+            // Reconnect using saved keys while traffic is blocked; bootstrap requests
+            // cannot succeed through the sink and must not delay tunnel restoration.
+            try { if (WaveVpnService.instance?.isBlocking != true) repository.refresh() } catch (e: CancellationException) { throw e }
             catch (_: Exception) { log.warn("Using cached account and server information") }
             val m = repository.manifest.value ?: error("Refresh the server list first")
             val a = repository.account.value ?: error("Sign in first")
@@ -126,7 +183,20 @@ class TunnelManager(private val context: Context, private val repository: AirRep
                     if (prefs.splitMode == SplitMode.Exclude) prefs.splitApps else emptySet(),
                     if (prefs.splitMode == SplitMode.Include) prefs.splitApps else emptySet())).byteInputStream())
                 log.info("Connecting to ${server.name}")
-                withContext(Dispatchers.IO) { backend.setState(tunnel, Tunnel.State.UP, config) }
+                withContext(Dispatchers.IO) {
+                    val service = vpnService()
+                    service.block()
+                    backend.setState(tunnel, Tunnel.State.DOWN, null)
+                    try {
+                        backend.setState(tunnel, Tunnel.State.UP, config)
+                        service.releaseBlock()
+                    } catch (e: Exception) {
+                        // establish() may already have replaced the blocking descriptor.
+                        service.releaseBlock()
+                        if (permissionIntent() == null) service.block()
+                        throw e
+                    }
+                }
                 started = true
                 val deadline = android.os.SystemClock.elapsedRealtime() + 10_000
                 var handshook = false
@@ -161,18 +231,17 @@ class TunnelManager(private val context: Context, private val repository: AirRep
             status.value = TunnelState.Down; since.value = null; counters.value = null
             context.stopService(Intent(context, ConnectionService::class.java))
         } catch (e: CancellationException) {
-            // Finish the serialized teardown before the next connect/disconnect can run.
-            if (started) withContext(NonCancellable + Dispatchers.IO) {
-                runCatching { backend.setState(tunnel, Tunnel.State.DOWN, null) }
-            }
+            // Cancellation is followed by another serialized connect or disconnect.
+            // Keep the current TUN until the next serialized operation replaces it.
             throw e
         } catch (_: Exception) {
             // Keep an existing tunnel in place on monitor errors instead of opening a traffic gap.
-            if (started) {
+            if (started && WaveVpnService.instance?.isBlocking != true) {
                 selectedServer?.let { status.value = TunnelState.Stalled(it) }
                 log.error("Connection monitoring failed; disconnect and retry")
             } else {
-                context.stopService(Intent(context, ConnectionService::class.java))
+                if (WaveVpnService.instance?.isBlocking != true)
+                    context.stopService(Intent(context, ConnectionService::class.java))
                 status.value = TunnelState.Failed("Check account, server and WireGuard settings")
                 log.error("Unable to start WireGuard")
             }

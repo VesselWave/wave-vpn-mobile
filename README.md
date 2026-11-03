@@ -54,7 +54,7 @@ Protection depends on platform behavior; affected Android versions can expose DN
 during tunnel changes. Verify application exclusions together with those settings
 before relying on split tunneling.
 
-[Verification record](docs/VERIFICATION.md). This is an unpublished development build.
+[Verification record](docs/VERIFICATION.md). Version 0.1.0 is an experimental prerelease. See [release notes](docs/RELEASE-v0.1.0.md) for known failures and qualification limits.
 
 Security reports: **vesselwave@protonmail.com**. See [security policy](SECURITY.md)
 and [release signing](docs/RELEASE-SIGNING.md) for public verification keys and

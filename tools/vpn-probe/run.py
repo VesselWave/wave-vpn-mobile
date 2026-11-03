@@ -539,8 +539,32 @@ class Run:
         if 'Disconnect' in labels:
             self.d.tap('Disconnect')
         self.d.wait_labels(lambda labels: 'Connect' in labels, 20)
-        self.wait_for(lambda: not self.active_vpn(), 10,
-                      'Android still reports an active target VPN after UI disconnect')
+        blocking_session = self.config.get('blocking_vpn_session')
+        def disconnected():
+            if not self.active_vpn():
+                return not (blocking_session and
+                            self.d.setting('secure', 'always_on_vpn_lockdown') == '1')
+            if not blocking_session or self.d.setting('secure', 'always_on_vpn_lockdown') != '1':
+                return False
+            text = self.d.shell('dumpsys', 'vpn_management')
+            owner = re.search(r'^  0: (\S+)(.*?)(?=^  \d+: |\Z)', text, re.M | re.S)
+            if not (owner and owner.group(1) == self.package and
+                    'bypassable=false' in owner.group(2)):
+                return False
+            # Samsung retains TransportInfo sessionId during in-place replacement.
+            # Require the live sink's addresses, DNS and both default routes.
+            networks = self.d.shell('dumpsys', 'connectivity')
+            required = ('192.0.2.1/32', 'fd00:7761:7665::1/128',
+                        '/192.0.2.2', '/fd00:7761:7665::2',
+                        '0.0.0.0/0 ->', '::/0 ->', 'bypassable=false')
+            return any('NetworkAgentInfo{' in line and
+                       'VPN CONNECTED extra: VPN:' + self.package + '}' in line and
+                       all(value in line for value in required)
+                       for line in networks.splitlines())
+        self.wait_for(disconnected, 10,
+                      'Android still reports an unexpected active target VPN after UI disconnect')
+        return {'blocking_interface_expected': bool(blocking_session),
+                'active_vpn_after_disconnect': self.active_vpn()}
 
     def vpn_settings(self):
         self.d.shell('am', 'start', '--user', '0', '-f', '0x10008000', '-a', 'android.settings.VPN_SETTINGS')
@@ -597,7 +621,16 @@ class Run:
         self.d.shell('am', 'start', '--user', '0', '-f', '0x10008000', '-n', PROBE + '/.Probe', '--es', 'phase', phase)
         self.wait_for(lambda: bool(self.d.pid(PROBE)), 10, 'Independent probe did not start')
 
+    def capture_network_matches(self):
+        bssid = self.config.get('expected_wifi_bssid')
+        if not bssid:
+            return True
+        status = self.d.shell('cmd', 'wifi', 'status')
+        return ('Wifi is connected' in status and
+                'bssid: ' + bssid.lower() in status.lower())
+
     def observe(self, name, seconds=18, action=None, expected='working', protected=True, required_override=None):
+        require(self.capture_network_matches(), 'Phone is not on the configured capture AP')
         phase = self.run_id + '-' + name
         policy = {'always_on_target_matches': self.d.setting('secure', 'always_on_vpn_app') == self.package,
                   'blocking_enabled': self.d.setting('secure', 'always_on_vpn_lockdown') == '1'}
@@ -636,7 +669,12 @@ class Run:
             result.update(status='fail', error=action_error)
         if not action_error and action and changed - start > (seconds - 8) * 1000:
             result.update(status='incomplete', error='Action overran the capture window; no recovery pass claimed')
-        result['privacy_assessed'] = bool(protected and captured)
+        network_matches = self.capture_network_matches()
+        result['capture_ap_pinned'] = bool(self.config.get('expected_wifi_bssid'))
+        result['capture_ap_matches_at_end'] = network_matches
+        if not network_matches:
+            result.update(status='fail', error='Phone left the configured capture AP')
+        result['privacy_assessed'] = bool(protected and captured and network_matches)
         if protected and captured:
             result['findings'] = capture_findings(captured)
             require(self.validated_families, 'Protected capture has no successful positive control')
@@ -783,7 +821,13 @@ trap - EXIT
         raise Failure(reason)
 
     def after_positive_control(self):
-        pass
+        baseline = self.config.get('private_dns_baseline')
+        if baseline is not None:
+            require(baseline in ('off', 'automatic'),
+                    'private_dns_baseline must be off or automatic')
+            # Original mode is already saved by setup and restored by cleanup.
+            self.d.put('global', 'private_dns_mode',
+                       'off' if baseline == 'off' else 'opportunistic')
 
     def positive_control(self):
         require(self.capture['kind'] != 'none', 'Positive control needs packet capture')
@@ -962,9 +1006,14 @@ trap - EXIT
             self.dns_counters(False)
 
     def private_dns(self):
+        modes = self.config.get('private_dns_modes', ['off', 'automatic', 'strict'])
+        require(isinstance(modes, list) and modes and
+                all(name in ('off', 'automatic', 'strict') for name in modes),
+                'private_dns_modes must select off, automatic or strict')
         original = {key: self.d.setting('global', key) for key in ('private_dns_mode', 'private_dns_specifier')}
         try:
-            for name, mode in [('off', 'off'), ('automatic', 'opportunistic'), ('strict', 'hostname')]:
+            for name in modes:
+                mode = {'off': 'off', 'automatic': 'opportunistic', 'strict': 'hostname'}[name]
                 def action(mode=mode):
                     if mode == 'hostname':
                         self.d.put('global', 'private_dns_specifier', 'one.one.one.one')
@@ -1227,6 +1276,7 @@ trap - EXIT
                   'artifact': self.state.get('artifact'), 'device': self.state.get('device'),
                   'installed_apk_sha256': [item['sha256'] for item in self.state.get('installed_apks', [])],
                   'validated_capture_families': self.validated_families,
+                  'private_dns_baseline': self.config.get('private_dns_baseline'),
                   'scope': 'Observed application probes and capture windows; never a device-wide leak-free certification',
                   'status': 'fail' if failed else ('incomplete' if incomplete else 'pass_for_exercised_scope'),
                   'capture_kind': self.capture['kind'], 'required_probes': self.config.get('required_probes', ['ipv4', 'dns', 'direct4', 'doh']), 'results': self.results,

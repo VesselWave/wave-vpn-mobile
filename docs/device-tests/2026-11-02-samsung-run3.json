@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "source_threads": [
+    "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+    "2a7198b7-2664-4843-897e-2349a08a5be7",
+    "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+  ],
+  "artifact": {
+    "sha256": "bea52cc5937b2e7851acafc90738c7724c92c1f5d7c6429fe2586c451981aef8",
+    "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+    "package": "me.vwave.vpn",
+    "version_code": 2,
+    "version_name": "0.2-dev",
+    "debuggable": false
+  },
+  "device": {
+    "api": 36,
+    "release": "16",
+    "security_patch": "2026-09-05",
+    "page_size": 4096,
+    "abi": "arm64-v8a",
+    "emulator": false
+  },
+  "installed_apk_sha256": [],
+  "validated_capture_families": [],
+  "private_dns_baseline": "off",
+  "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+  "status": "fail",
+  "capture_kind": "gateway",
+  "required_probes": [
+    "ipv4",
+    "dns",
+    "direct4",
+    "doh"
+  ],
+  "results": [
+    {
+      "scenario": "positive-control",
+      "duration_seconds": 18.0,
+      "probes": {
+        "ipv4": {
+          "success": 8,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 0,
+          "failure": 9
+        },
+        "dns": {
+          "success": 8,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 8,
+          "failure": 0
+        },
+        "doh": {
+          "success": 8,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 18,
+          "failure": 0
+        },
+        "dot6": {
+          "success": 0,
+          "failure": 18
+        },
+        "bound-dns": {
+          "success": 8,
+          "failure": 0
+        },
+        "bound-tcp4": {
+          "success": 9,
+          "failure": 0
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 9
+        }
+      },
+      "window_start_unix_ms": 1793667285749,
+      "window_end_unix_ms": 1793667303749,
+      "action_completed_unix_ms": null,
+      "vpn_policy_at_window_start": {
+        "always_on_target_matches": false,
+        "blocking_enabled": false
+      },
+      "vpn_policy_at_window_end": {
+        "always_on_target_matches": false,
+        "blocking_enabled": false
+      },
+      "capture": {
+        "capture": "positive-control.pcap",
+        "sha256": "f946599a55b308c043c4922916563ea9fee3a5713518ed99e5890f1077a8d0cc",
+        "bytes": 140,
+        "first_packet_unix": 1793667294.666355,
+        "last_packet_unix": 1793667294.666355,
+        "observed_span_seconds": 0.0,
+        "counts": {
+          "packets": 1
+        }
+      },
+      "expected": "working",
+      "status": "pass",
+      "findings": [],
+      "privacy_assessed": false,
+      "required_probes": [
+        "ipv4",
+        "dns",
+        "direct4",
+        "doh"
+      ]
+    },
+    {
+      "scenario": "positive-control-completion",
+      "status": "fail",
+      "error": "IPv4 positive control did not detect all expected packet types"
+    },
+    {
+      "scenario": "steady",
+      "status": "skip",
+      "error": "Positive-control stage did not complete"
+    },
+    {
+      "scenario": "crash",
+      "status": "skip",
+      "error": "Positive-control stage did not complete"
+    },
+    {
+      "scenario": "disconnect",
+      "status": "skip",
+      "error": "Positive-control stage did not complete"
+    },
+    {
+      "scenario": "reconnect",
+      "status": "skip",
+      "error": "Positive-control stage did not complete"
+    },
+    {
+      "scenario": "wifi-reconnect",
+      "status": "skip",
+      "error": "Positive-control stage did not complete"
+    },
+    {
+      "scenario": "force-stop",
+      "status": "skip",
+      "error": "Positive-control stage did not complete"
+    }
+  ],
+  "cleanup_complete": true
+}

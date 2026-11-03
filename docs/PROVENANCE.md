@@ -134,3 +134,11 @@ consulted for the transport-socket/namespace behavior, and
 UDP limitation. No source or tests were copied. These tools use system networking
 commands and caller-supplied SSH targets; they have no build dependency on the
 personal infrastructure checkout.
+
+## Blocking VPN interface mitigation (2026-10-31)
+
+The authored `WaveVpnService` subclasses the existing Apache-2.0 WireGuard
+Android dependency. Its service binding and TUN handoff were designed against
+[GoBackend.java at the pinned 1.0.20260102 tag](https://github.com/WireGuard/wireguard-android/blob/1.0.20260102/tunnel/src/main/java/com/wireguard/android/backend/GoBackend.java),
+particularly `VpnService.getBuilder`, service ownership and `setState` teardown.
+No dependency source was copied. The new service/code remains GPL-3.0-or-later.

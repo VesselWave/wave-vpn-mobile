@@ -500,3 +500,86 @@ not open or reconnect the VPN app. The result records
 Wi-Fi auto-selection. The password travels over private ADB stdin, not host
 command arguments. Without this option the phone must return to the captured
 BSSID on its own. A different BSSID or a changed fixed capture MAC fails the test.
+
+## External emulator Ethernet capture
+
+For an independent capture outside Android, the emulator console can write a
+host-side PCAP of its virtual Ethernet LAN. **Do not assume this captures the
+emulator's separate Wi-Fi path.** The 2026-10-24 control showed Wi-Fi probe
+traffic absent from this host capture. For the exercised setup, save the Wi-Fi
+state, disable Wi-Fi, use `capture.interface: "eth0"` in private runner profiles,
+and require fresh unprotected controls at both capture points before testing.
+Keep the ordinary Android-interface capture as a second observation.
+
+Use the profile's explicit ADB host, server port and serial on every command.
+For example (replace the serial if needed):
+
+```sh
+adb -H 127.0.0.1 -P 5037 -s emulator-5554 shell settings get global wifi_on
+adb -H 127.0.0.1 -P 5037 -s emulator-5554 shell svc wifi disable
+adb -H 127.0.0.1 -P 5037 -s emulator-5554 emu network capture start comparison-001.pcap
+# Run the comparison matrix with capture.interface set to eth0.
+adb -H 127.0.0.1 -P 5037 -s emulator-5554 emu network capture stop
+# Restore the saved Wi-Fi state after all tests and runner cleanup.
+```
+
+The current console requires a **bare filename**, and returns the host path
+under the AVD's `console_out` directory. A capture file may remain buffered until
+stopped. Move it into private storage, restrict its permissions, and retain its
+hash. Raw captures may contain account/device/network data and must stay out of
+Git. Do not stop someone else's capture or overwrite an existing artifact.
+
+Retain both directions without a DNS-only filter. Slice the completed host
+capture by each report's `window_start_unix_ms` / `window_end_unix_ms`; verify
+clock alignment using the positive control. Classify outgoing frames using the
+actual guest Ethernet MAC, retaining incoming frames separately. The host
+capture starts earlier than each Android-interface capture, so packet totals
+need not be identical. Check that fresh marked ordinary resolver and raw DNS
+controls appear externally, and that replies and successful application probes
+prove reachability. IPv6 attempts on the LAN, or IPv6 working inside the VPN,
+do not establish an unprotected IPv6 Internet path.
+
+Finish/restore interrupted runner state before starting another app. A device
+panel snapshot helper using UiAutomation can conflict with the QA driver;
+finish its automation session before running the matrix. The live device stream
+can remain open. Dismiss vendor first-connection prompts during preparation,
+then retry into a fresh output directory; a setup failure is never a protection
+pass. Restore any temporarily granted permissions separately.
+
+For a targeted rerun of failed Private DNS modes, set `private_dns_modes` in the
+private profile to a nonempty list drawn from `off`, `automatic`, and `strict`.
+The default still exercises all three. For example, `["automatic", "strict"]`
+skips a previously passing Off window while retaining setting restoration on
+errors. External captures still require a fresh positive control.
+
+For an app that intentionally retains a blocking VPN on lockdown Disconnect,
+set `blocking_vpn_session` to its exact Android VPN session label. The driver
+still requires the disconnected UI, lockdown enabled, the target owner package,
+and that exact non-bypassable session. An ordinary active encrypted VPN is not
+accepted. This only validates the action; the independent blocked probes and
+external packet findings still decide privacy results. Omit this setting for
+apps that tear down their VPN on Disconnect.
+
+### Samsung replacement verification and DNS baseline
+
+Some Samsung builds retain the old VPN `TransportInfo.sessionId` after an
+in-place replacement. With `blocking_vpn_session` enabled, the runner verifies
+the active owner, non-bypassable policy, lockdown and the live blocking link's
+IPv4/IPv6 addresses, DNS and default routes. The session name alone is no longer
+accepted as evidence. External capture and blocked application probes remain
+required; a matching link does not itself prove privacy.
+
+For a controlled follow-up, `private_dns_baseline: "off"` or `"automatic"` sets
+that mode after fresh unprotected positive controls and before the protected
+scenarios. Omit it to preserve the original baseline. Cleanup restores the saved
+mode/specifier even after failure; the selected baseline is recorded in the
+filtered report. This option tests an OS setting, not an app-enforced workaround.
+
+`expected_wifi_bssid` pins observations to the controlled AP: the runner checks
+association before capture and at the window end and fails if it changed.
+These are samples, not continuous coverage. Set `wifi_reconnect_credentials_file`
+to the **current** hotspot's private account file; an old file may reconnect the
+phone to a different saved network and invalidate gateway capture assumptions.
+Do not run the QA UI driver concurrently with an active screen-automation
+session. Release only your own session while the driver runs, then reopen it
+for restoration; restarting ADB or device services is unnecessary.

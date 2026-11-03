@@ -114,8 +114,9 @@ def main():
             archive.add(package, arcname=name)
     run('git', '-C', str(REPO), 'archive', '--format=tar.gz', f'--prefix={name}-source/',
         f'--output={output / (name + "-source.tar.gz")}', 'HEAD')
+    shutil.copy2(apk, output / f'{name}.apk')
     manifest = output / f'{name}-SHA256SUMS'
-    manifest.write_text(''.join(f'{digest(path)}  {path.name}\n' for path in sorted(output.glob('*.tar.gz'))))
+    manifest.write_text(''.join(f'{digest(path)}  {path.name}\n' for path in sorted(path for path in output.iterdir() if path.name.endswith(('.tar.gz', '.apk')))))
     if args.sign_key:
         signature = output / f'{name}-SHA256SUMS.asc'
         run('gpg', '--local-user', args.sign_key, '--armor', '--detach-sign',
@@ -124,7 +125,7 @@ def main():
         public.write_text(run('gpg', '--armor', '--export', args.sign_key, capture=True))
         run('bash', 'scripts/verify-release.sh', str(public), str(manifest), str(signature), args.sign_key)
     print(f'Candidate only, not published: {output}')
-    print('Device/privacy release gates must be closed independently before distribution.')
+    print('Production qualification gates remain independent; see documented prerelease limitations.')
 
 
 if __name__ == '__main__':
