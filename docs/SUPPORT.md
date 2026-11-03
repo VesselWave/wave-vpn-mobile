@@ -1,6 +1,8 @@
 # Installation and support
 
-Wave VPN v0.1.0 is an experimental test build, not production-qualified protection. Read the [release notes](RELEASE-v0.1.0.md) for its known limits before relying on it.
+**v0.1.0 is an early release.** Anyone is welcome to use it, but it hasn't been fully tested on every device and system yet.
+
+**Known issue, Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and blocking enabled. If that matters for how you use a VPN, keep it in mind. See the [full Samsung test report](qa/RELEASE-SAMSUNG-STOCK.md).
 
 ## Devices
 
@@ -13,7 +15,7 @@ Android 8 or newer. The release build has been run on:
 | Emulator | 17 | Release APK smoke test, crash recovery with and without Always-on ([report](qa/RELEASE-EMULATOR-SMOKE.md)) |
 | Emulators | 8, 15 (16 KB pages), 16 | Runtime checks of the signed, minified build |
 
-Native IPv6 uplinks, captured cellular data and long-running reliability aren't covered yet. A working WireGuard connection doesn't by itself prove that the whole device is leak-free; see [verification](VERIFICATION.md).
+Everything tested so far is in [verification](VERIFICATION.md).
 
 ## Installing and updating
 

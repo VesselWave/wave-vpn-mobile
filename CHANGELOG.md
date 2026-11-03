@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 · 2026-11-02 · experimental prerelease
+## 0.1.0 · 2026-11-02 · early release
 
 First public build. [Release notes](docs/RELEASE-v0.1.0.md).
 
@@ -14,8 +14,6 @@ First public build. [Release notes](docs/RELEASE-v0.1.0.md).
 - Disconnect stays disconnected: Android's Always-on restart can't silently reconnect
 - Device test runner with packet-capture positive controls, signed-artifact checks, filtered reports and resumable cleanup
 
-**Known issues**
+**Known issue**
 
-- Stock Samsung Android 16: DNS observed outside the tunnel during crash, Wi-Fi recovery and force-stop, with Always-on, blocking and Private DNS off ([report](docs/qa/RELEASE-SAMSUNG-STOCK.md)).
-- Android 16 emulator: app DNS escaped during process death despite Always-on and blocking ([follow-up](docs/qa/RELEASE-FOLLOWUP.md)).
-- Not yet covered: attributing Pixel background DNS/DoT, and broader devices and long-running reliability.
+- Samsung Android 16: DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and blocking enabled ([report](docs/qa/RELEASE-SAMSUNG-STOCK.md)).
