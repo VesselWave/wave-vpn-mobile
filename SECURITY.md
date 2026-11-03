@@ -4,7 +4,9 @@ Wave VPN 0.1.0 is an experimental prerelease. No version currently has a
 production support or security maintenance promise. See
 [verification](docs/VERIFICATION.md) for tested behavior and outstanding device tests.
 
-Known limitation: an Android 16 emulator exposed application DNS names on the
+Known limitation: stock Samsung Android 16 captures retain cleartext DNS during
+crash, Wi-Fi recovery and force-stop, including with Private DNS Off. See
+[the Samsung report](docs/RELEASE-SAMSUNG-STOCK.md). An Android 16 emulator exposed application DNS names on the
 underlying network during VPN process death despite Always-on VPN and blocking.
 API 37.0 and 37.2 SDK images also exposed fresh probe DNS during disconnect;
 see the [expanded evidence review](docs/RELEASE-ROUND3.md).
@@ -38,6 +40,7 @@ Android APK signing certificate SHA-256:
 
 The [public APK certificate](docs/keys/wave-android-release.pem) identifies the
 APK update signing key. This is distinct from the OpenPGP key. Debug APKs have
-a different application ID and certificate. No production APK has been published.
+a different application ID and certificate. The v0.1.0 experimental APK uses this signing identity; signing does not
+establish production qualification.
 Private keys, keystores and passphrases are never included in source control.
 See [release signing](docs/RELEASE-SIGNING.md).

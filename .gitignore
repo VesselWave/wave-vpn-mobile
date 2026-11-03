@@ -9,3 +9,15 @@ local.properties
 
 __pycache__/
 *.pyc
+
+# Private release/test inputs and archived references
+/.reference/
+/old/
+*.pcap
+*.pcapng
+*.key
+*.pfx
+.env
+.env.*
+account.json
+*.profile

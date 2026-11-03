@@ -6,6 +6,13 @@ Licensed under GPLv3 or later; not affiliated with AirVPN.
 This repository builds independently. See [provenance](docs/PROVENANCE.md) for
 pinned Eddie references and the authored UI retained during the backend rewrite.
 
+## Experimental release
+
+[v0.1.0 release notes](docs/RELEASE-v0.1.0.md) describe the known privacy and
+qualification limits. See [installation and support](docs/SUPPORT.md) and the
+[public-release checklist](docs/PUBLIC-RELEASE-CHECKLIST.md) before testing or
+sharing a build. This is not production-qualified VPN protection.
+
 ## Build
 
 Requires JDK 17 and Android SDK 37. Set `ANDROID_HOME`, or put your SDK path in

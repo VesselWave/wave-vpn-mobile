@@ -1,7 +1,12 @@
 # Installation and support
 
-Wave is an unpublished development app. The tested configurations and known DNS
-failure are recorded in [RELEASE-FOLLOWUP.md](RELEASE-FOLLOWUP.md). A successful
+Wave v0.1.0 is an experimental prerelease, not production-qualified protection.
+See the [release and downloads](https://github.com/VesselWave/wave-vpn-mobile/releases/tag/v0.1.0)
+and [release notes](RELEASE-v0.1.0.md). Repository access is currently restricted;
+public availability must be checked before sharing these links with testers.
+The tested configurations and known DNS failures are recorded in
+[the Samsung report](RELEASE-SAMSUNG-STOCK.md) and
+[RELEASE-FOLLOWUP.md](RELEASE-FOLLOWUP.md). A successful
 WireGuard connection does not establish whole-device leak protection.
 
 Android 8 or later is the build minimum. Signed runtime evidence covers an
