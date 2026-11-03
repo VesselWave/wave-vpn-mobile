@@ -1,11 +1,13 @@
 # Security status
 
-Wave VPN is an unpublished development application. No version currently has a
+Wave VPN 0.1.0 is an experimental prerelease. No version currently has a
 production support or security maintenance promise. See
 [verification](docs/VERIFICATION.md) for tested behavior and outstanding device tests.
 
 Known limitation: an Android 16 emulator exposed application DNS names on the
 underlying network during VPN process death despite Always-on VPN and blocking.
+API 37.0 and 37.2 SDK images also exposed fresh probe DNS during disconnect;
+see the [expanded evidence review](docs/RELEASE-ROUND3.md).
 This application does not promise device-wide leak prevention across Android
 versions. See the [release follow-up](docs/RELEASE-FOLLOWUP.md) for evidence,
 physical-device results and remaining gates.

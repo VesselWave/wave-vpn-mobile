@@ -33,7 +33,7 @@ public class Driver extends Instrumentation {
             .put("label", label).put("description", node.isEditable() ? string(node.getHintText()) : string(node.getContentDescription()))
             .put("id", string(node.getViewIdResourceName())).put("package", string(node.getPackageName()))
             .put("editable", node.isEditable()).put("password", node.isPassword())
-            .put("enabled", node.isEnabled()).put("checked", node.isChecked())
+            .put("enabled", node.isEnabled()).put("checked", node.isChecked()).put("selected", node.isSelected())
             .put("scrollable", node.isScrollable()).put("checkable", node.isCheckable()).put("clickable", node.isClickable()).put("visible", node.isVisibleToUser())
             .put("bounds", new JSONArray(new int[]{bounds.left, bounds.top, bounds.right, bounds.bottom}));
         rows.put(row);

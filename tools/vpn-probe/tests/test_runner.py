@@ -53,6 +53,29 @@ class PacketEvidenceTests(unittest.TestCase):
         result = self.summary(pcap([frame(src='192.0.2.2')]), client_addresses=['192.0.2.1'])
         self.assertNotIn('raw_dns4_out', result['counts'])
 
+    def test_mac_scope_catches_ipv6_without_a_known_privacy_address(self):
+        mac = bytes.fromhex('021122334455')
+        payload = b'probe-123.1-1-1-1.sslip.io'
+        udp = struct.pack('!HHHH', 12345, 53, 8 + len(payload), 0) + payload
+        ip6 = struct.pack('!IHBB', 6 << 28, len(udp), 17, 64)
+        ip6 += socket.inet_pton(socket.AF_INET6, '2001:db8::1234')
+        ip6 += socket.inet_pton(socket.AF_INET6, '2606:4700:4700::1111')
+        packet = bytes(6) + mac + b'\x86\xdd' + ip6 + udp
+        result = self.summary(pcap([packet]), client_addresses=['192.0.2.1'], client_mac='02:11:22:33:44:55')
+        self.assertEqual(result['counts']['system_dns6_out'], 1)
+        other = self.summary(pcap([packet]), client_mac='02:11:22:33:44:66')
+        self.assertNotIn('system_dns6_out', other['counts'])
+        self.assertNotIn('02:11:22:33:44:55', json.dumps(result))
+
+    def test_exclusive_ap_scope_survives_client_mac_rotation(self):
+        def source(mac):
+            packet = frame()
+            return packet[:6] + bytes.fromhex(mac) + packet[12:]
+        result = self.summary(pcap([source('021122334455'), source('021122334466'),
+                                    source('021122334477')]),
+                              client_addresses=['192.0.2.99'], ap_mac='02:11:22:33:44:77')
+        self.assertEqual(result['counts']['raw_dns4_out'], 2)
+
     def test_transport_port_is_configurable_and_not_called_crypto_validation(self):
         result = self.summary(pcap([frame(port=51820)]), wireguard_port=51820)
         self.assertEqual(result['counts']['wireguard_out'], 1)
@@ -73,8 +96,73 @@ class PacketEvidenceTests(unittest.TestCase):
         findings = runner.capture_findings(self.summary(pcap([frame(payload=b'background.example')])) )
         self.assertTrue(any('origin_not_assumed' in finding for finding in findings))
 
+    def test_default_and_bound_resolver_evidence_stays_separate_and_failing(self):
+        result = self.summary(pcap([
+            frame(payload=b'probe-123.1-1-1-1.sslip.io'),
+            frame(payload=b'probe-bound-456.1-1-1-1.sslip.io')]))
+        self.assertEqual(result['counts']['system_dns4_out'], 2)
+        self.assertEqual(result['counts']['default_system_dns4_out'], 1)
+        self.assertEqual(result['counts']['bound_system_dns4_out'], 1)
+        self.assertIn('probe_escape_ipv4', runner.capture_findings(result))
+
+    def test_shared_https_or_dot_endpoint_is_a_finding_without_probe_attribution(self):
+        for port in (443, 853):
+            findings = runner.capture_findings(self.summary(pcap([frame(port=port, tcp=True)])))
+            self.assertIn('probe_endpoint_transport_observed_ipv4_origin_not_assumed', findings)
+            self.assertNotIn('probe_escape_ipv4', findings)
+        marked = runner.capture_findings(self.summary(pcap([frame()])))
+        self.assertIn('probe_escape_ipv4', marked)
+
 
 class RunnerSafetyTests(unittest.TestCase):
+    def test_idle_ui_does_not_prove_android_tunnel_teardown(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run = runner.Run({'package': 'test.package', 'adb': {'serial': 'test-only'},
+                              'capture': {'kind': 'none'}}, temp, runner.parser().parse_args(['run']))
+            run.open_overview = lambda: ['Connect']
+            run.d.wait_labels = lambda *a: ['Connect']
+            run.active_vpn = lambda: True
+            def check(predicate, seconds, reason):
+                runner.require(predicate(), reason)
+            run.wait_for = check
+            with self.assertRaisesRegex(runner.Failure, 'active target VPN'):
+                run.disconnect()
+            run.active_vpn = lambda: False
+            run.disconnect()
+
+    def test_disconnect_scenario_establishes_a_connected_start(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run = runner.Run({'package': 'test.package', 'adb': {'serial': 'test-only'},
+                              'capture': {'kind': 'none'}}, temp, runner.parser().parse_args(['run']))
+            calls = []
+            run.connect = lambda: calls.append('connect')
+            run.protection = lambda enabled: calls.append(('protection', enabled))
+            run.observe = lambda *a, **kw: calls.append(('observe', a[0], kw['expected']))
+            run.run_scenario('disconnect')
+            self.assertEqual(calls, ['connect', ('protection', True), ('observe', 'disconnect', 'blocked')])
+
+    def test_debug_launcher_namespace_is_resolved_and_foreign_components_rejected(self):
+        device = runner.Device({'adb': {'serial': 'test-only'}})
+        calls = []
+        def shell(*args):
+            calls.append(args)
+            return 'me.vwave.vpn.dev/me.vwave.vpn.MainActivity' if args[0] == 'cmd' else ''
+        device.shell = shell
+        with patch.object(runner.time, 'sleep'):
+            device.open('me.vwave.vpn.dev')
+        self.assertEqual(calls[-1][-1], 'me.vwave.vpn.dev/me.vwave.vpn.MainActivity')
+        device.shell = lambda *a: 'other.package/other.package.MainActivity'
+        with self.assertRaises(runner.Failure):
+            device.open('me.vwave.vpn.dev')
+
+    def test_unconfigured_vpn_policy_is_disabled_without_a_settings_entry(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run = runner.Run({'package': 'test.package', 'adb': {'serial': 'test-only'},
+                              'capture': {'kind': 'none'}}, temp, runner.parser().parse_args(['run']))
+            run.d.setting = lambda *a: 'null'
+            run.vpn_settings = lambda: self.fail('An unprepared VPN has no Settings entry')
+            run.protection(False)
+
     def test_credentials_are_stdin_not_instrumentation_or_shell_arguments(self):
         device = runner.Device({'adb': {'serial': 'test-only'}})
         calls = []
@@ -118,6 +206,51 @@ class RunnerSafetyTests(unittest.TestCase):
             self.assertIn('\\$(cat /run/lock/wave-vpn-qa-gateway/owner', script)
             self.assertNotIn('192.0.2.1', (run.output / 'private/state.json').name)
 
+    def test_gateway_route_must_match_the_configured_capture_host(self):
+        with tempfile.TemporaryDirectory() as temp:
+            args = runner.parser().parse_args(['run'])
+            run = runner.Run({'package': 'test.package', 'adb': {'serial': 'test-only'},
+                              'capture': {'kind': 'gateway', 'gateway_ipv4': '192.0.2.2',
+                                          'phone_interface': 'wlan0', 'manage': False}}, temp, args)
+            for route, expected in [('default via 192.0.2.2 dev wlan0', True),
+                                    ('default via 192.0.2.3 dev wlan0', False),
+                                    ('default via 192.0.2.2 dev rmnet0', False)]:
+                with self.subTest(route=route):
+                    run.d.shell = lambda *a, **kw: route
+                    def verify(predicate, seconds, reason):
+                        self.assertEqual(predicate(), expected)
+                        if not expected:
+                            raise runner.Failure(reason)
+                    run.wait_for = verify
+                    if expected:
+                        run.setup_gateway()
+                    else:
+                        with self.assertRaises(runner.Failure):
+                            run.setup_gateway()
+
+    def test_wifi_restore_does_not_collapse_already_visible_static_ip_options(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run = runner.Run({'package': 'test.package', 'adb': {'serial': 'test-only'},
+                              'capture': {'kind': 'gateway', 'wifi_ssid': 'qa-only'}},
+                             temp, runner.parser().parse_args(['run']))
+            for expanded in (False, True):
+                with self.subTest(expanded=expanded):
+                    labels = ['qa-only']
+                    taps = []
+                    def tap(label):
+                        taps.append(label)
+                        if label == 'qa-only':
+                            labels[:] = ['Advanced options'] + (['IP settings'] if expanded else [])
+                        elif label == 'Advanced options':
+                            self.assertNotIn('IP settings', labels)
+                            labels.append('IP settings')
+                    run.d.shell = lambda *a: ''
+                    run.d.labels = lambda: labels[:]
+                    run.d.tap = tap
+                    run.d.wait_labels = lambda predicate: self.assertTrue(predicate(labels))
+                    run.wifi_form()
+                    self.assertEqual('Advanced options' in taps, not expanded)
+
     def test_early_success_cannot_mask_failed_post_crash_recovery(self):
         with tempfile.TemporaryDirectory() as temp:
             args = runner.parser().parse_args(['run'])
@@ -134,11 +267,75 @@ class RunnerSafetyTests(unittest.TestCase):
             self.assertEqual(result['status'], 'fail')
             self.assertIn('did not recover', result['error'])
 
+    def test_dhcp_restore_is_resumable_but_still_requires_capture_route_removal(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run = runner.Run({'package': 'test.package', 'adb': {'serial': 'test-only'},
+                              'capture': {'kind': 'gateway', 'gateway_ipv4': '192.0.2.2'}},
+                             temp, runner.parser().parse_args(['run']))
+            run.wifi_form = lambda: None
+            for mode, old_route in [('Static', False), ('DHCP', False), ('DHCP', True)]:
+                with self.subTest(mode=mode, old_route=old_route):
+                    run.state['wifi_changed'] = True
+                    calls = []
+                    run.d.labels = lambda: [mode]
+                    run.d.tap = lambda label: calls.append(label)
+                    run.d.ui = lambda action: calls.append(action)
+                    run.d.shell = lambda *a: 'default via 192.0.2.2 dev wlan0' if old_route else ''
+                    def verify(predicate, seconds, reason):
+                        if not predicate():
+                            raise runner.Failure(reason)
+                    run.wait_for = verify
+                    if old_route:
+                        with self.assertRaises(runner.Failure):
+                            run.restore_wifi()
+                        self.assertTrue(run.state['wifi_changed'])
+                    else:
+                        run.restore_wifi()
+                        self.assertNotIn('wifi_changed', run.state)
+                    self.assertEqual(calls, ['Static', 'DHCP', 'Save'] if mode == 'Static' else ['back'])
+
     def test_failed_fresh_snapshot_never_reuses_cached_nodes(self):
         device = runner.Device({'adb': {'serial': 'test-only'}})
         device.shell = lambda *a, **kw: 'INSTRUMENTATION_RESULT: error=failed'
         with self.assertRaises(runner.Failure):
             device.nodes()
+
+    def test_soak_detects_outage_after_early_success_and_preserves_privacy_failure(self):
+        with tempfile.TemporaryDirectory() as temp:
+            args = runner.parser().parse_args(['run'])
+            run = runner.Run({'package': 'test.package', 'adb': {'serial': 'test-only'},
+                              'capture': {'kind': 'none'}, 'soak_seconds': 60}, temp, args)
+            run.connect = lambda: None
+            run.protection = lambda enabled: None
+            for times, initial_status, expected in [([1000], 'pass', 'fail'),
+                                                     ([1000, 25000, 45000, 59000], 'pass', 'pass'),
+                                                     ([1000, 25000, 45000, 59000], 'fail', 'fail')]:
+                with self.subTest(times=times, initial_status=initial_status):
+                    result = {'status': initial_status, 'required_probes': ['dns'],
+                              'window_start_unix_ms': 0, 'window_end_unix_ms': 60000}
+                    rows = [[str(t), 'soak', 'dns', 'OK answer'] for t in times]
+                    run.observe = lambda *a: (result, rows)
+                    run.run_scenario('traffic-soak')
+                    self.assertEqual(result['status'], expected)
+                    self.assertIn('dns', result['longest_success_gap_seconds'])
+
+    def test_probe_start_waits_for_delayed_process_instead_of_assuming_half_a_second(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run = runner.Run({'package': 'test.package', 'adb': {'serial': 'test-only'}, 'capture': {'kind': 'none'}},
+                             temp, runner.parser().parse_args(['run']))
+            run.d.shell = lambda *a, **kw: ''
+            with patch.object(run.d, 'pid', side_effect=['', '', '123']), patch.object(runner.time, 'sleep'):
+                run.probe_start('test-phase')
+
+    def test_soak_cannot_outlive_the_gateway_cleanup_lease(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run = runner.Run({'package': 'test.package', 'adb': {'serial': 'test-only'},
+                              'capture': {'kind': 'gateway', 'manage': True}, 'soak_seconds': 3600},
+                             temp, runner.parser().parse_args(['run']))
+            run.state['gateway_cleanup_deadline_unix_ms'] = 3600000
+            run.connect = lambda: self.fail('Expired capture infrastructure must not start a soak')
+            with patch.object(runner.time, 'time', return_value=1800), self.assertRaises(runner.Failure):
+                run.run_scenario('traffic-soak')
 
     def test_probe_window_excludes_previous_phase_and_inflight_grace(self):
         rows = '100\told\tipv4\tOK old\n200\tcurrent\tipv4\tOK inflight\n900\tcurrent\tipv4\tFAIL timeout\n'

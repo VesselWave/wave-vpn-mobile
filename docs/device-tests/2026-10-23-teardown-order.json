@@ -1,0 +1,743 @@
+{
+  "candidate_head": "3ea82a6da625c01f44988338f2da9abcb45e81e2",
+  "private_evidence_root": "/private/tmp/wave-android-order-20261023",
+  "production_changed": false,
+  "artifact": {
+    "sha256": "0eacf40e886fa08b923a39a62b920acf154cf7b26d04aeea3d34b3fa286d973f",
+    "signer_sha256": "522b203a3989b648a59d9686edf497fed73c7384b70c05065d537c0417063fee",
+    "package": "me.vwave.vpn.dev",
+    "version_code": 2,
+    "version_name": "0.2-dev+debug",
+    "debuggable": true
+  },
+  "device": {
+    "api": 37,
+    "release": "17",
+    "security_patch": "2026-08-05",
+    "page_size": 4096,
+    "abi": "arm64-v8a",
+    "emulator": true
+  },
+  "cleanup_complete": true,
+  "results": [
+    {
+      "scenario": "order-1-before",
+      "status": "fail",
+      "findings": [
+        "cleartext_dns_observed_ipv4_origin_not_assumed",
+        "nonprobe_dot_transport_observed_ipv4_origin_not_assumed",
+        "probe_escape_ipv4"
+      ],
+      "counts": {
+        "packets": 167,
+        "wireguard_out": 37,
+        "all_dot4_syn": 1,
+        "all_dns4_out": 4,
+        "system_dns4_out": 4,
+        "default_system_dns4_out": 2,
+        "bound_system_dns4_out": 2
+      },
+      "dns_begin_ms": 1792721565600,
+      "dns_end_ms": 1792721570631,
+      "trigger_received_ms": 1792721565611.0,
+      "lookup_pending_at_trigger": true,
+      "lookup_end_right_censored": false,
+      "events": [
+        {
+          "ms": 1792721565611.0,
+          "event": "TRIGGER_RECEIVED"
+        },
+        {
+          "ms": 1792721565612.0,
+          "event": "DISCONNECT order=before"
+        },
+        {
+          "ms": 1792721565612.0,
+          "event": "STOP_REQUEST before"
+        },
+        {
+          "ms": 1792721565614.0,
+          "event": "CANCEL_DOWN_BEGIN"
+        },
+        {
+          "ms": 1792721565614.0,
+          "event": "SERVICE_DESTROY"
+        },
+        {
+          "ms": 1792721565654.0,
+          "event": "CANCEL_DOWN_RETURN"
+        },
+        {
+          "ms": 1792721565654.0,
+          "event": "EXPLICIT_DOWN_RETURN"
+        }
+      ],
+      "android_disconnect_ms": [
+        1792721565619.0
+      ],
+      "dns_packets": [
+        {
+          "ms": 1792721565624.856,
+          "workload": "ordinary",
+          "socket_tuple_match_count": 31,
+          "socket_tuple_first": {
+            "device_ms": 1792721565684,
+            "uid": 10232,
+            "fwmark": "0xe0067"
+          },
+          "socket_tuple_last": {
+            "device_ms": 1792721570473,
+            "uid": 10232,
+            "fwmark": "0xe0067"
+          },
+          "socket_uid_mark_pairs": [
+            [
+              10232,
+              "0xe0067"
+            ]
+          ]
+        },
+        {
+          "ms": 1792721565626.249,
+          "workload": "bound",
+          "socket_tuple_match_count": 31,
+          "socket_tuple_first": {
+            "device_ms": 1792721565684,
+            "uid": 10232,
+            "fwmark": "0xe0067"
+          },
+          "socket_tuple_last": {
+            "device_ms": 1792721570473,
+            "uid": 10232,
+            "fwmark": "0xe0067"
+          },
+          "socket_uid_mark_pairs": [
+            [
+              10232,
+              "0xe0067"
+            ]
+          ]
+        },
+        {
+          "ms": 1792721565627.006,
+          "workload": "bound",
+          "socket_tuple_match_count": 31,
+          "socket_tuple_first": {
+            "device_ms": 1792721565684,
+            "uid": 10232,
+            "fwmark": "0xe0067"
+          },
+          "socket_tuple_last": {
+            "device_ms": 1792721570473,
+            "uid": 10232,
+            "fwmark": "0xe0067"
+          },
+          "socket_uid_mark_pairs": [
+            [
+              10232,
+              "0xe0067"
+            ]
+          ]
+        },
+        {
+          "ms": 1792721565628.246,
+          "workload": "ordinary",
+          "socket_tuple_match_count": 31,
+          "socket_tuple_first": {
+            "device_ms": 1792721565684,
+            "uid": 10232,
+            "fwmark": "0xe0067"
+          },
+          "socket_tuple_last": {
+            "device_ms": 1792721570473,
+            "uid": 10232,
+            "fwmark": "0xe0067"
+          },
+          "socket_uid_mark_pairs": [
+            [
+              10232,
+              "0xe0067"
+            ]
+          ]
+        }
+      ],
+      "policy_start": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "policy_end": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "all_sampled_policy_pairs_protected": true,
+      "all_sampled_rules_have_prohibit": true,
+      "sample_count": 163,
+      "sampling_command_span_ms": {
+        "min": 47,
+        "max": 78
+      }
+    },
+    {
+      "scenario": "order-2-before",
+      "status": "fail",
+      "findings": [
+        "nonprobe_dot_transport_observed_ipv4_origin_not_assumed"
+      ],
+      "counts": {
+        "packets": 282,
+        "wireguard_out": 103,
+        "all_dot4_syn": 1
+      },
+      "dns_begin_ms": 1792721597294,
+      "dns_end_ms": null,
+      "trigger_received_ms": 1792721597306.0,
+      "lookup_pending_at_trigger": true,
+      "lookup_end_right_censored": true,
+      "events": [
+        {
+          "ms": 1792721597306.0,
+          "event": "TRIGGER_RECEIVED"
+        },
+        {
+          "ms": 1792721597306.0,
+          "event": "DISCONNECT order=before"
+        },
+        {
+          "ms": 1792721597306.0,
+          "event": "STOP_REQUEST before"
+        },
+        {
+          "ms": 1792721597307.0,
+          "event": "CANCEL_DOWN_BEGIN"
+        },
+        {
+          "ms": 1792721597307.0,
+          "event": "SERVICE_DESTROY"
+        },
+        {
+          "ms": 1792721597346.0,
+          "event": "CANCEL_DOWN_RETURN"
+        },
+        {
+          "ms": 1792721597346.0,
+          "event": "EXPLICIT_DOWN_RETURN"
+        }
+      ],
+      "android_disconnect_ms": [
+        1792721597311.0
+      ],
+      "dns_packets": [],
+      "policy_start": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "policy_end": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "all_sampled_policy_pairs_protected": true,
+      "all_sampled_rules_have_prohibit": true,
+      "sample_count": 159,
+      "sampling_command_span_ms": {
+        "min": 49,
+        "max": 91
+      }
+    },
+    {
+      "scenario": "order-3-before",
+      "status": "fail",
+      "findings": [
+        "cleartext_dns_observed_ipv4_origin_not_assumed",
+        "nonprobe_dot_transport_observed_ipv4_origin_not_assumed",
+        "probe_escape_ipv4"
+      ],
+      "counts": {
+        "packets": 329,
+        "wireguard_out": 149,
+        "all_dot4_syn": 1,
+        "all_dns4_out": 2,
+        "system_dns4_out": 2,
+        "default_system_dns4_out": 2
+      },
+      "dns_begin_ms": 1792721629989,
+      "dns_end_ms": 1792721635018,
+      "trigger_received_ms": 1792721630001.0,
+      "lookup_pending_at_trigger": true,
+      "lookup_end_right_censored": false,
+      "events": [
+        {
+          "ms": 1792721630001.0,
+          "event": "TRIGGER_RECEIVED"
+        },
+        {
+          "ms": 1792721630001.0,
+          "event": "DISCONNECT order=before"
+        },
+        {
+          "ms": 1792721630001.0,
+          "event": "STOP_REQUEST before"
+        },
+        {
+          "ms": 1792721630002.0,
+          "event": "SERVICE_DESTROY"
+        },
+        {
+          "ms": 1792721630002.0,
+          "event": "CANCEL_DOWN_BEGIN"
+        },
+        {
+          "ms": 1792721630028.0,
+          "event": "CANCEL_DOWN_RETURN"
+        },
+        {
+          "ms": 1792721630029.0,
+          "event": "EXPLICIT_DOWN_RETURN"
+        }
+      ],
+      "android_disconnect_ms": [
+        1792721630007.0
+      ],
+      "dns_packets": [
+        {
+          "ms": 1792721630011.708,
+          "workload": "ordinary",
+          "socket_tuple_match_count": 31,
+          "socket_tuple_first": {
+            "device_ms": 1792721630095,
+            "uid": 10232,
+            "fwmark": "0xe0069"
+          },
+          "socket_tuple_last": {
+            "device_ms": 1792721634929,
+            "uid": 10232,
+            "fwmark": "0xe0069"
+          },
+          "socket_uid_mark_pairs": [
+            [
+              10232,
+              "0xe0069"
+            ]
+          ]
+        },
+        {
+          "ms": 1792721630013.753,
+          "workload": "ordinary",
+          "socket_tuple_match_count": 31,
+          "socket_tuple_first": {
+            "device_ms": 1792721630095,
+            "uid": 10232,
+            "fwmark": "0xe0069"
+          },
+          "socket_tuple_last": {
+            "device_ms": 1792721634929,
+            "uid": 10232,
+            "fwmark": "0xe0069"
+          },
+          "socket_uid_mark_pairs": [
+            [
+              10232,
+              "0xe0069"
+            ]
+          ]
+        }
+      ],
+      "policy_start": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "policy_end": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "all_sampled_policy_pairs_protected": true,
+      "all_sampled_rules_have_prohibit": true,
+      "sample_count": 162,
+      "sampling_command_span_ms": {
+        "min": 48,
+        "max": 76
+      }
+    },
+    {
+      "scenario": "order-4-after",
+      "status": "fail",
+      "findings": [
+        "cleartext_dns_observed_ipv4_origin_not_assumed",
+        "nonprobe_dot_transport_observed_ipv4_origin_not_assumed",
+        "probe_escape_ipv4"
+      ],
+      "counts": {
+        "packets": 210,
+        "wireguard_out": 56,
+        "all_dot4_syn": 1,
+        "all_dns4_out": 5,
+        "system_dns4_out": 4,
+        "default_system_dns4_out": 2,
+        "bound_system_dns4_out": 2
+      },
+      "dns_begin_ms": 1792721660212,
+      "dns_end_ms": 1792721665243,
+      "trigger_received_ms": 1792721660224.0,
+      "lookup_pending_at_trigger": true,
+      "lookup_end_right_censored": false,
+      "events": [
+        {
+          "ms": 1792721660224.0,
+          "event": "TRIGGER_RECEIVED"
+        },
+        {
+          "ms": 1792721660224.0,
+          "event": "DISCONNECT order=after"
+        },
+        {
+          "ms": 1792721660224.0,
+          "event": "CANCEL_DOWN_BEGIN"
+        },
+        {
+          "ms": 1792721660262.0,
+          "event": "CANCEL_DOWN_RETURN"
+        },
+        {
+          "ms": 1792721660262.0,
+          "event": "EXPLICIT_DOWN_RETURN"
+        },
+        {
+          "ms": 1792721660262.0,
+          "event": "STOP_REQUEST after"
+        },
+        {
+          "ms": 1792721660266.0,
+          "event": "SERVICE_DESTROY"
+        }
+      ],
+      "android_disconnect_ms": [
+        1792721660229.0
+      ],
+      "dns_packets": [
+        {
+          "ms": 1792721660234.646,
+          "workload": "ordinary",
+          "socket_tuple_match_count": 31,
+          "socket_tuple_first": {
+            "device_ms": 1792721660308,
+            "uid": 10232,
+            "fwmark": "0xe006a"
+          },
+          "socket_tuple_last": {
+            "device_ms": 1792721665111,
+            "uid": 10232,
+            "fwmark": "0xe006a"
+          },
+          "socket_uid_mark_pairs": [
+            [
+              10232,
+              "0xe006a"
+            ]
+          ]
+        },
+        {
+          "ms": 1792721660235.154,
+          "workload": "bound",
+          "socket_tuple_match_count": 31,
+          "socket_tuple_first": {
+            "device_ms": 1792721660308,
+            "uid": 10232,
+            "fwmark": "0xe006a"
+          },
+          "socket_tuple_last": {
+            "device_ms": 1792721665111,
+            "uid": 10232,
+            "fwmark": "0xe006a"
+          },
+          "socket_uid_mark_pairs": [
+            [
+              10232,
+              "0xe006a"
+            ]
+          ]
+        },
+        {
+          "ms": 1792721660236.873,
+          "workload": "ordinary",
+          "socket_tuple_match_count": 31,
+          "socket_tuple_first": {
+            "device_ms": 1792721660308,
+            "uid": 10232,
+            "fwmark": "0xe006a"
+          },
+          "socket_tuple_last": {
+            "device_ms": 1792721665111,
+            "uid": 10232,
+            "fwmark": "0xe006a"
+          },
+          "socket_uid_mark_pairs": [
+            [
+              10232,
+              "0xe006a"
+            ]
+          ]
+        },
+        {
+          "ms": 1792721660236.876,
+          "workload": "bound",
+          "socket_tuple_match_count": 31,
+          "socket_tuple_first": {
+            "device_ms": 1792721660308,
+            "uid": 10232,
+            "fwmark": "0xe006a"
+          },
+          "socket_tuple_last": {
+            "device_ms": 1792721665111,
+            "uid": 10232,
+            "fwmark": "0xe006a"
+          },
+          "socket_uid_mark_pairs": [
+            [
+              10232,
+              "0xe006a"
+            ]
+          ]
+        },
+        {
+          "ms": 1792721660277.263,
+          "workload": "unassigned",
+          "socket_tuple_match_count": 0,
+          "socket_tuple_first": null,
+          "socket_tuple_last": null,
+          "socket_uid_mark_pairs": []
+        }
+      ],
+      "policy_start": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "policy_end": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "all_sampled_policy_pairs_protected": true,
+      "all_sampled_rules_have_prohibit": true,
+      "sample_count": 164,
+      "sampling_command_span_ms": {
+        "min": 48,
+        "max": 76
+      }
+    },
+    {
+      "scenario": "order-5-after",
+      "status": "fail",
+      "findings": [
+        "nonprobe_dot_transport_observed_ipv4_origin_not_assumed"
+      ],
+      "counts": {
+        "packets": 207,
+        "wireguard_out": 37,
+        "all_dot4_syn": 1
+      },
+      "dns_begin_ms": 1792721691665,
+      "dns_end_ms": null,
+      "trigger_received_ms": 1792721691676.0,
+      "lookup_pending_at_trigger": true,
+      "lookup_end_right_censored": true,
+      "events": [
+        {
+          "ms": 1792721691676.0,
+          "event": "TRIGGER_RECEIVED"
+        },
+        {
+          "ms": 1792721691676.0,
+          "event": "DISCONNECT order=after"
+        },
+        {
+          "ms": 1792721691677.0,
+          "event": "CANCEL_DOWN_BEGIN"
+        },
+        {
+          "ms": 1792721691703.0,
+          "event": "CANCEL_DOWN_RETURN"
+        },
+        {
+          "ms": 1792721691704.0,
+          "event": "EXPLICIT_DOWN_RETURN"
+        },
+        {
+          "ms": 1792721691704.0,
+          "event": "STOP_REQUEST after"
+        },
+        {
+          "ms": 1792721691706.0,
+          "event": "SERVICE_DESTROY"
+        }
+      ],
+      "android_disconnect_ms": [
+        1792721691680.0
+      ],
+      "dns_packets": [],
+      "policy_start": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "policy_end": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "all_sampled_policy_pairs_protected": true,
+      "all_sampled_rules_have_prohibit": true,
+      "sample_count": 163,
+      "sampling_command_span_ms": {
+        "min": 49,
+        "max": 71
+      }
+    },
+    {
+      "scenario": "order-6-after",
+      "status": "fail",
+      "findings": [
+        "nonprobe_dot_transport_observed_ipv4_origin_not_assumed"
+      ],
+      "counts": {
+        "packets": 196,
+        "wireguard_out": 37,
+        "all_dot4_syn": 1
+      },
+      "dns_begin_ms": 1792721723178,
+      "dns_end_ms": null,
+      "trigger_received_ms": 1792721723190.0,
+      "lookup_pending_at_trigger": true,
+      "lookup_end_right_censored": true,
+      "events": [
+        {
+          "ms": 1792721723190.0,
+          "event": "TRIGGER_RECEIVED"
+        },
+        {
+          "ms": 1792721723190.0,
+          "event": "DISCONNECT order=after"
+        },
+        {
+          "ms": 1792721723191.0,
+          "event": "CANCEL_DOWN_BEGIN"
+        },
+        {
+          "ms": 1792721723225.0,
+          "event": "CANCEL_DOWN_RETURN"
+        },
+        {
+          "ms": 1792721723225.0,
+          "event": "EXPLICIT_DOWN_RETURN"
+        },
+        {
+          "ms": 1792721723225.0,
+          "event": "STOP_REQUEST after"
+        },
+        {
+          "ms": 1792721723226.0,
+          "event": "SERVICE_DESTROY"
+        }
+      ],
+      "android_disconnect_ms": [
+        1792721723196.0
+      ],
+      "dns_packets": [],
+      "policy_start": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "policy_end": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "all_sampled_policy_pairs_protected": true,
+      "all_sampled_rules_have_prohibit": true,
+      "sample_count": 164,
+      "sampling_command_span_ms": {
+        "min": 48,
+        "max": 74
+      }
+    }
+  ],
+  "sha256": {
+    "original-head.tar": "65e171d8c9f476e6b3709286b1fc0c92a3106dcfd6edc86300af50d2ad9e9556",
+    "launch-source-hashes.json": "7e32fce380b36562a226008dec726128d2c1015552f15ef51b36d6b94e75fb50",
+    "compare.py": "fa38193f25376117a4083cf63b8d5bfc216df7a78ca77843e98d6eb1079499b0",
+    "analyze.py": "ef6c0e6f66db1d6353d01fcfe66c2cd16ac0a730e6f4663a20eed14aaf34be6e",
+    "DESIGN.md": "9a11be83df4d313a5a571a14910e1d8f5fcc427e2cf8bce8ca5bc808072982a9",
+    "build.log": "2f495d6d703fa39218b847c34e6a8bdf07ad95b2564f14de4006c8fd25503065",
+    "qa-tests.log": "f8a8cce66b60a876f78d58b848da184cc3f6568e12e3053da812e74195c93e5c",
+    "run.log": "45217ec0f08ba1c5291a91e77b0381299b57bda07e3aebc1dbe72267888973cd",
+    "platform-uids.txt": "75e2f9a44fb3e0f75f76509bec974c0a517c702955735833fa26aeded308e398",
+    "api37/report.json": "dfa9eac86ba6168217a60685d821b79157624738e49ed666d012c5743a43b1e8",
+    "api37/report.md": "b301fe9923b17e0228eb3d7c91e090605a1b2ac039d51ab32d99a7efd7d9820a",
+    "api37/private/order-1-before.pcap": "6b655dc677fb9a6b6c3417112703823c93329aa14b93c9adff51e084ef96d89e",
+    "api37/private/order-2-before.pcap": "35871bb6262239d5edc0e407ace53152cee74e98feb217d348f1659c0762215a",
+    "api37/private/order-3-before.pcap": "d783c663672d8af8bb0d2acd281c82d7af5952a9ad93d73036852ae78ec037a9",
+    "api37/private/order-4-after.pcap": "8d300bb446c3b5f8c5e2f73c686b3235328585ffa2cf34901411ceb3519904b4",
+    "api37/private/order-5-after.pcap": "6987aab73eb6e29cf554ffeb51e625f1977d7eab1e3c69a4bd05fc7af9ae8948",
+    "api37/private/order-6-after.pcap": "720d4e4a28e24fedac11dacad2783d66a55861dc9982f25c93a5accfcff24074",
+    "api37/private/positive-control.pcap": "5747044842b599bb248b49c3f0090abf4df1c901a6dbdada0f4ebdc3f44c6180",
+    "api37/private/order-1-before.tsv": "14501a8145d521fe3e02febd722f3e31b7f812c17e64d2c86f89a27927f89b68",
+    "api37/private/order-2-before.tsv": "ee02de6d51f506903934e392f64a13c87eb6b5cdb6febe5fee6fe90df3115c6a",
+    "api37/private/order-3-before.tsv": "578b46ec3e2871ccba52859e65145a9cfaddc1162fe2c8a16d95791b956aa600",
+    "api37/private/order-4-after.tsv": "229dd11cf801a336eb490debb37cf0c68f9dbdba800a060a8c93eec988bedcf8",
+    "api37/private/order-5-after.tsv": "ccb5bb5c66fcc3d871e64d3337b365eb38f84f8f33eb1755e798808506d6608f",
+    "api37/private/order-6-after.tsv": "c2b77c424e611956c38db65bb22a7e8057073e3a938565aaa5811f892302c858",
+    "api37/private/positive-control.tsv": "649ed4a56843bd73a10f364a63f8f99296f117757c35ee5f1a7cbb3cf47f3d09",
+    "api37/private/state-order-1-before.jsonl": "4576b53dafdfe1dd59b90bf94fb39178850d9462c91542562ee9a09176ff7eaf",
+    "api37/private/state-order-2-before.jsonl": "bb4ee8486abdd845f7e930302cfb5fa480e49f8f793506924766c9d04a976f0f",
+    "api37/private/state-order-3-before.jsonl": "6daeb4691b95086c4b4b8710d7776fc68ed324a46010c13e8e2cdd96326afacf",
+    "api37/private/state-order-4-after.jsonl": "af1f5525b043744ed457f25a8f1fb5bbfbd31645b83a25ebc88fe975bb2c72e4",
+    "api37/private/state-order-5-after.jsonl": "1a7990f0ad35dcf2d43d1ffdf015ca0bd478d9bbf7ce81eaed5bf5f661a00df7",
+    "api37/private/state-order-6-after.jsonl": "f1e356ca16ac6c5f3b04580a4855d97f71f94c602749d4450fbe5aaebce34ba0",
+    "api37/private/state-positive-control.jsonl": "9d66b462d256138984581d08fd4b7ce5cdbf08a757b33dfc95c78d661ec2cdf3",
+    "api37/private/logcat-order-1-before.txt": "4269c05e4435d5d8b1630f3125bd6617e72935378a443d18f73c3afbe5b4d0d1",
+    "api37/private/logcat-order-2-before.txt": "9eece825537aab343eec7f0df7a15cd22b1f66dbb198a03400ae0f64bcd249ff",
+    "api37/private/logcat-order-3-before.txt": "44b010ee729db264f4228f86e81347c76575fe04b4ca8c4ba06c295e04d58864",
+    "api37/private/logcat-order-4-after.txt": "e068ba0022619b74103166793dc07eff90ced453f90b8accb364df2440aa8bd4",
+    "api37/private/logcat-order-5-after.txt": "2d7089c3389d421928fd3881c00d8eac8bed417f0da9f1394793db05ce42ccbd",
+    "api37/private/logcat-order-6-after.txt": "53de30df2e77e7cede2343ede281c12445293f702009ba7cc496a5e4de244d7c",
+    "api37/private/logcat-positive-control.txt": "e3e35b1ad19b742b0dd0bb68b7a0f71c5e4f1cb46d51882338e65f83ed2f24b5",
+    "api37/private/rules-order-1-before-end.txt": "ee726f24638453d0326a8bd1843f49b06228f200569cd0790a042fc369085fed",
+    "api37/private/rules-order-1-before-start.txt": "54cbf5306d0421fdda2cd4845e5ad0ff5843c132b2dbbad3ff8274f24011ca64",
+    "api37/private/rules-order-2-before-end.txt": "1e28d9567a40eaa1fa6d9b576b602a7af628fd8cf49f8c295287d138f5b4cd56",
+    "api37/private/rules-order-2-before-start.txt": "7f9eef2f43ce7d75d49f79364fc1203600775b4f041b7f596ae02421ad9966e1",
+    "api37/private/rules-order-3-before-end.txt": "79307871b9303eb243617c1016cfa42acb79e31939296a407838e941cb2329dd",
+    "api37/private/rules-order-3-before-start.txt": "ec72a844eee1b24d6e9bc0a1c092476a056d85fde5737d269412f0f53a2df8b5",
+    "api37/private/rules-order-4-after-end.txt": "03d367d73c908941d1af6e8368620d13c82c34578d609197b75b904c30267b9c",
+    "api37/private/rules-order-4-after-start.txt": "a48925a0362453df2b14b747f75df803eb684134eff2ce9868c145c6c5fe4fc4",
+    "api37/private/rules-order-5-after-end.txt": "88f851e0e31a30536506a14ca19c0be3b271ca513c5b96e2df4c44dcbb5587b1",
+    "api37/private/rules-order-5-after-start.txt": "1406d7fb2c7125ae3e4fce06a9348a6aee1b8570cbf7a00d4d1e31843bc1f395",
+    "api37/private/rules-order-6-after-end.txt": "b35eeeb32af20930b0d0523de3f62567da07eac30546dce323ffce52df127509",
+    "api37/private/rules-order-6-after-start.txt": "edc044aa14ef085a051b00fe166b95667cfb64bb2daa9fd1375775084a9de0e3",
+    "api37/private/rules-positive-control-end.txt": "cff15ef733eb32bc0ee1b128896c23332386795c481f58c3ba33329fadeff416",
+    "api37/private/rules-positive-control-start.txt": "e322def51ced7adf587a4dedab60cbd5fddc420e04bb31bd5deabb621b915a93",
+    "api37/private/tools/driver.apk": "762a8c0c1c9c1a7d04219f203aea454fdd79c5471e147b0d2e613dfeb39bf284",
+    "api37/private/tools/probe.apk": "b93288077c189fd24f84fea8d4e2f8319018f18c5179bc476139cdefd4c3b2be",
+    "api37/private/tools/capture": "f2ef27f73d830a5112cabed7475a65de2327127da5ab1fd3c8a2e704dfbe8dec",
+    "source/app/build/outputs/apk/debug/app-debug.apk": "0eacf40e886fa08b923a39a62b920acf154cf7b26d04aeea3d34b3fa286d973f",
+    "cleanup.py": "27080e45411e64ea989baa79625dcc344eb4785a647ae007aa8cc3dc5e771085",
+    "cleanup.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cleanup-boot.log": "d11256144d566e8c1697eaba737b27276723045b70a84476854b5a44456008dd",
+    "cleanup-boot2.log": "a67e4002ab5a3de0d9c9201188378a1bf14acd8f10e5c8e8ad18c8f9e2112593",
+    "cleanup-state.txt": "3aa9f3573760d4a11c24b4ed76d049abe505016807f6d73d3becdc8fabd5d853"
+  },
+  "launch_source_entries_verified": 105,
+  "platform_fingerprint": "google/sdk_gphone64_arm64/emu64a:17/CE2A.260420.051.A3/16571990:userdebug/dev-keys",
+  "package_uids": {
+    "me.vwave.vpn.dev": 10231,
+    "me.vwave.vpnprobe": 10232,
+    "me.vwave.vpnprobe.driver": 10233
+  },
+  "cleanup_verification": {
+    "runner_complete": true,
+    "runner_errors": [],
+    "original_target_apk_present": false,
+    "target_and_helpers_absent": true,
+    "mode_marker_absent_with_uninstalled_target": true,
+    "adb_uid": 2000,
+    "always_on_target": "null",
+    "blocking": "0",
+    "private_dns_mode": "null",
+    "existing_api36_untouched": true,
+    "owned_emulators_stopped": true,
+    "note": "Cleanup-only verification corrected an initial interpretation of the reset target_created flag; no preexisting debug app existed."
+  }
+}

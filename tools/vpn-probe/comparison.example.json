@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "common": {
+    "sdk": "${ANDROID_HOME}",
+    "ndk": "${ANDROID_NDK_HOME}",
+    "adb": {
+      "path": "${ANDROID_HOME}/platform-tools/adb",
+      "host": "127.0.0.1",
+      "port": 5038,
+      "serial": "${WAVE_QA_PIXEL_SERIAL}"
+    },
+    "capture": {
+      "kind": "gateway",
+      "ssh": "${WAVE_QA_GATEWAY_SSH}",
+      "interface": "eth0",
+      "client_ipv4": "${WAVE_QA_PIXEL_IPV4}",
+      "client_ipv6": [],
+      "gateway_ipv4": "${WAVE_QA_GATEWAY_IPV4}",
+      "phone_interface": "wlan0",
+      "manage": true,
+      "configure_wifi": true,
+      "prefix": 24
+    },
+    "wireguard_port": 1637,
+    "required_probes": [
+      "ipv4",
+      "ipv6",
+      "dns",
+      "direct4",
+      "doh"
+    ],
+    "restart_timeout": 30
+  },
+  "profiles": {
+    "wave": {
+      "package": "me.vwave.vpn",
+      "apk": "${WAVE_QA_APK}",
+      "expected_signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+      "credentials_file": "${WAVE_QA_CREDENTIALS}"
+    },
+    "eddie": {
+      "package": "org.airvpn.eddie",
+      "apk": "${WAVE_QA_EDDIE_BASE_APK}",
+      "expected_signer_sha256": "${WAVE_QA_EDDIE_SIGNER_SHA256}",
+      "credentials_file": "${WAVE_QA_CREDENTIALS}",
+      "comparison_ui": {
+        "overview": [
+          {
+            "text": "Quick Connect"
+          }
+        ],
+        "connect": [
+          {
+            "id": "org.airvpn.eddie:id/quick_connect_button"
+          }
+        ],
+        "connected": {
+          "prefix": "Connected to server"
+        },
+        "disconnect": [
+          {
+            "text": "Connection Status"
+          },
+          {
+            "text": "Disconnect"
+          },
+          {
+            "text": "YES"
+          }
+        ],
+        "authentication": {
+          "needed": {
+            "text": "Tap button to login to AirVPN"
+          },
+          "open": [
+            {
+              "id": "org.airvpn.eddie:id/quick_connect_button"
+            }
+          ],
+          "username": {
+            "id": "org.airvpn.eddie:id/edt_login_username"
+          },
+          "password": {
+            "id": "org.airvpn.eddie:id/edt_login_password"
+          },
+          "submit": {
+            "text": "Login"
+          },
+          "ready": {
+            "id": "org.airvpn.eddie:id/spn_user_key"
+          }
+        }
+      }
+    },
+    "proton": {
+      "package": "ch.protonvpn.android",
+      "apk": "${WAVE_QA_PROTON_BASE_APK}",
+      "expected_signer_sha256": "${WAVE_QA_PROTON_SIGNER_SHA256}",
+      "comparison_ui": {
+        "overview": [],
+        "connect": [
+          {
+            "id": "connectCardButton"
+          }
+        ],
+        "connected": {
+          "text": "Disconnect"
+        },
+        "disconnect": [
+          {
+            "id": "connectCardButton"
+          }
+        ]
+      }
+    }
+  }
+}

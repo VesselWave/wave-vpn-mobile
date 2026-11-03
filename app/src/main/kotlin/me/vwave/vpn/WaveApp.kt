@@ -21,7 +21,9 @@ class WaveApp : Application() {
         repository = AirRepository(SessionVault(this))
         tunnels = TunnelManager(this, repository, settings, pinger, log, scope)
         GoBackend.setAlwaysOnCallback {
-            if (repository.isLoggedIn && !tunnels.isActive) tunnels.connect()
+            scope.launch {
+                if (repository.isLoggedIn && tunnels.shouldReconnect && !tunnels.isActive) tunnels.connect()
+            }
         }
     }
 }

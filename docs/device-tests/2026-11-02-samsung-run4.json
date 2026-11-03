@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "source_threads": [
+    "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+    "2a7198b7-2664-4843-897e-2349a08a5be7",
+    "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+  ],
+  "artifact": {
+    "sha256": "9557b238b4368f5dfa55efdc21cc0e531c2ff3838df17772dd217ec2d9145a7b",
+    "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+    "package": "me.vwave.vpn",
+    "version_code": 2,
+    "version_name": "0.2-dev",
+    "debuggable": false
+  },
+  "device": {
+    "api": 36,
+    "release": "16",
+    "security_patch": "2026-09-05",
+    "page_size": 4096,
+    "abi": "arm64-v8a",
+    "emulator": false
+  },
+  "installed_apk_sha256": [],
+  "validated_capture_families": [],
+  "private_dns_baseline": "off",
+  "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+  "status": "fail",
+  "capture_kind": "gateway",
+  "required_probes": [
+    "ipv4",
+    "dns",
+    "direct4",
+    "doh"
+  ],
+  "results": [
+    {
+      "scenario": "setup-or-run",
+      "status": "fail",
+      "error": "Fresh UI command failed (stale snapshots are never reused)"
+    }
+  ],
+  "cleanup_complete": false,
+  "restoration_followup": {
+    "cleanup_complete": true,
+    "method": "Runner restore succeeded after releasing this thread screen automation"
+  }
+}

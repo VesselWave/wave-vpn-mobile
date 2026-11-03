@@ -1,0 +1,2001 @@
+{
+  "date_utc": "2026-10-23",
+  "head": "265dd5b",
+  "branch": "release/readiness-20261023",
+  "release_gate_status": "blocked",
+  "production_app_changed": false,
+  "exact_platform_cause_proved": false,
+  "private_evidence_base": "/tmp/wave-android-lifecycle-20261023",
+  "runs": {
+    "api37": {
+      "status": "fail",
+      "device": {
+        "api": 37,
+        "release": "17",
+        "security_patch": "2026-08-05",
+        "page_size": 4096,
+        "abi": "arm64-v8a",
+        "emulator": true
+      },
+      "artifact": {
+        "sha256": "3636d6522f23958a511c1b74c00f16cd0c7ac52e7dafb267304f2a3b0f6785b8",
+        "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+        "package": "me.vwave.vpn",
+        "version_code": 2,
+        "version_name": "0.2-dev",
+        "debuggable": false
+      },
+      "cleanup_complete": true,
+      "results": [
+        {
+          "scenario": "positive-control",
+          "duration_seconds": 18.0,
+          "probes": {
+            "ipv4": {
+              "success": 8,
+              "failure": 0
+            },
+            "ipv6": {
+              "success": 0,
+              "failure": 9
+            },
+            "dns": {
+              "success": 8,
+              "failure": 0
+            },
+            "direct4": {
+              "success": 8,
+              "failure": 0
+            },
+            "doh": {
+              "success": 8,
+              "failure": 0
+            },
+            "dot4": {
+              "success": 18,
+              "failure": 0
+            },
+            "dot6": {
+              "success": 0,
+              "failure": 18
+            },
+            "bound-dns": {
+              "success": 8,
+              "failure": 0
+            },
+            "bound-tcp4": {
+              "success": 9,
+              "failure": 0
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 9
+            }
+          },
+          "window_start_unix_ms": 1792720568504,
+          "window_end_unix_ms": 1792720586504,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": false,
+            "blocking_enabled": false
+          },
+          "capture": {
+            "capture": "positive-control.pcap",
+            "sha256": "9ffa1db0feace2dbc671aacf9efce3fb386faf94502dd5cc2d9ee0e71f427b78",
+            "bytes": 357698,
+            "first_packet_unix": 1792720568.555035,
+            "last_packet_unix": 1792720586.515167,
+            "observed_span_seconds": 17.96,
+            "counts": {
+              "packets": 2795,
+              "all_https4_syn": 231,
+              "all_dns6_out": 89,
+              "raw_dns6_out": 89,
+              "all_dns4_out": 105,
+              "raw_dns4_out": 89,
+              "all_dot6_syn": 18,
+              "dot6_syn": 18,
+              "all_dot4_syn": 20,
+              "dot4_syn": 18,
+              "all_https6_syn": 9,
+              "system_dns4_out": 16,
+              "direct_https4_syn": 9
+            }
+          },
+          "expected": "working",
+          "status": "pass",
+          "findings": [],
+          "privacy_assessed": false,
+          "required_probes": [
+            "ipv4",
+            "dns",
+            "direct4",
+            "doh"
+          ]
+        },
+        {
+          "scenario": "steady",
+          "duration_seconds": 18.0,
+          "probes": {
+            "ipv4": {
+              "success": 7,
+              "failure": 0
+            },
+            "ipv6": {
+              "success": 7,
+              "failure": 0
+            },
+            "dns": {
+              "success": 8,
+              "failure": 0
+            },
+            "direct4": {
+              "success": 8,
+              "failure": 0
+            },
+            "doh": {
+              "success": 8,
+              "failure": 0
+            },
+            "dot4": {
+              "success": 17,
+              "failure": 0
+            },
+            "dot6": {
+              "success": 17,
+              "failure": 0
+            },
+            "bound-dns": {
+              "success": 8,
+              "failure": 0
+            },
+            "bound-tcp4": {
+              "success": 0,
+              "failure": 9
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 9
+            }
+          },
+          "window_start_unix_ms": 1792720599044,
+          "window_end_unix_ms": 1792720617044,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "capture": {
+            "capture": "steady.pcap",
+            "sha256": "b773eadfed344fbb8e1d9b7c72308f424beb27756da6182ec80f3478e03b09b8",
+            "bytes": 351616,
+            "first_packet_unix": 1792720599.088495,
+            "last_packet_unix": 1792720617.053319,
+            "observed_span_seconds": 17.965,
+            "counts": {
+              "packets": 1590,
+              "wireguard_out": 923
+            }
+          },
+          "expected": "working",
+          "status": "pass",
+          "findings": [],
+          "privacy_assessed": true,
+          "required_probes": [
+            "ipv4",
+            "ipv6",
+            "dns",
+            "direct4",
+            "doh"
+          ],
+          "doh_endpoint_syn_outside": 0,
+          "wan_exit_observations": 0
+        },
+        {
+          "scenario": "disconnect",
+          "duration_seconds": 35.0,
+          "probes": {
+            "ipv4": {
+              "success": 1,
+              "failure": 16
+            },
+            "ipv6": {
+              "success": 1,
+              "failure": 16
+            },
+            "dns": {
+              "success": 1,
+              "failure": 16
+            },
+            "direct4": {
+              "success": 1,
+              "failure": 16
+            },
+            "doh": {
+              "success": 1,
+              "failure": 16
+            },
+            "dot4": {
+              "success": 2,
+              "failure": 33
+            },
+            "dot6": {
+              "success": 2,
+              "failure": 33
+            },
+            "bound-dns": {
+              "success": 1,
+              "failure": 16
+            },
+            "bound-tcp4": {
+              "success": 0,
+              "failure": 17
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 17
+            }
+          },
+          "window_start_unix_ms": 1792720618192,
+          "window_end_unix_ms": 1792720653192,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "capture": {
+            "capture": "disconnect.pcap",
+            "sha256": "da42b0044529092663f51779df90d7656ba36bb5542429a20e713eaf179521b5",
+            "bytes": 245159,
+            "first_packet_unix": 1792720618.235419,
+            "last_packet_unix": 1792720650.077061,
+            "observed_span_seconds": 31.842,
+            "counts": {
+              "packets": 1957,
+              "wireguard_out": 562,
+              "all_https4_syn": 131,
+              "all_dns4_out": 1
+            }
+          },
+          "expected": "blocked",
+          "status": "fail",
+          "findings": [
+            "cleartext_dns_observed_ipv4_origin_not_assumed"
+          ],
+          "privacy_assessed": true,
+          "required_probes": [
+            "ipv4",
+            "ipv6",
+            "dns",
+            "direct4",
+            "doh"
+          ],
+          "doh_endpoint_syn_outside": 0,
+          "wan_exit_observations": 0
+        },
+        {
+          "scenario": "reconnect",
+          "duration_seconds": 45.0,
+          "probes": {
+            "ipv4": {
+              "success": 18,
+              "failure": 1
+            },
+            "ipv6": {
+              "success": 14,
+              "failure": 2
+            },
+            "dns": {
+              "success": 18,
+              "failure": 1
+            },
+            "direct4": {
+              "success": 18,
+              "failure": 1
+            },
+            "doh": {
+              "success": 17,
+              "failure": 1
+            },
+            "dot4": {
+              "success": 36,
+              "failure": 6
+            },
+            "dot6": {
+              "success": 29,
+              "failure": 11
+            },
+            "bound-dns": {
+              "success": 17,
+              "failure": 1
+            },
+            "bound-tcp4": {
+              "success": 0,
+              "failure": 22
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 22
+            }
+          },
+          "window_start_unix_ms": 1792720654280,
+          "window_end_unix_ms": 1792720699280,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "capture": {
+            "capture": "reconnect.pcap",
+            "sha256": "b926c1519821c13d033a7c6d96fe0b4dedde15ebd91ca94f80f763acbd131901",
+            "bytes": 950209,
+            "first_packet_unix": 1792720655.082188,
+            "last_packet_unix": 1792720699.280889,
+            "observed_span_seconds": 44.199,
+            "counts": {
+              "packets": 4908,
+              "all_https4_syn": 137,
+              "wireguard_out": 2424
+            }
+          },
+          "expected": "working",
+          "status": "pass",
+          "findings": [],
+          "privacy_assessed": true,
+          "required_probes": [
+            "ipv4",
+            "ipv6",
+            "dns",
+            "direct4",
+            "doh"
+          ],
+          "doh_endpoint_syn_outside": 0,
+          "wan_exit_observations": 0
+        }
+      ],
+      "files": [
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/report.json",
+          "sha256": "befe225ddaa3c2dbde22979970a580f796726b43b7aa430608d8a1e7a91a1f14",
+          "bytes": 8552
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/report.md",
+          "sha256": "77836501e390dbba48bbf4864f8e136f7e3ba4f84ebd3f439d75fbfac582e923",
+          "bytes": 553
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/state.json",
+          "sha256": "9185c9e3eafcb0e23bbbeab85e185c7153e656bfe73076bd14fb1c8fb12acd63",
+          "bytes": 2160
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/disconnect.pcap",
+          "sha256": "da42b0044529092663f51779df90d7656ba36bb5542429a20e713eaf179521b5",
+          "bytes": 245159
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/disconnect.tsv",
+          "sha256": "6bd7cea9efded69703284b9dee21d35058798a72336982da73eccc1aa13bb8ef",
+          "bytes": 101781
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/lifecycle-disconnect.jsonl",
+          "sha256": "c1356c9bc0705afba7d304bcd7d0c8b43e6353105baab85d4f0968ab7563fd66",
+          "bytes": 491060
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/lifecycle-positive-control.jsonl",
+          "sha256": "80b5a2a7b7edb8e97125b5873d28f39e1e7784504caae2351d645c1ea59c1628",
+          "bytes": 166563
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/lifecycle-reconnect.jsonl",
+          "sha256": "e909fa0475ce58dc1122ca9fecb67959c677acf22c059a9c523dcc7c491f1e6e",
+          "bytes": 1286682
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/lifecycle-steady.jsonl",
+          "sha256": "025ee297d2b4427d8620f4630aa55c70e662d3e4ea2606dadb44255200c1f4df",
+          "bytes": 538189
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/logcat-disconnect.txt",
+          "sha256": "232c88b84188014f14fba71fb9ad319456ecab101c7cddf6b23a3fc654b9fe30",
+          "bytes": 505817
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/logcat-positive-control.txt",
+          "sha256": "962c69f7a166ad5dfd763acf7daff3dc18d351fcea0db48b81fef1044cee14f0",
+          "bytes": 280492
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/logcat-reconnect.txt",
+          "sha256": "84a8a00d4b992c73c1e8327cfcb53927193c0d92f721c0b90a59549ad0864433",
+          "bytes": 506939
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/logcat-steady.txt",
+          "sha256": "cd6a89e488b959522ca66986cb7ed0d887609e67958159a794e103a5984064ea",
+          "bytes": 214897
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/positive-control.pcap",
+          "sha256": "9ffa1db0feace2dbc671aacf9efce3fb386faf94502dd5cc2d9ee0e71f427b78",
+          "bytes": 357698
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/positive-control.tsv",
+          "sha256": "5a8f13d3ed2b1b4489580a1fd611c23800ced427139c920e68bf3828ec6a66c1",
+          "bytes": 33691
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/reconnect.pcap",
+          "sha256": "b926c1519821c13d033a7c6d96fe0b4dedde15ebd91ca94f80f763acbd131901",
+          "bytes": 950209
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/reconnect.tsv",
+          "sha256": "6f61700d2b34980257e6adf56bd4a49d0a4cfa42f395c3b57e396986e238a31f",
+          "bytes": 148071
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/steady.pcap",
+          "sha256": "b773eadfed344fbb8e1d9b7c72308f424beb27756da6182ec80f3478e03b09b8",
+          "bytes": 351616
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/steady.tsv",
+          "sha256": "4414f9f6b080f17c9c80c2338af2b20abaece4dcfc015372b2d512a601d611c3",
+          "bytes": 66188
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/source/AndroidManifest.xml",
+          "sha256": "22e4ec071c1a58b335216f30c72c585d1cdc83694f7b02905aa42fbec60d78b0",
+          "bytes": 890
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/source/Driver.java",
+          "sha256": "9f0467c930105a7497526d51f4324e007cb69e407e4ab8b9ec79db30c5a6cb11",
+          "bytes": 7301
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/source/DriverManifest.xml",
+          "sha256": "3ae2cedfdec30912a08add70c45e8c11138f97acaf22d942f3db75a451497a67",
+          "bytes": 426
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/source/KeepAlive.java",
+          "sha256": "f75a2c94a46671913ab3701418c18c5a784232dfec7e58c658782a7fecb90c38",
+          "bytes": 678
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/source/Probe.java",
+          "sha256": "b568b92301a14b12fc2b9d8888effab914774974599a1846d9d54e9ca3cc012c",
+          "bytes": 5383
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/source/build.sh",
+          "sha256": "ec41433444db1125f12a3c7d01300e9ee8ccc45c50cf5d2cf8a13462d89fdc69",
+          "bytes": 2838
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/source/capture.c",
+          "sha256": "9478cf935343403fc08128c32e22fc342d054bf3990c045b627efb3d8f17081b",
+          "bytes": 1737
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/source/correlate.py",
+          "sha256": "65ae138a8b11e943b430e96829fbc64ef7ece024fa241e0f22c6ada8e4aa2d0e",
+          "bytes": 1154
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/source/run.py",
+          "sha256": "506bb0b2061740834909909ec346b87374c634e5ac2dd4c15b4d93ecc2e06494",
+          "bytes": 77645
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/source/summarize.py",
+          "sha256": "c3c53957d6965ca91f1d2ac5f602b30068394f8a2ba39a124238cc05149487ac",
+          "bytes": 5021
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/tools/capture",
+          "sha256": "f2ef27f73d830a5112cabed7475a65de2327127da5ab1fd3c8a2e704dfbe8dec",
+          "bytes": 8792
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/tools/driver.apk",
+          "sha256": "758a5cfb5451ce396e6fb89b336766cdb19df39bf5d652146fa660f16afbd86d",
+          "bytes": 12709
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37/private/tools/probe.apk",
+          "sha256": "08b895a224e2d5a0c037e5567b1547d286652396054ec070be87e8f0666e006e",
+          "bytes": 16805
+        }
+      ],
+      "correlation": {
+        "disconnect": {
+          "counts": {
+            "unassigned": 1
+          },
+          "packet_unix_ms": {
+            "unassigned": [
+              1792720620621.177
+            ]
+          },
+          "reinspection": {
+            "capture": "disconnect.pcap",
+            "sha256": "da42b0044529092663f51779df90d7656ba36bb5542429a20e713eaf179521b5",
+            "bytes": 245159,
+            "first_packet_unix": 1792720618.235419,
+            "last_packet_unix": 1792720650.077061,
+            "observed_span_seconds": 31.842,
+            "counts": {
+              "packets": 1957,
+              "wireguard_out": 562,
+              "all_https4_syn": 131,
+              "all_dns4_out": 1
+            }
+          },
+          "lifecycle_transitions": [
+            {
+              "device_unix_ms": 1792720617384,
+              "host_ms_start": 1792720617139,
+              "host_ms_end": 1792720617180,
+              "wave_pid": "3336",
+              "tun0_present": true,
+              "connection_service_record_present": true
+            },
+            {
+              "device_unix_ms": 1792720620533,
+              "host_ms_start": 1792720620282,
+              "host_ms_end": 1792720620350,
+              "wave_pid": "3336",
+              "tun0_present": false,
+              "connection_service_record_present": false
+            }
+          ],
+          "sampled_saved_policy_combinations": [
+            {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            }
+          ],
+          "sample_count": 111,
+          "logcat_events": [
+            {
+              "device_unix_ms": 1792720620533,
+              "event": "backend_down"
+            },
+            {
+              "device_unix_ms": 1792720620548,
+              "event": "android_vpn_disconnected"
+            }
+          ]
+        }
+      }
+    },
+    "api37-2": {
+      "status": "fail",
+      "device": {
+        "api": 37,
+        "release": "17",
+        "security_patch": "2026-09-05",
+        "page_size": 16384,
+        "abi": "arm64-v8a",
+        "emulator": true
+      },
+      "artifact": {
+        "sha256": "3636d6522f23958a511c1b74c00f16cd0c7ac52e7dafb267304f2a3b0f6785b8",
+        "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+        "package": "me.vwave.vpn",
+        "version_code": 2,
+        "version_name": "0.2-dev",
+        "debuggable": false
+      },
+      "cleanup_complete": true,
+      "results": [
+        {
+          "scenario": "positive-control",
+          "duration_seconds": 18.0,
+          "probes": {
+            "ipv4": {
+              "success": 8,
+              "failure": 0
+            },
+            "ipv6": {
+              "success": 0,
+              "failure": 9
+            },
+            "dns": {
+              "success": 8,
+              "failure": 0
+            },
+            "direct4": {
+              "success": 8,
+              "failure": 0
+            },
+            "doh": {
+              "success": 8,
+              "failure": 0
+            },
+            "dot4": {
+              "success": 18,
+              "failure": 0
+            },
+            "dot6": {
+              "success": 0,
+              "failure": 18
+            },
+            "bound-dns": {
+              "success": 8,
+              "failure": 0
+            },
+            "bound-tcp4": {
+              "success": 9,
+              "failure": 0
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 9
+            }
+          },
+          "window_start_unix_ms": 1792720738750,
+          "window_end_unix_ms": 1792720756750,
+          "action_completed_unix_ms": null,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": false,
+            "blocking_enabled": false
+          },
+          "vpn_policy_at_window_end": {
+            "always_on_target_matches": false,
+            "blocking_enabled": false
+          },
+          "capture": {
+            "capture": "positive-control.pcap",
+            "sha256": "57e6632454768fc6c5b5a64e3ebab4f685b7eb3b0a731dd5c71bbd2bb4428aa9",
+            "bytes": 9013353,
+            "first_packet_unix": 1792720738.777719,
+            "last_packet_unix": 1792720756.770505,
+            "observed_span_seconds": 17.993,
+            "counts": {
+              "packets": 9787,
+              "all_https4_syn": 191,
+              "all_dns4_out": 106,
+              "raw_dns4_out": 90,
+              "all_dns6_out": 90,
+              "raw_dns6_out": 90,
+              "all_dot6_syn": 18,
+              "dot6_syn": 18,
+              "all_dot4_syn": 20,
+              "dot4_syn": 18,
+              "all_https6_syn": 9,
+              "system_dns4_out": 16,
+              "default_system_dns4_out": 16,
+              "direct_https4_syn": 9
+            }
+          },
+          "expected": "working",
+          "status": "pass",
+          "findings": [],
+          "privacy_assessed": false,
+          "required_probes": [
+            "ipv4",
+            "dns",
+            "direct4",
+            "doh"
+          ]
+        },
+        {
+          "scenario": "steady",
+          "duration_seconds": 18.0,
+          "probes": {
+            "ipv4": {
+              "success": 8,
+              "failure": 0
+            },
+            "ipv6": {
+              "success": 7,
+              "failure": 0
+            },
+            "dns": {
+              "success": 8,
+              "failure": 0
+            },
+            "direct4": {
+              "success": 8,
+              "failure": 0
+            },
+            "doh": {
+              "success": 8,
+              "failure": 0
+            },
+            "dot4": {
+              "success": 17,
+              "failure": 0
+            },
+            "dot6": {
+              "success": 17,
+              "failure": 0
+            },
+            "bound-dns": {
+              "success": 8,
+              "failure": 0
+            },
+            "bound-tcp4": {
+              "success": 0,
+              "failure": 9
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 9
+            }
+          },
+          "window_start_unix_ms": 1792720768604,
+          "window_end_unix_ms": 1792720786604,
+          "action_completed_unix_ms": null,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "vpn_policy_at_window_end": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "capture": {
+            "capture": "steady.pcap",
+            "sha256": "fdb5a99dbe64e386863cce6b5d9dd308725d595f3011dd5948a66f69d3468e2a",
+            "bytes": 441922,
+            "first_packet_unix": 1792720768.647275,
+            "last_packet_unix": 1792720786.606493,
+            "observed_span_seconds": 17.959,
+            "counts": {
+              "packets": 1766,
+              "wireguard_out": 1016
+            }
+          },
+          "expected": "working",
+          "status": "pass",
+          "findings": [],
+          "privacy_assessed": true,
+          "required_probes": [
+            "ipv4",
+            "ipv6",
+            "dns",
+            "direct4",
+            "doh"
+          ],
+          "doh_endpoint_syn_outside": 0,
+          "wan_exit_observations": 0
+        },
+        {
+          "scenario": "disconnect",
+          "duration_seconds": 35.0,
+          "probes": {
+            "ipv4": {
+              "success": 1,
+              "failure": 16
+            },
+            "ipv6": {
+              "success": 1,
+              "failure": 16
+            },
+            "dns": {
+              "success": 1,
+              "failure": 16
+            },
+            "direct4": {
+              "success": 1,
+              "failure": 16
+            },
+            "doh": {
+              "success": 1,
+              "failure": 16
+            },
+            "dot4": {
+              "success": 2,
+              "failure": 33
+            },
+            "dot6": {
+              "success": 2,
+              "failure": 33
+            },
+            "bound-dns": {
+              "success": 1,
+              "failure": 16
+            },
+            "bound-tcp4": {
+              "success": 0,
+              "failure": 17
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 17
+            }
+          },
+          "window_start_unix_ms": 1792720789740,
+          "window_end_unix_ms": 1792720824740,
+          "action_completed_unix_ms": 1792720792909,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "vpn_policy_at_window_end": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "capture": {
+            "capture": "disconnect.pcap",
+            "sha256": "0a86fbe16ad542d2e5a06a7f2f9eb1f7ee857f2ecf88739cfd39c8b38d15b71f",
+            "bytes": 304844,
+            "first_packet_unix": 1792720789.781068,
+            "last_packet_unix": 1792720823.998326,
+            "observed_span_seconds": 34.217,
+            "counts": {
+              "packets": 2184,
+              "wireguard_out": 748,
+              "all_https4_syn": 105,
+              "all_dns4_out": 1,
+              "unsupported_network_packets": 4
+            }
+          },
+          "expected": "blocked",
+          "status": "fail",
+          "findings": [
+            "cleartext_dns_observed_ipv4_origin_not_assumed",
+            "unsupported_packet_forms_not_assessed"
+          ],
+          "privacy_assessed": true,
+          "required_probes": [
+            "ipv4",
+            "ipv6",
+            "dns",
+            "direct4",
+            "doh"
+          ],
+          "doh_endpoint_syn_outside": 0,
+          "wan_exit_observations": 0
+        },
+        {
+          "scenario": "reconnect",
+          "duration_seconds": 45.0,
+          "probes": {
+            "ipv4": {
+              "success": 16,
+              "failure": 1
+            },
+            "ipv6": {
+              "success": 15,
+              "failure": 1
+            },
+            "dns": {
+              "success": 17,
+              "failure": 1
+            },
+            "direct4": {
+              "success": 15,
+              "failure": 1
+            },
+            "doh": {
+              "success": 17,
+              "failure": 1
+            },
+            "dot4": {
+              "success": 37,
+              "failure": 5
+            },
+            "dot6": {
+              "success": 40,
+              "failure": 3
+            },
+            "bound-dns": {
+              "success": 17,
+              "failure": 1
+            },
+            "bound-tcp4": {
+              "success": 0,
+              "failure": 22
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 22
+            }
+          },
+          "window_start_unix_ms": 1792720825453,
+          "window_end_unix_ms": 1792720870453,
+          "action_completed_unix_ms": 1792720829672,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "vpn_policy_at_window_end": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "capture": {
+            "capture": "reconnect.pcap",
+            "sha256": "59bfadf72f6b1b81eff2d34fafe8ec83b3989b04594a0ada029b700c464c1091",
+            "bytes": 1139974,
+            "first_packet_unix": 1792720826.218323,
+            "last_packet_unix": 1792720870.487394,
+            "observed_span_seconds": 44.269,
+            "counts": {
+              "packets": 5266,
+              "all_https4_syn": 134,
+              "unsupported_network_packets": 8,
+              "wireguard_out": 2591
+            }
+          },
+          "expected": "working",
+          "status": "fail",
+          "findings": [
+            "unsupported_packet_forms_not_assessed"
+          ],
+          "privacy_assessed": true,
+          "required_probes": [
+            "ipv4",
+            "ipv6",
+            "dns",
+            "direct4",
+            "doh"
+          ],
+          "doh_endpoint_syn_outside": 0,
+          "wan_exit_observations": 0
+        }
+      ],
+      "files": [
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/report.json",
+          "sha256": "0c02834feb7dea5a06c1eca92172f8d22d3f152a9df87d5cf65fe8829f53a6f6",
+          "bytes": 9449
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/report.md",
+          "sha256": "d24ef659170fc2ba6cde4f8887a229e1230eb97a19e47c7f576a368aaf416378",
+          "bytes": 634
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/state.json",
+          "sha256": "6d364a8083a69c3cf643f921eebe85c6ef7bde90aac974b2664e6a970864aeb0",
+          "bytes": 2195
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/disconnect.pcap",
+          "sha256": "0a86fbe16ad542d2e5a06a7f2f9eb1f7ee857f2ecf88739cfd39c8b38d15b71f",
+          "bytes": 304844
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/disconnect.tsv",
+          "sha256": "906c78bd141707ab65402baf3e9ba2ab92fe1b75af3d30949075027f1facebad",
+          "bytes": 103573
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/lifecycle-disconnect.jsonl",
+          "sha256": "8d5b252d3a3928fed4da15747f22a7f9ec6ae88baa66e72fe14c64edbda39711",
+          "bytes": 521580
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/lifecycle-positive-control.jsonl",
+          "sha256": "66ad86c4f1b4a06fdd5b5e2146901a16726cd745a90261108148b79ca163e3e5",
+          "bytes": 171907
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/lifecycle-reconnect.jsonl",
+          "sha256": "beaec541dbb5c1d2141c8ecbbf321239af94e51ebf13bd6b7b428800f22846ec",
+          "bytes": 1335296
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/lifecycle-steady.jsonl",
+          "sha256": "83afbe4ee61f5bbc9fbdc730f805e4d797d0b2b976fe03213f8aaaa430bcab4e",
+          "bytes": 563129
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/logcat-disconnect.txt",
+          "sha256": "4b91e83b509f85a9962466876fe2258ab57680be111a65cc806fed5458b38969",
+          "bytes": 918353
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/logcat-positive-control.txt",
+          "sha256": "23a1a831e02a3477c990038effe62f38459d1c49e516d6aa861a0b923fc26eb9",
+          "bytes": 572406
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/logcat-reconnect.txt",
+          "sha256": "a41fb19a60e63206d5d7710ce58ab4c878562ff8c3eb12bb2b5e566ab68139fe",
+          "bytes": 1105285
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/logcat-steady.txt",
+          "sha256": "87d3b002f69d860aa35965291adb1ecacbc115050227bf6c97f5fc5c619e417d",
+          "bytes": 477649
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/positive-control.pcap",
+          "sha256": "57e6632454768fc6c5b5a64e3ebab4f685b7eb3b0a731dd5c71bbd2bb4428aa9",
+          "bytes": 9013353
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/positive-control.tsv",
+          "sha256": "2d2874ec42c76ae32124fad3da0bfabe561d540708482fb5122469a469930c48",
+          "bytes": 33801
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/reconnect.pcap",
+          "sha256": "59bfadf72f6b1b81eff2d34fafe8ec83b3989b04594a0ada029b700c464c1091",
+          "bytes": 1139974
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/reconnect.tsv",
+          "sha256": "e21c92f354f4c7b3321072785fa0eaf9a56af10ddd75b0f1ce753a81bbe3e74e",
+          "bytes": 147800
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/steady.pcap",
+          "sha256": "fdb5a99dbe64e386863cce6b5d9dd308725d595f3011dd5948a66f69d3468e2a",
+          "bytes": 441922
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/steady.tsv",
+          "sha256": "6d5bfd0ddb908160439cec25dc9cb5ec21cdf8edb38374bf2988eddec5f2f2f2",
+          "bytes": 66121
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/source/AndroidManifest.xml",
+          "sha256": "22e4ec071c1a58b335216f30c72c585d1cdc83694f7b02905aa42fbec60d78b0",
+          "bytes": 890
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/source/Driver.java",
+          "sha256": "9f0467c930105a7497526d51f4324e007cb69e407e4ab8b9ec79db30c5a6cb11",
+          "bytes": 7301
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/source/DriverManifest.xml",
+          "sha256": "3ae2cedfdec30912a08add70c45e8c11138f97acaf22d942f3db75a451497a67",
+          "bytes": 426
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/source/KeepAlive.java",
+          "sha256": "f75a2c94a46671913ab3701418c18c5a784232dfec7e58c658782a7fecb90c38",
+          "bytes": 678
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/source/Probe.java",
+          "sha256": "b568b92301a14b12fc2b9d8888effab914774974599a1846d9d54e9ca3cc012c",
+          "bytes": 5383
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/source/build.sh",
+          "sha256": "ec41433444db1125f12a3c7d01300e9ee8ccc45c50cf5d2cf8a13462d89fdc69",
+          "bytes": 2838
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/source/capture.c",
+          "sha256": "9478cf935343403fc08128c32e22fc342d054bf3990c045b627efb3d8f17081b",
+          "bytes": 1737
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/source/correlate.py",
+          "sha256": "15b2e09a572a94fe904e8704c1e56a178206656e48074305a98dee2a6117acb9",
+          "bytes": 1624
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/source/run.py",
+          "sha256": "88d9ba1a602cf2371aaa181e958a490a08f83653e3e4e95919242661a8dfa3f0",
+          "bytes": 78031
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/source/summarize.py",
+          "sha256": "192d72d7707f4fdc294b418561e60be5c35cd46b9c5250a90fe5a01b8cbf69a2",
+          "bytes": 5377
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/tools/capture",
+          "sha256": "f2ef27f73d830a5112cabed7475a65de2327127da5ab1fd3c8a2e704dfbe8dec",
+          "bytes": 8792
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/tools/driver.apk",
+          "sha256": "b6ef716b294f3c544d1cd94dfbc7f27029a11b8129638db900e83d01b7e8b682",
+          "bytes": 12709
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api37-2/private/tools/probe.apk",
+          "sha256": "0b958fdd990934175a27dbbbaea3cf16166fb7a3ded5d53bdabffa3c27b1e13d",
+          "bytes": 16805
+        }
+      ],
+      "correlation": {
+        "disconnect": {
+          "counts": {
+            "unassigned": 1
+          },
+          "packet_unix_ms": {
+            "unassigned": [
+              1792720792258.267
+            ]
+          },
+          "reinspection": {
+            "capture": "disconnect.pcap",
+            "sha256": "0a86fbe16ad542d2e5a06a7f2f9eb1f7ee857f2ecf88739cfd39c8b38d15b71f",
+            "bytes": 304844,
+            "first_packet_unix": 1792720789.781068,
+            "last_packet_unix": 1792720823.998326,
+            "observed_span_seconds": 34.217,
+            "counts": {
+              "packets": 2184,
+              "wireguard_out": 748,
+              "all_https4_syn": 105,
+              "all_dns4_out": 1,
+              "unsupported_network_packets": 4
+            }
+          },
+          "lifecycle_transitions": [
+            {
+              "device_unix_ms": 1792720788930,
+              "host_ms_start": 1792720789048,
+              "host_ms_end": 1792720789095,
+              "wave_pid": "3426",
+              "tun0_present": true,
+              "connection_service_record_present": true
+            },
+            {
+              "device_unix_ms": 1792720792354,
+              "host_ms_start": 1792720792463,
+              "host_ms_end": 1792720792533,
+              "wave_pid": "3426",
+              "tun0_present": false,
+              "connection_service_record_present": false
+            }
+          ],
+          "sampled_saved_policy_combinations": [
+            {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            }
+          ],
+          "sample_count": 116,
+          "logcat_events": [
+            {
+              "device_unix_ms": 1792720792116,
+              "event": "backend_down"
+            },
+            {
+              "device_unix_ms": 1792720792141,
+              "event": "android_vpn_disconnected"
+            }
+          ]
+        }
+      }
+    },
+    "api36": {
+      "status": "fail",
+      "device": {
+        "api": 36,
+        "release": "16",
+        "security_patch": "2025-07-05",
+        "page_size": 4096,
+        "abi": "arm64-v8a",
+        "emulator": true
+      },
+      "artifact": {
+        "sha256": "3636d6522f23958a511c1b74c00f16cd0c7ac52e7dafb267304f2a3b0f6785b8",
+        "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+        "package": "me.vwave.vpn",
+        "version_code": 2,
+        "version_name": "0.2-dev",
+        "debuggable": false
+      },
+      "cleanup_complete": true,
+      "results": [
+        {
+          "scenario": "positive-control",
+          "duration_seconds": 18.0,
+          "probes": {
+            "ipv4": {
+              "success": 8,
+              "failure": 0
+            },
+            "ipv6": {
+              "success": 0,
+              "failure": 9
+            },
+            "dns": {
+              "success": 8,
+              "failure": 0
+            },
+            "direct4": {
+              "success": 9,
+              "failure": 0
+            },
+            "doh": {
+              "success": 9,
+              "failure": 0
+            },
+            "dot4": {
+              "success": 18,
+              "failure": 0
+            },
+            "dot6": {
+              "success": 0,
+              "failure": 18
+            },
+            "bound-dns": {
+              "success": 0,
+              "failure": 9
+            },
+            "bound-tcp4": {
+              "success": 0,
+              "failure": 9
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 9
+            }
+          },
+          "window_start_unix_ms": 1792720794879,
+          "window_end_unix_ms": 1792720812879,
+          "action_completed_unix_ms": null,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": false,
+            "blocking_enabled": false
+          },
+          "vpn_policy_at_window_end": {
+            "always_on_target_matches": false,
+            "blocking_enabled": false
+          },
+          "capture": {
+            "capture": "positive-control.pcap",
+            "sha256": "4447821e135e61098dfab3307d60efa60289d54184951b3bcb1e1080e5dfb7b7",
+            "bytes": 215511,
+            "first_packet_unix": 1792720794.927217,
+            "last_packet_unix": 1792720812.868678,
+            "observed_span_seconds": 17.941,
+            "counts": {
+              "packets": 1792,
+              "all_https4_syn": 114,
+              "all_dns4_out": 105,
+              "raw_dns4_out": 89,
+              "all_dns6_out": 89,
+              "raw_dns6_out": 89,
+              "all_dot6_syn": 18,
+              "dot6_syn": 18,
+              "all_dot4_syn": 18,
+              "dot4_syn": 18,
+              "all_https6_syn": 9,
+              "system_dns4_out": 16,
+              "default_system_dns4_out": 16,
+              "direct_https4_syn": 9
+            }
+          },
+          "expected": "working",
+          "status": "pass",
+          "findings": [],
+          "privacy_assessed": false,
+          "required_probes": [
+            "ipv4",
+            "dns",
+            "direct4",
+            "doh"
+          ]
+        },
+        {
+          "scenario": "crash",
+          "duration_seconds": 50.0,
+          "probes": {
+            "ipv4": {
+              "success": 17,
+              "failure": 1
+            },
+            "ipv6": {
+              "success": 16,
+              "failure": 0
+            },
+            "dns": {
+              "success": 20,
+              "failure": 1
+            },
+            "direct4": {
+              "success": 19,
+              "failure": 0
+            },
+            "doh": {
+              "success": 17,
+              "failure": 1
+            },
+            "dot4": {
+              "success": 42,
+              "failure": 1
+            },
+            "dot6": {
+              "success": 41,
+              "failure": 2
+            },
+            "bound-dns": {
+              "success": 20,
+              "failure": 1
+            },
+            "bound-tcp4": {
+              "success": 0,
+              "failure": 25
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 25
+            }
+          },
+          "window_start_unix_ms": 1792720826384,
+          "window_end_unix_ms": 1792720876384,
+          "action_completed_unix_ms": 1792720828480,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "vpn_policy_at_window_end": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "capture": {
+            "capture": "crash.pcap",
+            "sha256": "3393413ba0d2bf08ed03f42f0468bb165db56f5436249da4b5b4aa82a82a6469",
+            "bytes": 992285,
+            "first_packet_unix": 1792720826.432281,
+            "last_packet_unix": 1792720876.327154,
+            "observed_span_seconds": 49.895,
+            "counts": {
+              "packets": 4036,
+              "wireguard_out": 2237,
+              "unsupported_network_packets": 4,
+              "all_dns4_out": 2
+            }
+          },
+          "expected": "working",
+          "death_method": "root SIGKILL",
+          "restart_seconds": 1.125,
+          "wave_opened_to_recover": false,
+          "status": "fail",
+          "findings": [
+            "cleartext_dns_observed_ipv4_origin_not_assumed",
+            "unsupported_packet_forms_not_assessed"
+          ],
+          "privacy_assessed": true,
+          "required_probes": [
+            "ipv4",
+            "ipv6",
+            "dns",
+            "direct4",
+            "doh"
+          ],
+          "doh_endpoint_syn_outside": 0,
+          "wan_exit_observations": 0
+        },
+        {
+          "scenario": "disconnect",
+          "duration_seconds": 35.0,
+          "probes": {
+            "ipv4": {
+              "success": 1,
+              "failure": 17
+            },
+            "ipv6": {
+              "success": 1,
+              "failure": 17
+            },
+            "dns": {
+              "success": 1,
+              "failure": 16
+            },
+            "direct4": {
+              "success": 1,
+              "failure": 17
+            },
+            "doh": {
+              "success": 1,
+              "failure": 17
+            },
+            "dot4": {
+              "success": 2,
+              "failure": 33
+            },
+            "dot6": {
+              "success": 2,
+              "failure": 33
+            },
+            "bound-dns": {
+              "success": 1,
+              "failure": 16
+            },
+            "bound-tcp4": {
+              "success": 0,
+              "failure": 17
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 17
+            }
+          },
+          "window_start_unix_ms": 1792720879770,
+          "window_end_unix_ms": 1792720914770,
+          "action_completed_unix_ms": 1792720883155,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "vpn_policy_at_window_end": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "capture": {
+            "capture": "disconnect.pcap",
+            "sha256": "3345b7ac2847a2d938f41aa4a8a965104ea087c32461d26351e5af1203e822c2",
+            "bytes": 297395,
+            "first_packet_unix": 1792720879.819429,
+            "last_packet_unix": 1792720914.575918,
+            "observed_span_seconds": 34.756,
+            "counts": {
+              "packets": 2415,
+              "wireguard_out": 572,
+              "all_https4_syn": 172,
+              "unsupported_network_packets": 2
+            }
+          },
+          "expected": "blocked",
+          "status": "fail",
+          "findings": [
+            "unsupported_packet_forms_not_assessed"
+          ],
+          "privacy_assessed": true,
+          "required_probes": [
+            "ipv4",
+            "ipv6",
+            "dns",
+            "direct4",
+            "doh"
+          ],
+          "doh_endpoint_syn_outside": 0,
+          "wan_exit_observations": 0
+        },
+        {
+          "scenario": "reconnect",
+          "duration_seconds": 45.0,
+          "probes": {
+            "ipv4": {
+              "success": 19,
+              "failure": 1
+            },
+            "ipv6": {
+              "success": 17,
+              "failure": 1
+            },
+            "dns": {
+              "success": 19,
+              "failure": 1
+            },
+            "direct4": {
+              "success": 19,
+              "failure": 1
+            },
+            "doh": {
+              "success": 19,
+              "failure": 1
+            },
+            "dot4": {
+              "success": 39,
+              "failure": 4
+            },
+            "dot6": {
+              "success": 38,
+              "failure": 5
+            },
+            "bound-dns": {
+              "success": 19,
+              "failure": 1
+            },
+            "bound-tcp4": {
+              "success": 0,
+              "failure": 22
+            },
+            "bound-tcp6": {
+              "success": 0,
+              "failure": 22
+            }
+          },
+          "window_start_unix_ms": 1792720916057,
+          "window_end_unix_ms": 1792720961057,
+          "action_completed_unix_ms": 1792720920754,
+          "vpn_policy_at_window_start": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "vpn_policy_at_window_end": {
+            "always_on_target_matches": true,
+            "blocking_enabled": true
+          },
+          "capture": {
+            "capture": "reconnect.pcap",
+            "sha256": "d4295b584ca8663569a87bf94f918c7d88705bce4256cec8eb9ff4dbdd19c6be",
+            "bytes": 994690,
+            "first_packet_unix": 1792720916.898385,
+            "last_packet_unix": 1792720961.069782,
+            "observed_span_seconds": 44.171,
+            "counts": {
+              "packets": 5134,
+              "all_https4_syn": 162,
+              "wireguard_out": 2338,
+              "unsupported_network_packets": 2
+            }
+          },
+          "expected": "working",
+          "status": "fail",
+          "findings": [
+            "unsupported_packet_forms_not_assessed"
+          ],
+          "privacy_assessed": true,
+          "required_probes": [
+            "ipv4",
+            "ipv6",
+            "dns",
+            "direct4",
+            "doh"
+          ],
+          "doh_endpoint_syn_outside": 0,
+          "wan_exit_observations": 0
+        }
+      ],
+      "files": [
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/report.json",
+          "sha256": "f269a3a7be7a385f2b7c167c0f4281eac98ecf30d2d17d90f7b7296ec8614fd5",
+          "bytes": 9669
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/report.md",
+          "sha256": "e783f5815f067fd03286a661fc82300d4855ade7e3ed2c9500be9ed779762f49",
+          "bytes": 675
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/state.json",
+          "sha256": "01ba701c89084045a4090f361c6adff52faf2a1222d414d36c41b401e3c2ac4a",
+          "bytes": 2102
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/crash.pcap",
+          "sha256": "3393413ba0d2bf08ed03f42f0468bb165db56f5436249da4b5b4aa82a82a6469",
+          "bytes": 992285
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/crash.tsv",
+          "sha256": "8fc78d8cfee977484b597ec44546577f4cb88df82ce11cac1730d01041d638d3",
+          "bytes": 96744
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/disconnect.pcap",
+          "sha256": "3345b7ac2847a2d938f41aa4a8a965104ea087c32461d26351e5af1203e822c2",
+          "bytes": 297395
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/disconnect.tsv",
+          "sha256": "6911436258daa2533f7b886ee49efcda1da5ae9cef704f721c0ded93c92d8318",
+          "bytes": 133587
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/lifecycle-crash.jsonl",
+          "sha256": "d6aa6f1c4f4f0b56c94d9d7e2e15c1efeda1bb3b75b991496c9059305efb40f5",
+          "bytes": 2285340
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/lifecycle-disconnect.jsonl",
+          "sha256": "ba8361aa963a0d7efb463e54beb968b0ee1b66a8fde32f6a7e6ec4e16c7a1e25",
+          "bytes": 1046643
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/lifecycle-positive-control.jsonl",
+          "sha256": "de198c9631d91403697b4b3512d927b61400a3b23d3feb15da15015b519dde41",
+          "bytes": 519031
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/lifecycle-reconnect.jsonl",
+          "sha256": "d2b16da01648ea6e80ece2d18209ea4c6fc4c8f48635953aa20f4f18ccd0dc83",
+          "bytes": 1934247
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/logcat-crash.txt",
+          "sha256": "8a407a93e5b5f631e6b32b0fd8d51625a2c064f7c7cdd26d075420b22f0fbb98",
+          "bytes": 407584
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/logcat-disconnect.txt",
+          "sha256": "bb697413b6fc30f06f00341066af6f25e0358b094adcb78796d49e9157d82291",
+          "bytes": 419756
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/logcat-positive-control.txt",
+          "sha256": "574ac7dbb959b9eaecd4316d29468fb8a3f6170c03caeef743c462faadaf5015",
+          "bytes": 245174
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/logcat-reconnect.txt",
+          "sha256": "43e5fb331cdd795b995fcb2d4cbda1c248c38428827b4b0005f45494f99e804b",
+          "bytes": 576753
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/positive-control.pcap",
+          "sha256": "4447821e135e61098dfab3307d60efa60289d54184951b3bcb1e1080e5dfb7b7",
+          "bytes": 215511
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/positive-control.tsv",
+          "sha256": "54d78fede3f41d7c4fe2be999e2d9335b1d87f8773180db6dbdb28b0f939fd1f",
+          "bytes": 34368
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/reconnect.pcap",
+          "sha256": "d4295b584ca8663569a87bf94f918c7d88705bce4256cec8eb9ff4dbdd19c6be",
+          "bytes": 994690
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/reconnect.tsv",
+          "sha256": "7bb2d3aeac3476c49ffa163094fce2f4afe6add48c971f20fec9134a3af897e3",
+          "bytes": 180582
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/source/AndroidManifest.xml",
+          "sha256": "22e4ec071c1a58b335216f30c72c585d1cdc83694f7b02905aa42fbec60d78b0",
+          "bytes": 890
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/source/Driver.java",
+          "sha256": "9f0467c930105a7497526d51f4324e007cb69e407e4ab8b9ec79db30c5a6cb11",
+          "bytes": 7301
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/source/DriverManifest.xml",
+          "sha256": "3ae2cedfdec30912a08add70c45e8c11138f97acaf22d942f3db75a451497a67",
+          "bytes": 426
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/source/KeepAlive.java",
+          "sha256": "f75a2c94a46671913ab3701418c18c5a784232dfec7e58c658782a7fecb90c38",
+          "bytes": 678
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/source/Probe.java",
+          "sha256": "b568b92301a14b12fc2b9d8888effab914774974599a1846d9d54e9ca3cc012c",
+          "bytes": 5383
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/source/build.sh",
+          "sha256": "ec41433444db1125f12a3c7d01300e9ee8ccc45c50cf5d2cf8a13462d89fdc69",
+          "bytes": 2838
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/source/capture.c",
+          "sha256": "9478cf935343403fc08128c32e22fc342d054bf3990c045b627efb3d8f17081b",
+          "bytes": 1737
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/source/correlate.py",
+          "sha256": "15b2e09a572a94fe904e8704c1e56a178206656e48074305a98dee2a6117acb9",
+          "bytes": 1624
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/source/run.py",
+          "sha256": "bfefd5c4a020ae3085b23066f9fecc53599e435510c28545857abf065b70d227",
+          "bytes": 78176
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/source/summarize.py",
+          "sha256": "192d72d7707f4fdc294b418561e60be5c35cd46b9c5250a90fe5a01b8cbf69a2",
+          "bytes": 5377
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/tools/capture",
+          "sha256": "f2ef27f73d830a5112cabed7475a65de2327127da5ab1fd3c8a2e704dfbe8dec",
+          "bytes": 8792
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/tools/driver.apk",
+          "sha256": "38257059523e437335f5fad4a7bc5fa9643d3f5d577e2a9694c9766453107429",
+          "bytes": 12709
+        },
+        {
+          "path": "/tmp/wave-android-lifecycle-20261023/api36/private/tools/probe.apk",
+          "sha256": "99550b00fec2c621415458c7e9a97b889758349307add081a89234bb6ffffae6",
+          "bytes": 16805
+        }
+      ],
+      "correlation": {
+        "crash": {
+          "counts": {
+            "unassigned": 2
+          },
+          "packet_unix_ms": {
+            "unassigned": [
+              1792720828286.356,
+              1792720828288.184
+            ]
+          },
+          "reinspection": {
+            "capture": "crash.pcap",
+            "sha256": "3393413ba0d2bf08ed03f42f0468bb165db56f5436249da4b5b4aa82a82a6469",
+            "bytes": 992285,
+            "first_packet_unix": 1792720826.432281,
+            "last_packet_unix": 1792720876.327154,
+            "observed_span_seconds": 49.895,
+            "counts": {
+              "packets": 4036,
+              "wireguard_out": 2237,
+              "unsupported_network_packets": 4,
+              "all_dns4_out": 2
+            }
+          },
+          "lifecycle_transitions": [
+            {
+              "device_unix_ms": 1792720825465,
+              "host_ms_start": 1792720825196,
+              "host_ms_end": 1792720825247,
+              "wave_pid": "14908",
+              "tun0_present": true,
+              "connection_service_record_present": true
+            },
+            {
+              "device_unix_ms": 1792720827360,
+              "host_ms_start": 1792720827091,
+              "host_ms_end": 1792720827142,
+              "wave_pid": null,
+              "tun0_present": false,
+              "connection_service_record_present": true
+            },
+            {
+              "device_unix_ms": 1792720828297,
+              "host_ms_start": 1792720828025,
+              "host_ms_end": 1792720828093,
+              "wave_pid": "18082",
+              "tun0_present": true,
+              "connection_service_record_present": true
+            }
+          ],
+          "sampled_saved_policy_combinations": [
+            {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            }
+          ],
+          "sample_count": 158,
+          "logcat_events": [
+            {
+              "device_unix_ms": 1792720827162,
+              "event": "android_vpn_disconnected"
+            }
+          ]
+        },
+        "disconnect": {
+          "counts": {},
+          "packet_unix_ms": {},
+          "reinspection": {
+            "capture": "disconnect.pcap",
+            "sha256": "3345b7ac2847a2d938f41aa4a8a965104ea087c32461d26351e5af1203e822c2",
+            "bytes": 297395,
+            "first_packet_unix": 1792720879.819429,
+            "last_packet_unix": 1792720914.575918,
+            "observed_span_seconds": 34.756,
+            "counts": {
+              "packets": 2415,
+              "wireguard_out": 572,
+              "all_https4_syn": 172,
+              "unsupported_network_packets": 2
+            }
+          },
+          "lifecycle_transitions": [
+            {
+              "device_unix_ms": 1792720878921,
+              "host_ms_start": 1792720878655,
+              "host_ms_end": 1792720878702,
+              "wave_pid": "18082",
+              "tun0_present": true,
+              "connection_service_record_present": true
+            },
+            {
+              "device_unix_ms": 1792720882423,
+              "host_ms_start": 1792720882150,
+              "host_ms_end": 1792720882212,
+              "wave_pid": "18082",
+              "tun0_present": false,
+              "connection_service_record_present": false
+            }
+          ],
+          "sampled_saved_policy_combinations": [
+            {
+              "always_on_target_matches": true,
+              "blocking_enabled": true
+            }
+          ],
+          "sample_count": 107,
+          "logcat_events": [
+            {
+              "device_unix_ms": 1792720882282,
+              "event": "backend_down"
+            },
+            {
+              "device_unix_ms": 1792720882306,
+              "event": "android_vpn_disconnected"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "historical_disconnect_inspection": {
+    "api37-matrix-final": {
+      "file": {
+        "path": "/tmp/wave-android-round3-20261022/api37-matrix-final/private/disconnect.pcap",
+        "sha256": "a6a368e4062151d421f9304e4c42bbe0aaa562d845815ed36126005ac9a712cb",
+        "bytes": 227281
+      },
+      "counts": {
+        "default_resolver": 4,
+        "bound_resolver": 4,
+        "unassigned": 3
+      },
+      "packet_unix_ms": {
+        "default_resolver": [
+          1792700201260.892,
+          1792700201260.92,
+          1792700201263.238,
+          1792700201263.244
+        ],
+        "bound_resolver": [
+          1792700201260.922,
+          1792700201261.02,
+          1792700201263.243,
+          1792700201263.321
+        ],
+        "unassigned": [
+          1792700201261.162,
+          1792700201263.243,
+          1792700201303.358
+        ]
+      }
+    },
+    "api37-2-matrix-final": {
+      "file": {
+        "path": "/tmp/wave-android-round3-20261022/api37-2-matrix-final/private/disconnect.pcap",
+        "sha256": "7159db1de9742b43ca28c99768c0a569d7eb0362794b868b579fe78d097a1478",
+        "bytes": 236367
+      },
+      "counts": {
+        "bound_resolver": 4,
+        "default_resolver": 4,
+        "unassigned": 1
+      },
+      "packet_unix_ms": {
+        "bound_resolver": [
+          1792700198987.546,
+          1792700198987.555,
+          1792700198988.771,
+          1792700198988.773
+        ],
+        "default_resolver": [
+          1792700198987.555,
+          1792700198987.556,
+          1792700198988.235,
+          1792700198988.599
+        ],
+        "unassigned": [
+          1792700199053.934
+        ]
+      }
+    }
+  },
+  "validation": {
+    "kotlin-build-lint-final.log": {
+      "path": "/tmp/wave-android-lifecycle-20261023/kotlin-build-lint-final.log",
+      "sha256": "2f8d064fd303483a644c398e2b11e1da2f45f69da490969259f07969460ea0bf",
+      "bytes": 3601
+    },
+    "kotlin-tests-rerun.log": {
+      "path": "/tmp/wave-android-lifecycle-20261023/kotlin-tests-rerun.log",
+      "sha256": "d64f1d4b4162b85fc052ec30060e109de6f53372ab6ac3b236284fa0ee8c7ade",
+      "bytes": 962
+    },
+    "qa-tests-final.log": {
+      "path": "/tmp/wave-android-lifecycle-20261023/qa-tests-final.log",
+      "sha256": "5c50e17d8f2d3642a1ca78a708596472c4d1f492e45d357d04fd6a03e73b5f1b",
+      "bytes": 3031
+    },
+    "release-tool-tests.log": {
+      "path": "/tmp/wave-android-lifecycle-20261023/release-tool-tests.log",
+      "sha256": "c00578dea12d52ca9ca4d94f45cd805d65accfa13ed980f39acc1a4c5d2871a0",
+      "bytes": 624
+    }
+  },
+  "limits": [
+    "Saved policy values are not proof of continuous kernel enforcement.",
+    "Sampling and cold boot can change race timing. Absence of marked DNS in a new sample does not invalidate earlier captures.",
+    "DNS without markers and endpoint-only SYNs have no UID attribution.",
+    "No physical, gateway, IPv6 uplink, cellular, LMK, pre-unlock or overnight scope was exercised.",
+    "Source snapshots were reconstructed from HEAD and known edit ordering after the runs; raw logs and captures are original."
+  ],
+  "original_round3_captures_verified_unchanged": 65,
+  "original_round3_reports_verified_unchanged": 11,
+  "supporting_files": [
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/INVOCATIONS.md",
+      "sha256": "de6d589a4b7b1ad0a98d4b60c4fd3415312e6c0e5351bd854db603dfda6ee886",
+      "bytes": 1848
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/api36-platform.txt",
+      "sha256": "68fa6f169b73d97cc00d8603312d264b2559c6e409519547c021046162538687",
+      "bytes": 45131
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/api37-2-platform.txt",
+      "sha256": "6e2248f9a09a949db04969a4f97458179fa1eb1d4fbc35bcf63df00a6d3d46fd",
+      "bytes": 47730
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/assemble.py",
+      "sha256": "f7ef567f39a05b29cac60e3efe919d2b8b0445169a89530c4588b1480582ebfb",
+      "bytes": 5160
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/boot37-headless-retry.log",
+      "sha256": "6be89693fb6a92da6064ec2ae049ac91062b1ef0e90c67a47fa6c8ea37044ca5",
+      "bytes": 8515
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/boot37-headless.log",
+      "sha256": "5a008e443acedfde95927a470cd988f63e1c116281b59b1790fe7124a49a5dd9",
+      "bytes": 1348
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/connectivity-during-disconnect.txt",
+      "sha256": "b07c5ee1b0f312ad0c870b37328c9f64ccd6fb3d9988710e1263acef81486384",
+      "bytes": 73490
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/correlate.py",
+      "sha256": "15b2e09a572a94fe904e8704c1e56a178206656e48074305a98dee2a6117acb9",
+      "bytes": 1624
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/kotlin-build-lint-final.log",
+      "sha256": "2f8d064fd303483a644c398e2b11e1da2f45f69da490969259f07969460ea0bf",
+      "bytes": 3601
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/kotlin-build-lint.log",
+      "sha256": "898e5a903715c87d0990c0181973dd72610cc9081204af3b379e3b2d6b7b3dc8",
+      "bytes": 3601
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/kotlin-tests-rerun.log",
+      "sha256": "d64f1d4b4162b85fc052ec30060e109de6f53372ab6ac3b236284fa0ee8c7ade",
+      "bytes": 962
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/netd-during-disconnect.txt",
+      "sha256": "2d7e408299d24392f6dcdbcd8526e5157cf5b99266b0e99cea7bac9a1d607ced",
+      "bytes": 44470
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/qa-tests-final.log",
+      "sha256": "5c50e17d8f2d3642a1ca78a708596472c4d1f492e45d357d04fd6a03e73b5f1b",
+      "bytes": 3031
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/qa-tests.log",
+      "sha256": "0db599eb1691b5a9003962e27b90f313549c3185cc3eac3d9a89898e7489ce18",
+      "bytes": 2940
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/release-tool-tests.log",
+      "sha256": "c00578dea12d52ca9ca4d94f45cd805d65accfa13ed980f39acc1a4c5d2871a0",
+      "bytes": 624
+    },
+    {
+      "path": "/tmp/wave-android-lifecycle-20261023/resolver-during-disconnect.txt",
+      "sha256": "f71fb6ddf10f135c930aa3f723ec300e67caf8b320f7eea52cbafe410eea3d83",
+      "bytes": 4010
+    }
+  ]
+}

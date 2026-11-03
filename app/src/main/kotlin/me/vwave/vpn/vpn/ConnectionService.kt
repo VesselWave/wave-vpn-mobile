@@ -36,7 +36,7 @@ class ConnectionService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
-        if (!app.tunnels.isActive) {
+        if (app.tunnels.shouldReconnect && !app.tunnels.isActive) {
             app.log.info("Restoring VPN after Android service start")
             app.tunnels.connect()
         }

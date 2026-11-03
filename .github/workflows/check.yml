@@ -1,0 +1,37 @@
+name: Checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Select JDK 17
+        run: |
+          echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
+          echo "$JAVA_HOME_17_X64/bin" >> "$GITHUB_PATH"
+      - name: Install pinned Android SDK packages
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, subprocess
+          manager = pathlib.Path(os.environ['ANDROID_HOME']) / 'cmdline-tools/latest/bin/sdkmanager'
+          subprocess.run([str(manager), '--licenses'], input='y\n' * 100, text=True, check=True)
+          subprocess.run([str(manager), 'platforms;android-37.0', 'build-tools;37.0.0'], check=True)
+          PY
+      - name: Protocol tests, lint and both build types
+        run: ./gradlew --no-daemon --no-configuration-cache :core:test :app:lintDebug :app:assembleDebug :app:assembleRelease
+      - name: Independent device-runner tests
+        run: python3 -m unittest discover -s tools/vpn-probe/tests -v
+      - name: Release packaging tests
+        run: |
+          python3 -m unittest discover -s scripts/tests -v
+          python3 scripts/test-release.py

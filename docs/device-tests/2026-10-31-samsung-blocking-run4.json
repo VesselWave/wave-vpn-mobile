@@ -1,0 +1,215 @@
+{
+  "schema": 1,
+  "source_threads": [
+    "fd5dd284-969f-435f-9afa-b1814ce8e6ef",
+    "2a7198b7-2664-4843-897e-2349a08a5be7",
+    "240d3f84-ccf8-4071-b4fd-19554f697ec1"
+  ],
+  "artifact": {
+    "sha256": "cc4e8b8b37ffdc10ddb983baf3ad2d7fde0bf437df92a4659226ac5b15ba4bc9",
+    "signer_sha256": "29950a5756876759b28984a0e6b44a276efd948f8e7008c3fff471d4ad418821",
+    "package": "me.vwave.vpn",
+    "version_code": 2,
+    "version_name": "0.2-dev",
+    "debuggable": false
+  },
+  "device": {
+    "api": 36,
+    "release": "16",
+    "security_patch": "2026-09-05",
+    "page_size": 4096,
+    "abi": "arm64-v8a",
+    "emulator": false
+  },
+  "installed_apk_sha256": [],
+  "validated_capture_families": [
+    "ipv4"
+  ],
+  "scope": "Observed application probes and capture windows; never a device-wide leak-free certification",
+  "status": "fail",
+  "capture_kind": "gateway",
+  "required_probes": [
+    "ipv4",
+    "dns",
+    "direct4",
+    "doh"
+  ],
+  "results": [
+    {
+      "scenario": "positive-control",
+      "duration_seconds": 18.0,
+      "probes": {
+        "ipv4": {
+          "success": 8,
+          "failure": 0
+        },
+        "ipv6": {
+          "success": 0,
+          "failure": 9
+        },
+        "dns": {
+          "success": 8,
+          "failure": 0
+        },
+        "direct4": {
+          "success": 8,
+          "failure": 0
+        },
+        "doh": {
+          "success": 8,
+          "failure": 0
+        },
+        "dot4": {
+          "success": 18,
+          "failure": 0
+        },
+        "dot6": {
+          "success": 0,
+          "failure": 18
+        },
+        "bound-dns": {
+          "success": 8,
+          "failure": 0
+        },
+        "bound-tcp4": {
+          "success": 9,
+          "failure": 0
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 9
+        }
+      },
+      "window_start_unix_ms": 1793471851812,
+      "window_end_unix_ms": 1793471869812,
+      "action_completed_unix_ms": null,
+      "vpn_policy_at_window_start": {
+        "always_on_target_matches": false,
+        "blocking_enabled": false
+      },
+      "vpn_policy_at_window_end": {
+        "always_on_target_matches": false,
+        "blocking_enabled": false
+      },
+      "capture": {
+        "capture": "positive-control.pcap",
+        "sha256": "0147970b57d1b8408689d5f48216743460b766f5d9beee5a9623a545ef17a598",
+        "bytes": 134892,
+        "first_packet_unix": 1793471852.448132,
+        "last_packet_unix": 1793471869.228826,
+        "observed_span_seconds": 16.781,
+        "counts": {
+          "packets": 870,
+          "all_dns4_out": 110,
+          "raw_dns4_out": 84,
+          "all_https4_syn": 32,
+          "direct_https4_syn": 16,
+          "all_dot4_syn": 16,
+          "dot4_syn": 16,
+          "system_dns4_out": 16,
+          "default_system_dns4_out": 8,
+          "bound_system_dns4_out": 8
+        }
+      },
+      "expected": "working",
+      "status": "pass",
+      "findings": [],
+      "privacy_assessed": false,
+      "required_probes": [
+        "ipv4",
+        "dns",
+        "direct4",
+        "doh"
+      ]
+    },
+    {
+      "scenario": "disconnect",
+      "duration_seconds": 35.0,
+      "probes": {
+        "ipv4": {
+          "success": 1,
+          "failure": 2
+        },
+        "ipv6": {
+          "success": 1,
+          "failure": 2
+        },
+        "dns": {
+          "success": 1,
+          "failure": 2
+        },
+        "direct4": {
+          "success": 1,
+          "failure": 7
+        },
+        "doh": {
+          "success": 1,
+          "failure": 2
+        },
+        "dot4": {
+          "success": 4,
+          "failure": 23
+        },
+        "dot6": {
+          "success": 4,
+          "failure": 23
+        },
+        "bound-dns": {
+          "success": 2,
+          "failure": 2
+        },
+        "bound-tcp4": {
+          "success": 0,
+          "failure": 17
+        },
+        "bound-tcp6": {
+          "success": 0,
+          "failure": 17
+        }
+      },
+      "window_start_unix_ms": 1793471891350,
+      "window_end_unix_ms": 1793471926350,
+      "action_completed_unix_ms": null,
+      "vpn_policy_at_window_start": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "vpn_policy_at_window_end": {
+        "always_on_target_matches": true,
+        "blocking_enabled": true
+      },
+      "capture": {
+        "capture": "disconnect.pcap",
+        "sha256": "850cd05cf9384a3a5e12feb9e793372d1fb516e51e86f32e916c7378ca4e20be",
+        "bytes": 206847,
+        "first_packet_unix": 1793471891.892968,
+        "last_packet_unix": 1793471925.882316,
+        "observed_span_seconds": 33.989,
+        "counts": {
+          "packets": 1195,
+          "wireguard_out": 647,
+          "all_https4_syn": 1
+        }
+      },
+      "expected": "blocked",
+      "status": "fail",
+      "findings": [],
+      "error": "Android still reports an unexpected active target VPN after UI disconnect",
+      "privacy_assessed": true,
+      "required_probes": [
+        "ipv4",
+        "dns",
+        "direct4",
+        "doh"
+      ],
+      "doh_endpoint_syn_outside": 0,
+      "wan_exit_observations": 0
+    },
+    {
+      "scenario": "reconnect",
+      "status": "fail",
+      "error": "Android still reports an unexpected active target VPN after UI disconnect"
+    }
+  ],
+  "cleanup_complete": true
+}

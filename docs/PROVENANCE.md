@@ -118,3 +118,27 @@ GPL-3.0-or-later QA code. They reproduce the recorded device workflows using
 Android SDK APIs, ADB and standard gateway tools. No implementation or tests were
 copied from the archived apps. They are separate from the shipped application
 and do not depend on the sibling desktop checkout or T3 thread storage.
+
+The later allocation-pressure and direct-boot QA helpers were also authored for
+these tests, with GPL-3.0-or-later headers; their source and raw evidence remain
+in the private evidence directory, not in the application APK. Host troubleshooting
+consulted Google's [AOSP emulator acceleration setup](https://android.googlesource.com/platform/external/qemu/+/refs/heads/emu-32-release/android-qemu2-glue/main.cpp)
+as read-only context for the HVF diagnostic. No emulator source or tests were
+copied, and that reference does not establish a DNS failure mechanism.
+
+The temporary hotspot and tunneled dual-stack QA tools are authored
+GPL-3.0-or-later scripts, separate from the APK. The
+[WireGuard namespace documentation](https://www.wireguard.com/netns/) was
+consulted for the transport-socket/namespace behavior, and
+[Tor's SOCKS specification](https://spec.torproject.org/socks-extensions) for its
+UDP limitation. No source or tests were copied. These tools use system networking
+commands and caller-supplied SSH targets; they have no build dependency on the
+personal infrastructure checkout.
+
+## Blocking VPN interface mitigation (2026-10-31)
+
+The authored `WaveVpnService` subclasses the existing Apache-2.0 WireGuard
+Android dependency. Its service binding and TUN handoff were designed against
+[GoBackend.java at the pinned 1.0.20260102 tag](https://github.com/WireGuard/wireguard-android/blob/1.0.20260102/tunnel/src/main/java/com/wireguard/android/backend/GoBackend.java),
+particularly `VpnService.getBuilder`, service ownership and `setState` teardown.
+No dependency source was copied. The new service/code remains GPL-3.0-or-later.

@@ -35,11 +35,13 @@ targeted checks on both the emulator and physical Pixel without tapping Connect.
 The signed minified release also has runtime coverage on the Pixel and on
 Android 8.0, Android 15 with 16 KB pages, and Android 16 emulators.
 
-Physical IPv4 upstream capture and the current release-test findings are recorded
-in the [follow-up report](docs/RELEASE-FOLLOWUP.md). The older Android 16 emulator
-exposed fresh application DNS names outside the tunnel during process death,
-even with Android blocking enabled. A general leak-free claim is therefore not
-supported. Native IPv6 uplink capture and longer reliability tests remain gates.
+Physical IPv4 upstream capture and the release-test findings are recorded in the
+[follow-up report](docs/RELEASE-FOLLOWUP.md) and [expanded review](docs/RELEASE-ROUND3.md).
+The older Android 16 emulator exposed fresh application DNS during process death;
+newer API 37.0 and 37.2 SDK images also exposed fresh probe DNS during disconnect.
+Physical capture contains additional DNS/transport observations without originating
+UID/profile attribution. A general leak-free claim is not supported. Native IPv6
+uplink/cellular capture and longer reliability tests remain gates.
 See also the [initial signed-release report](docs/RELEASE-DEVICE-TESTING.md).
 
 The [repeatable device-test runner](tools/vpn-probe/RUNNING.md) automates the
@@ -52,7 +54,7 @@ Protection depends on platform behavior; affected Android versions can expose DN
 during tunnel changes. Verify application exclusions together with those settings
 before relying on split tunneling.
 
-[Verification record](docs/VERIFICATION.md). This is an unpublished development build.
+[Verification record](docs/VERIFICATION.md). Version 0.1.0 is an experimental prerelease. See [release notes](docs/RELEASE-v0.1.0.md) for known failures and qualification limits.
 
 Security reports: **vesselwave@protonmail.com**. See [security policy](SECURITY.md)
 and [release signing](docs/RELEASE-SIGNING.md) for public verification keys and
