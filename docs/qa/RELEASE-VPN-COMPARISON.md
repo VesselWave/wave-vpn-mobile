@@ -1,5 +1,7 @@
 # Android VPN comparison — 2026-10-24 UTC
 
+> **In short:** AirVPN's own Eddie leaked app DNS on the same stock emulator, so the failure isn't unique to Wave. The exact cause is still unknown.
+
 The release remains **blocked** for an unrestricted privacy claim. Official
 Eddie reproduced marked ordinary application DNS outside the VPN on the stock
 Android emulator. This demonstrates that the observed failure is not exclusive

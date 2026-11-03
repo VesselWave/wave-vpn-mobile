@@ -1,5 +1,7 @@
 # Android device verification — 2026-10-22 UTC
 
+> **In short:** First device run of a 0.2-dev debug build on a Pixel 7 (Android 17) and an Android 16 emulator. A development test record, not leak-protection certification.
+
 This is a development-build test record, not a complete leak-protection or release
 certification. No application code was changed for this run.
 

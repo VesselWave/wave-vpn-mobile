@@ -1,70 +1,43 @@
-# Android release signing
+# Release signing
 
-The production application ID is `me.vwave.vpn`. Debug builds use
-`me.vwave.vpn.dev` and the debug signing certificate. Production updates must
-preserve the release signing identity; back up the encrypted keystore and its
-passphrase separately before publishing the first release. Losing that identity
-can prevent updates to existing installations.
+Release builds use the package `me.vwave.vpn` and the production certificate. Debug builds use `me.vwave.vpn.dev` and the debug certificate, so the two can be installed side by side.
 
-Supply these environment variables from private local storage:
+## Verifying a download
 
-- `WAVE_ANDROID_KEYSTORE`: absolute path to the private PKCS12 keystore.
-- `WAVE_ANDROID_KEY_ALIAS`: `wave-vpn-release`.
-- `WAVE_ANDROID_KEYSTORE_PASSWORD`: keystore password.
-- `WAVE_ANDROID_KEY_PASSWORD`: key password.
-
-Run `./gradlew --no-daemon --no-configuration-cache :core:test :app:lintDebug :app:assembleRelease`.
-With no signing variables, release builds remain unsigned. Partially configured
-signing fails instead of falling back to another key. Do not put passwords in
-committed Gradle files, command-line arguments or shell history. Avoid Gradle
-configuration caching or build-scan uploads for signing jobs containing secrets.
-
-The signed APK is `app/build/outputs/apk/release/app-release.apk`.
-Before distributing it, use the Android SDK build-tools:
+You need the APK, both archives, the `SHA256SUMS` manifest, its `.asc` signature and the key, all from the same release. Then:
 
 ```sh
-apksigner verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
+bash scripts/verify-release.sh wave-vpn-android-VERSION-signing-key.asc \
+  wave-vpn-android-VERSION-SHA256SUMS wave-vpn-android-VERSION-SHA256SUMS.asc \
+  414018C0BBB8C0A70A80BF570AA32CCB2C0B3951
+apksigner verify --verbose --print-certs wave-vpn-android-VERSION.apk
 ```
 
-Require a valid APK signature and compare the signer certificate SHA-256 digest
-with [SECURITY.md](../SECURITY.md). The public certificate is stored at
-[keys/wave-android-release.pem](keys/wave-android-release.pem). A matching
-certificate does not establish VPN leak protection or completion of device tests.
+The script checks the key's identity, the manifest signature and every file's hash. `apksigner` must report a valid signature whose SHA-256 matches the certificate in [SECURITY.md](../SECURITY.md) (also in [keys/wave-android-release.pem](keys/wave-android-release.pem)). The script ships in this repository; no other checkout is needed.
 
-For separately signed download checksums, use the shared OpenPGP public key at
-[keys/wave-release-signing.asc](keys/wave-release-signing.asc), fingerprint
-`414018C0BBB8C0A70A80BF570AA32CCB2C0B3951`. Publish the fingerprint through a
-separately trusted maintainer channel. The private OpenPGP key and APK keystore
-must remain outside the repository. No release is automatically published.
+Get the fingerprint from a source other than the download itself: [SECURITY.md](../SECURITY.md), [keys.openpgp.org](https://keys.openpgp.org/search?q=414018C0BBB8C0A70A80BF570AA32CCB2C0B3951) or [vpn.vwave.me](https://vpn.vwave.me/#verify). A matching certificate proves who built the APK; it doesn't prove leak protection or that device tests are complete.
 
-## Packaging a tagged candidate
+## Building a signed release (maintainers)
 
-After selecting a release version (`X.Y.Z` or `X.Y.Z-rc.N`), incrementing the
-version code as appropriate and committing the reviewed source, create its
-`v<VERSION>` tag. From that clean checkout, with the signing environment above:
+Updates only install over a release signed with the same key, so **losing the keystore means existing users can't update**. Keep an encrypted backup of the keystore and its passphrase, separately.
+
+Provide the signing details from private local storage, never from committed files, command-line arguments or shell history:
+
+| Variable | Value |
+| --- | --- |
+| `WAVE_ANDROID_KEYSTORE` | Absolute path to the PKCS12 keystore |
+| `WAVE_ANDROID_KEY_ALIAS` | `wave-vpn-release` |
+| `WAVE_ANDROID_KEYSTORE_PASSWORD` | Keystore password |
+| `WAVE_ANDROID_KEY_PASSWORD` | Key password |
+
+Without these, release builds stay unsigned; a partial set fails rather than falling back to another key. Turn off Gradle configuration caching and build-scan uploads for signing jobs.
+
+To package a tagged candidate: pick the version (`X.Y.Z` or `X.Y.Z-rc.N`), bump the version code, commit, tag `v<VERSION>`, then from that clean checkout run:
 
 ```sh
 python3 scripts/release.py --sign-key 414018C0BBB8C0A70A80BF570AA32CCB2C0B3951
 ```
 
-Requires Python 3.10+, JDK 17, SDK platform 37/build-tools 37.0.0, OpenSSL and
-GnuPG. It runs checks, builds the signed/minified APK, verifies its production
-certificate, package/version and 16 KB alignment, and creates APK/notices and
-source archives, provenance/toolchain records and checksums under
-`app/build/distribution/<revision>/`. An existing output directory is refused.
-It does not publish or establish completion of privacy/device release gates.
-Without `--sign-key`, the APK still requires its production signature, but the
-download checksum manifest is left unsigned.
+It needs Python 3.10+, JDK 17, SDK platform 37 with build-tools 37.0.0, OpenSSL and GnuPG. It runs the checks; builds the signed, minified APK; verifies its certificate, package, version and 16 KB alignment; and writes the APK, notices, source archive, provenance and toolchain records and checksums to `app/build/distribution/<revision>/`. It refuses an existing output directory and never publishes anything. Without `--sign-key`, the APK is still production-signed but the checksum manifest is left unsigned.
 
-Verify a signed download set from a separate environment:
-
-```sh
-bash scripts/verify-release.sh wave-vpn-android-VERSION-signing-key.asc \
-  wave-vpn-android-VERSION-SHA256SUMS wave-vpn-android-VERSION-SHA256SUMS.asc \
-  TRUSTED_FULL_FINGERPRINT
-```
-
-The verifier checks the trusted OpenPGP identity, manifest signature and every
-archive hash. Keep the two archives beside the manifest. After extraction, also
-verify the APK certificate with `apksigner` before installation. The standalone
-verifier is maintained in each app; no sibling checkout is needed.
+The private OpenPGP key and the keystore never go in the repository.

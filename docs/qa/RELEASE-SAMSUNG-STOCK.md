@@ -1,5 +1,7 @@
 # Stock Samsung leak verification — 2026-10-31
 
+> **In short:** External packet capture on a stock Galaxy S24 Ultra (Android 16). DNS escaped outside the VPN during crash, Wi-Fi recovery and force-stop, even with Always-on, blocking and Private DNS off. The app-side mitigations tried didn't fix it.
+
 Latest follow-up (2026-11-02): the blocking handoff is verified by live link
 configuration and blocked probes, but **stock Samsung privacy still fails**.
 Private DNS Off did not prevent phone-origin DNS outside the VPN during crash,

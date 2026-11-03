@@ -1,5 +1,7 @@
 # v0.1.0 released-APK emulator smoke test — 2026-11-03
 
+> **In short:** The published v0.1.0 APK passes install, connect, disconnect and crash recovery on an Android 17 emulator. With Always-on and blocking on, a crash leaked nothing in the probe; two cases need you to tap Connect again.
+
 Artifact: `wave-vpn-android-0.1.0.apk` downloaded from the v0.1.0 GitHub release,
 SHA-256 `5db2792df49e77e3aafbc3591036022b3bbd3f7c123e128f6ae1806f9c1f4943`.
 Before install: OpenPGP manifest signature, trusted fingerprint

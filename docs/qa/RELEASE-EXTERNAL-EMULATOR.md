@@ -1,5 +1,7 @@
 # External emulator VPN comparison — 2026-10-24
 
+> **In short:** Wave, Eddie and Proton under the same emulator lifecycle tests with external capture. No marked app DNS escaped in this short sample, but unattributed DNS appeared during Wave's crash and Proton's disconnect. Doesn't show that all Android VPNs leak.
+
 These results **do not establish that all Android VPNs leak**. The fresh external
 capture observed no marked application-probe DNS escape in Wave, Eddie or Proton
 across one accepted steady, disconnect, reconnect and crash window per app.

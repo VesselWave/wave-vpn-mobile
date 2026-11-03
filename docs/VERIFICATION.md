@@ -1,4 +1,37 @@
-# Replacement verification
+# Verification
+
+What has been tested on Wave VPN for Android, what failed, and what hasn't been covered yet. The dated log below is the evidence; the [qa reports](README.md#how-it-was-tested) have the full detail.
+
+## Summary
+
+**Passes**
+
+- Protocol and security unit tests, lint and builds; live sign-in bootstrap against AirVPN
+- Pixel 7 (GrapheneOS, Android 17): connections, dual-stack traffic, network handoffs, recovery after reboot (once unlocked) and after the app's process dies
+- Signed, minified release build on the Pixel and on Android 8, 15 (16 KB pages) and 16 emulators
+- Released v0.1.0 APK on an Android 17 emulator: install, connect, disconnect, crash recovery with and without Always-on ([report](qa/RELEASE-EMULATOR-SMOKE.md))
+
+**Fails**
+
+- Stock Samsung Android 16: DNS outside the tunnel during crash, Wi-Fi recovery and force-stop ([report](qa/RELEASE-SAMSUNG-STOCK.md))
+- Android 16 emulator: app DNS escaped while the VPN process was dead, despite Always-on and blocking
+- Android 17 (API 37.0 and 37.2) emulator images: probe DNS during disconnect ([review](qa/RELEASE-ROUND3.md))
+
+**Not yet covered**
+
+- The v0.1.0 APK on a physical device
+- Native IPv6 uplinks and captured mobile data
+- Boot before first unlock, and overnight or long-running reliability
+
+## Log, newest first
+
+- [Physical release and DNS investigation follow-up — 2026-10-22 UTC](#physical-release-and-dns-investigation-follow-up--2026-10-22-utc)
+- [Signed release and captured traffic — 2026-10-22 UTC](#signed-release-and-captured-traffic--2026-10-22-utc)
+- [Physical Android verification — 2026-10-22 UTC](#physical-android-verification--2026-10-22-utc)
+- [Release identity setup — 2026-10-22 UTC](#release-identity-setup--2026-10-22-utc)
+- [Initial replacement check](#initial-replacement-check)
+
+## Initial replacement check
 
 2026-10-21 UTC, macOS development host.
 

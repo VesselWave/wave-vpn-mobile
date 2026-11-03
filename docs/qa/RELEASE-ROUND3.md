@@ -1,5 +1,7 @@
 # Independent release testing review (Round 3) — 2026-10-22 UTC
 
+> **In short:** An independent review of the Pixel and emulator (API 36, 37.0, 37.2) evidence. Release stays blocked on DNS findings; no root cause proved and no leak-free claim.
+
 This report reviews the independent Round 3 evidence gathered across the physical
 Pixel 7 (GrapheneOS Android 17) and Google APIs SDK emulators (API 36, API 37.0 4 KB,
 and API 37.2 16 KB). Evidence was assembled from raw captures and reports in

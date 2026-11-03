@@ -1,5 +1,7 @@
 # Emulator lifecycle investigation — 2026-10-23 UTC
 
+> **In short:** A closer look at the emulator DNS-during-disconnect results: the leaks came from ordinary app lookups too, not only an explicit-network probe. No app fix or exact platform cause found.
+
 The release gate remains **blocked**. No production lifecycle fix or exact
 platform DNS cause is established. This investigation changes QA evidence and
 preconditions only; it leaves the app, signed candidate and user VPN preferences

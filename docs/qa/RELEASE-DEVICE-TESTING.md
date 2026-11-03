@@ -1,5 +1,7 @@
 # Signed release and packet checks — 2026-10-22 UTC
 
+> **In short:** First checks of the production-signed 0.2-dev build. Historical: the [follow-up](RELEASE-FOLLOWUP.md) supersedes its open items and found DNS escapes it didn't.
+
 This is the initial round's historical record. The
 [follow-up report](RELEASE-FOLLOWUP.md) supersedes its open physical-device blocker
 and its negative application-DNS result: physical signed-release capture is now
