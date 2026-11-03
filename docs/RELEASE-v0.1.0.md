@@ -7,7 +7,7 @@ This is an experimental release, not production-qualified VPN protection.
 outside the VPN during crash, Wi-Fi recovery and force-stop despite Always-on
 and blocking, including with Private DNS Off. Do not rely on this build where
 such exposure is unacceptable. Packet origin remains unassigned to a process.
-See [the Samsung evidence](RELEASE-SAMSUNG-STOCK.md) and the broader verification
+See [the Samsung evidence](qa/RELEASE-SAMSUNG-STOCK.md) and the broader verification
 reports. Blocking TUN handoff, early lockdown startup blocking and recovery
 improvements do not eliminate the failure.
 

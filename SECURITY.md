@@ -6,19 +6,19 @@ production support or security maintenance promise. See
 
 Known limitation: stock Samsung Android 16 captures retain cleartext DNS during
 crash, Wi-Fi recovery and force-stop, including with Private DNS Off. See
-[the Samsung report](docs/RELEASE-SAMSUNG-STOCK.md). An Android 16 emulator exposed application DNS names on the
+[the Samsung report](docs/qa/RELEASE-SAMSUNG-STOCK.md). An Android 16 emulator exposed application DNS names on the
 underlying network during VPN process death despite Always-on VPN and blocking.
 API 37.0 and 37.2 SDK images also exposed fresh probe DNS during disconnect;
-see the [expanded evidence review](docs/RELEASE-ROUND3.md).
+see the [expanded evidence review](docs/qa/RELEASE-ROUND3.md).
 This application does not promise device-wide leak prevention across Android
-versions. See the [release follow-up](docs/RELEASE-FOLLOWUP.md) for evidence,
+versions. See the [release follow-up](docs/qa/RELEASE-FOLLOWUP.md) for evidence,
 physical-device results and remaining gates.
 
 Report vulnerabilities privately to **vesselwave@protonmail.com**. Include the
 app version, Android version and reproduction steps. Do not post passwords,
 private profiles, WireGuard keys, account identifiers or unredacted logs in public
-issues. This is the maintainer-designated contact; email delivery has not been
-independently tested. No response-time commitment is currently offered.
+issues. This is the maintainer's monitored address. No response-time commitment is
+currently offered.
 
 ## Release identity
 

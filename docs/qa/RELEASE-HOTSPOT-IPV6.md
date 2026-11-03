@@ -44,7 +44,7 @@ criterion, distinct from a marked escape or unassigned packet finding.
 
 ## Automation
 
-[Running instructions](../tools/vpn-probe/RUNNING.md) cover the leased bridged AP,
+[Running instructions](../../tools/vpn-probe/RUNNING.md) cover the leased bridged AP,
 isolated dual-stack VPS tunnel, independent cleanup, namespace capture, required
 capture families and installed-app matrix. The new `wifi-reconnect` scenario
 verifies Wi-Fi disabled, holds it off for ten seconds, re-enables it, and requires

@@ -50,7 +50,7 @@ A signed artifact establishes identity, not production qualification.
   do not uninstall the user's app to work around signing mismatches.
 
 Existing tools and evidence: [Samsung](RELEASE-SAMSUNG-STOCK.md),
-[device testing](RELEASE-DEVICE-TESTING.md), [signing](RELEASE-SIGNING.md),
-[release notes](RELEASE-v0.1.0.md). A spare stock phone/SIM and externally captured
+[device testing](RELEASE-DEVICE-TESTING.md), [signing](../RELEASE-SIGNING.md),
+[release notes](../RELEASE-v0.1.0.md). A spare stock phone/SIM and externally captured
 native IPv6 network are useful; retain the restored Samsung settings until a new
 hardware test is arranged. Android emulators alone cannot close physical gates.

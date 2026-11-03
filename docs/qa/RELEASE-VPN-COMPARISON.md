@@ -98,7 +98,7 @@ Those references provide context; they do not prove the mechanism of these
 specific SDK packets. The observed marked Eddie queries are the independent
 runtime evidence that this problem is broader than Wave.
 
-The new [installed-app comparator and repeated matrix](../tools/vpn-probe/RUNNING.md#comparing-installed-vpn-applications)
+The new [installed-app comparator and repeated matrix](../../tools/vpn-probe/RUNNING.md#comparing-installed-vpn-applications)
 reuse the same probes, controls and failure rules. Each matrix snapshots/hashes
 its runner and configuration, preserves every repetition, rotates target order,
 and stops on incomplete cleanup. The vendor adapter supports the five basic

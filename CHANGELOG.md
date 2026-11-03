@@ -13,7 +13,7 @@
 Known release blocker: Android 16 emulator process-death testing exposed fresh
 application DNS outside the tunnel despite Always-on VPN and blocking. Pixel
 background DNS/DoT attribution and broader platform/reliability coverage remain
-open. See [the current findings](docs/RELEASE-FOLLOWUP.md).
+open. See [the current findings](docs/qa/RELEASE-FOLLOWUP.md).
 
 This experimental prerelease does not establish production readiness or general
 leak protection. See [v0.1.0 release notes](docs/RELEASE-v0.1.0.md).

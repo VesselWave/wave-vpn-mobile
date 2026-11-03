@@ -93,7 +93,7 @@ was revoked. The host capture was stopped and its files moved to private storage
 Vendor accounts/apps remain available in the emulator. Original failed reports
 retain their initial state, with successful restoration recorded separately.
 
-[External capture commands](../tools/vpn-probe/RUNNING.md#external-emulator-ethernet-capture)
+[External capture commands](../../tools/vpn-probe/RUNNING.md#external-emulator-ethernet-capture)
 document the exercised setup and its Wi-Fi limitation. Documentation/evidence
 changes passed `git diff --check`; app code was unchanged, so Kotlin/Rust builds
 were not repeated. No release was published.

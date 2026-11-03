@@ -19,7 +19,7 @@ DNS queries outside the tunnel. No general leak-free result is claimed.
   subsequently rerun; the opt-in live test was skipped. Existing warnings remain.
 - `zipalign -c -P 16 4` passed. No release was published.
 - Production application code was not changed during this testing round. The
-  added [independent QA tools](../tools/vpn-probe/README.md) are outside app modules
+  added [independent QA tools](../../tools/vpn-probe/README.md) are outside app modules
   and are not shipped or required by either app's build.
 
 [Filtered evidence](device-tests/2026-10-22-release-packets.json) contains packet

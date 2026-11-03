@@ -6,9 +6,8 @@ neither the app build nor this runner depends on the sibling Linux repository,
 T3 sessions, `/tmp` helpers, machine keychains or a hard-coded phone serial.
 The helpers are GPL-3.0-or-later and are not shipped in Wave.
 
-Source workflows: [device testing](t3-thread://v1/240d3f84-ccf8-4071-b4fd-19554f697ec1),
-[process-death recovery](t3-thread://v1/2a7198b7-2664-4843-897e-2349a08a5be7),
-and [release follow-up](t3-thread://v1/fd5dd284-969f-435f-9afa-b1814ce8e6ef).
+Background: [device testing](../../docs/qa/DEVICE-TESTING.md) and the
+[release follow-up](../../docs/qa/RELEASE-FOLLOWUP.md).
 
 ## Quick start
 
@@ -222,7 +221,7 @@ the privately recorded DoH endpoint addresses.
 The runner does not claim to fix observed platform DNS behavior or automate
 unperformed release gates such as pre-unlock capture, permission revocation,
 natural memory pressure, every other profile/browser or overnight reliability.
-See [the recorded follow-up](../../docs/RELEASE-FOLLOWUP.md) for those limits.
+See [the recorded follow-up](../../docs/qa/RELEASE-FOLLOWUP.md) for those limits.
 
 `traffic-soak` runs a longer active probe/capture window. Set `soak_seconds`
 (60–86400, default 3600) and optionally `soak_max_gap_seconds` (5–300, default 30)
@@ -334,7 +333,7 @@ that snapshot for every run. Ctrl-C/termination is forwarded once to the active
 child and waits for its cleanup instead of immediately killing it; abrupt host
 failure still requires restoring the child's saved state.
 
-The [runner validation record](../../docs/device-tests/2026-10-22-runner-validation.json)
+The [runner validation record](../../docs/qa/device-tests/2026-10-22-runner-validation.json)
 records the first complete live run: positive control, steady connection,
 process kill, disconnect and reconnect on Android 16. Recovery worked without
 opening Wave; the privacy result failed on observed DNS and unsupported packet

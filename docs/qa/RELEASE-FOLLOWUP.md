@@ -17,7 +17,7 @@ Raw captures, device/account details and probe results remain private.
 The initial physical matrix used exactly the previously tested minified release
 APK, SHA-256
 `7e25686199ec333a2733425c06ec04aa858768f26df304d7808c000188ff2ea2`.
-Its certificate SHA-256 matches the [published production identity](../SECURITY.md).
+Its certificate SHA-256 matches the [published production identity](../../SECURITY.md).
 The existing production package had a different legacy certificate. After the
 user explicitly authorized replacement, it was uninstalled and this APK was
 installed as `me.vwave.vpn`. The development package was retained.

@@ -109,7 +109,7 @@ It sends HTTPS requests through Android's standard APIs; no Cloudflare source
 code was copied. The capture counters and additional testing notes are authored
 GPL-3.0-or-later QA material and are not shipped in the APK. GrapheneOS release
 notes and its public issue tracker were consulted as context for platform DNS
-behavior, as linked in [the follow-up report](RELEASE-FOLLOWUP.md); no operating
+behavior, as linked in [the follow-up report](qa/RELEASE-FOLLOWUP.md); no operating
 system or archived application code was imported.
 
 The standalone `tools/vpn-probe/run.py` runner, accessibility instrumentation
