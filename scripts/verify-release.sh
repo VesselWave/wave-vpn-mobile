@@ -24,7 +24,7 @@ import sys
 manifest = Path(sys.argv[1]).resolve()
 seen = set()
 for line in manifest.read_text().splitlines():
-    match = re.fullmatch(r'([a-fA-F0-9]{64}) [ *]([A-Za-z0-9][A-Za-z0-9._-]*\.tar\.gz)', line)
+    match = re.fullmatch(r'([a-fA-F0-9]{64}) [ *]([A-Za-z0-9][A-Za-z0-9._-]*(?:\.tar\.gz|\.apk))', line)
     if not match or match[2] in seen:
         raise SystemExit('Invalid or duplicate checksum entry')
     seen.add(match[2])

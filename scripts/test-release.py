@@ -25,13 +25,18 @@ with tempfile.TemporaryDirectory(prefix='wave-release-', dir='/tmp') as director
     public.write_bytes(run('gpg','--armor','--export',fingerprint).stdout)
     archive = root / 'wave-test.tar.gz'
     archive.write_bytes(b'synthetic archive content')
+    apk = root / 'wave-test.apk'
+    apk.write_bytes(b'synthetic apk content')
     manifest = root / 'SHA256SUMS'
-    manifest.write_text(hashlib.sha256(archive.read_bytes()).hexdigest() + '  ' + archive.name + '\n')
+    manifest.write_text(''.join(hashlib.sha256(path.read_bytes()).hexdigest() + '  ' + path.name + '\n' for path in (archive, apk)))
     signature = root / 'SHA256SUMS.asc'
     run('gpg','--batch','--armor','--detach-sign','--output',str(signature),str(manifest))
     verify = ['bash',str(repo / 'scripts/verify-release.sh'),str(public),str(manifest),str(signature)]
     run(*verify, fingerprint)
     run(*verify, '0' * len(fingerprint), ok=False)
+    apk.write_bytes(b'tampered apk content')
+    run(*verify, fingerprint, ok=False)
+    apk.write_bytes(b'synthetic apk content')
     archive.write_bytes(b'tampered content')
     run(*verify, fingerprint, ok=False)
     manifest.write_text('0' * 64 + '  wave-test.tar.gz\n')
