@@ -10,7 +10,7 @@
 
 An unofficial WireGuard client for [AirVPN](https://airvpn.org). Sign in with your AirVPN account, pick a server and connect: no config files to copy around. Open source, signed releases, and an honest account of what it protects and what it doesn't.
 
-**[Download from vpn.vwave.me](https://vpn.vwave.me)** · [Release notes](docs/RELEASE-v0.1.1.md) · [Linux app](https://github.com/VesselWave/wave-vpn-desktop)
+**[Download from vpn.vwave.me](https://vpn.vwave.me)** · [Release notes](docs/RELEASE-v0.1.1.md) · [Linux app](https://github.com/VesselWave/wave-vpn-desktop) · [Forum thread](https://airvpn.org/forums/topic/82017-wave-vpn-open-source-wireguard-client-for-android-and-linux-unofficial-v011/)
 
 <p align="center">
   <img src="docs/screenshots/overview.png" alt="Overview: connected to a Toronto server, with live download and upload rates and session totals" width="32%">

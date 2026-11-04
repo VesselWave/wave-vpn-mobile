@@ -35,6 +35,8 @@ Turn on **Always-on VPN** and **Block connections without VPN** (Settings → Op
 
 ## Reporting a problem
 
+Open bugs as [GitHub issues](https://github.com/VesselWave/wave-vpn-mobile/issues). Ask questions in the [AirVPN forum thread](https://airvpn.org/forums/topic/82017-wave-vpn-open-source-wireguard-client-for-android-and-linux-unofficial-v011/).
+
 Report security issues privately to **vesselwave@protonmail.com** ([SECURITY.md](../SECURITY.md)).
 
 For ordinary bugs, include:
