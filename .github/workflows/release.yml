@@ -1,0 +1,88 @@
+name: Release
+# Pushing a tag vX.Y.Z builds, signs, verifies and publishes the GitHub release.
+# Signing secrets live in the protected "release" environment; see docs/RELEASE-SIGNING.md.
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  SIGN_KEY: 414018C0BBB8C0A70A80BF570AA32CCB2C0B3951
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Match tag to app version and release notes
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version=$(sed -n 's/^ *versionName = "\([^"]*\)"/\1/p' app/build.gradle.kts)
+          test "$TAG" = "v$version"
+          test -f "docs/RELEASE-v$version.md"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+      - name: Select JDK 17
+        run: |
+          echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
+          echo "$JAVA_HOME_17_X64/bin" >> "$GITHUB_PATH"
+      - name: Install pinned Android SDK packages
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, subprocess
+          manager = pathlib.Path(os.environ['ANDROID_HOME']) / 'cmdline-tools/latest/bin/sdkmanager'
+          subprocess.run([str(manager), '--licenses'], input='y\n' * 100, text=True, check=True)
+          subprocess.run([str(manager), 'platforms;android-37.0', 'build-tools;37.0.0'], check=True)
+          PY
+      - name: Restore signing keys
+        env:
+          KEYSTORE_BASE64: ${{ secrets.WAVE_ANDROID_KEYSTORE_BASE64 }}
+          GPG_KEY_BASE64: ${{ secrets.RELEASE_GPG_KEY_BASE64 }}
+          GPG_PASSPHRASE: ${{ secrets.RELEASE_GPG_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          : "${KEYSTORE_BASE64:?Missing WAVE_ANDROID_KEYSTORE_BASE64}" "${GPG_KEY_BASE64:?Missing RELEASE_GPG_KEY_BASE64}"
+          umask 077
+          keystore="$RUNNER_TEMP/release.p12"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$keystore"
+          echo "WAVE_ANDROID_KEYSTORE=$keystore" >> "$GITHUB_ENV"
+          export GNUPGHOME="$RUNNER_TEMP/gnupg"
+          mkdir -p "$GNUPGHOME"
+          printf '%s' "$GPG_KEY_BASE64" | base64 --decode | gpg --batch --quiet --import
+          printf 'batch\npinentry-mode loopback\n' > "$GNUPGHOME/gpg.conf"
+          if [ -n "$GPG_PASSPHRASE" ]; then
+            printf '%s' "$GPG_PASSPHRASE" > "$GNUPGHOME/passphrase"
+            echo "passphrase-file $GNUPGHOME/passphrase" >> "$GNUPGHOME/gpg.conf"
+          fi
+          gpg --list-secret-keys "$SIGN_KEY" > /dev/null
+          echo "GNUPGHOME=$GNUPGHOME" >> "$GITHUB_ENV"
+      - name: Check, build, sign and verify
+        env:
+          WAVE_ANDROID_KEY_ALIAS: wave-vpn-release
+          WAVE_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.WAVE_ANDROID_KEYSTORE_PASSWORD }}
+          WAVE_ANDROID_KEY_PASSWORD: ${{ secrets.WAVE_ANDROID_KEY_PASSWORD }}
+        run: python3 scripts/release.py --sign-key "$SIGN_KEY"
+      - name: Remove signing keys
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/release.p12" "$RUNNER_TEMP/gnupg"
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          out="app/build/distribution/$(git rev-parse HEAD)"
+          flags=()
+          case "$VERSION" in 0.*|*-*) flags+=(--prerelease) ;; esac
+          gh release create "$TAG" --verify-tag "${flags[@]}" \
+            --title "Wave VPN $VERSION for Android" \
+            --notes-file "docs/RELEASE-v$VERSION.md" \
+            "$out"/*
