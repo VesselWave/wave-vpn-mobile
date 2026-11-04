@@ -146,7 +146,14 @@ fun SettingsScreen(vm: AppViewModel, onSplitTunneling: () -> Unit) {
             containerColor = t.surface,
             shape = RoundedCornerShape(Dimens.radiusLg),
             title = { Text("Sign out?", style = MaterialTheme.typography.titleLarge) },
-            text = { Text("This disconnects and removes your AirVPN login and keys from this phone.", color = t.muted) },
+            // Dialog text doesn't scroll on its own; large text would cut the message off.
+            text = {
+                Text(
+                    "This disconnects and removes your AirVPN login and keys from this phone.",
+                    color = t.muted,
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                )
+            },
             confirmButton = {
                 TextButton(onClick = { dialog = null; vm.logout() }) { Text("Sign out", color = t.danger) }
             },
@@ -172,7 +179,7 @@ fun <T> ChoiceDialog(
         shape = RoundedCornerShape(Dimens.radiusLg),
         title = { Text(title, style = MaterialTheme.typography.titleLarge) },
         text = {
-            Column {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
                 for (option in options) {
                     Row(
                         Modifier

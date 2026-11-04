@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -25,6 +26,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
@@ -83,7 +85,19 @@ fun LoginScreen(vm: AppViewModel) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { vm.login(user, password) }),
             trailingIcon = {
-                TextButton(onClick = { showPassword = !showPassword }) { Text(if (showPassword) "Hide" else "Show", color = tokens.muted) }
+                // Under very large text the word would crowd the label out, so it becomes an icon.
+                if (LocalDensity.current.fontScale >= 1.5f) {
+                    IconButton(onClick = { showPassword = !showPassword }) {
+                        LucideIcon(
+                            if (showPassword) Lucide.EyeOff else Lucide.Eye,
+                            tokens.muted,
+                            20.dp,
+                            contentDescription = if (showPassword) "Hide password" else "Show password",
+                        )
+                    }
+                } else {
+                    TextButton(onClick = { showPassword = !showPassword }) { Text(if (showPassword) "Hide" else "Show", color = tokens.muted) }
+                }
             },
             modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.Password },
         )

@@ -13,7 +13,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -80,12 +83,17 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
         else -> null
     }
 
-    Column(Modifier.fillMaxSize().statusBarsPadding().padding(horizontal = 20.dp)) {
-        Wordmark(Modifier.padding(top = Dimens.md))
+    // Wordmark on top, footer at the bottom, the action centered between them. When large text
+    // makes that taller than the screen, the whole page scrolls rather than squeezing the middle.
+    BoxWithConstraints(Modifier.fillMaxSize().statusBarsPadding()) {
+        Column(
+            Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = maxHeight).padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Wordmark(Modifier.padding(top = Dimens.md))
 
-        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             Column(
-                Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(vertical = Dimens.lg),
+                Modifier.fillMaxWidth().padding(vertical = Dimens.lg),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(Dimens.lg),
             ) {
@@ -122,7 +130,7 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
                     } else {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(targetTitle(settings.target), style = MaterialTheme.typography.displaySmall, textAlign = TextAlign.Center)
-                            Row(horizontalArrangement = Arrangement.spacedBy(Dimens.md)) {
+                            FlowRow(horizontalArrangement = Arrangement.spacedBy(Dimens.md, Alignment.CenterHorizontally)) {
                                 LinkButton(
                                     if (settings.target == Target.Best) "Choose a server" else "Change server",
                                     onClick = onChooseServer,
@@ -190,20 +198,26 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
                     }
                 }
             }
-        }
 
-        // ── Footer: session count, Always-on VPN (Android's kill switch; "Network lock" on the desktop) ──
-        Rule()
-        Row(Modifier.fillMaxWidth().heightIn(min = 52.dp), verticalAlignment = Alignment.CenterVertically) {
-            if (count > 0) {
-                Text(
-                    "$count ${if (count == 1) "connection" else "connections"} this session",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = t.muted,
-                )
+            // ── Footer: session count, Always-on VPN (Android's kill switch; "Network lock" on the desktop) ──
+            Column {
+                Rule()
+                // Keep the action readable when large text leaves no room beside the count.
+                FlowRow(
+                    Modifier.fillMaxWidth().heightIn(min = 52.dp),
+                    horizontalArrangement = if (count > 0) Arrangement.SpaceBetween else Arrangement.End,
+                    itemVerticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (count > 0) {
+                        Text(
+                            "$count ${if (count == 1) "connection" else "connections"} this session",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = t.muted,
+                        )
+                    }
+                    GhostButton("Always-on VPN", onLockSettings, icon = Lucide.Lock, trailingIcon = Lucide.ChevronRight)
+                }
             }
-            Spacer(Modifier.weight(1f))
-            GhostButton("Always-on VPN", onLockSettings, icon = Lucide.Lock, trailingIcon = Lucide.ChevronRight)
         }
     }
 
@@ -221,9 +235,12 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
 /** "Wave VPN", set like the desktop's wordmark. */
 @Composable
 fun Wordmark(modifier: Modifier = Modifier) {
-    Row(modifier) {
-        Text("Wave", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
-        Text(" VPN", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold), color = tokens.faint)
+    // A logo, not reading text: it stops growing at 1.5× to leave room for content.
+    CapFontScale(1.5f) {
+        Row(modifier) {
+            Text("Wave", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
+            Text(" VPN", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold), color = tokens.faint)
+        }
     }
 }
 
@@ -273,7 +290,10 @@ private fun PowerButton(kind: DotKind, onClick: () -> Unit) {
     )
     val ink by animateColorAsState(if (kind == DotKind.On || kind == DotKind.Warn) t.onAccent else t.accentFg, label = "power-ink")
     val ring = kind == DotKind.Off || kind == DotKind.Busy
-    Box(Modifier.size(196.dp), contentAlignment = Alignment.Center) {
+    // Under very large text, a smaller button keeps the server name in view without scrolling.
+    val compact = LocalDensity.current.fontScale >= 1.5f
+    val outer = if (compact) 148.dp else 196.dp
+    Box(Modifier.size(outer), contentAlignment = Alignment.Center) {
         Surface(
             onClick = onClick,
             shape = CircleShape,
@@ -281,7 +301,7 @@ private fun PowerButton(kind: DotKind, onClick: () -> Unit) {
             border = if (ring) BorderStroke(1.5.dp, t.accent.copy(alpha = 0.45f)) else null,
             shadowElevation = if (kind == DotKind.On) 10.dp else 0.dp,
             modifier = Modifier
-                .size(176.dp)
+                .size(outer - 20.dp)
                 .semantics {
                     contentDescription = when (kind) {
                         DotKind.Off -> "Connect"
@@ -291,11 +311,11 @@ private fun PowerButton(kind: DotKind, onClick: () -> Unit) {
                 },
         ) {
             Box(contentAlignment = Alignment.Center) {
-                LucideIcon(Lucide.Power, ink, 64.dp)
+                LucideIcon(Lucide.Power, ink, if (compact) 52.dp else 64.dp)
             }
         }
         if (kind == DotKind.Busy) {
-            CircularProgressIndicator(Modifier.size(196.dp), color = t.accent, strokeWidth = 2.dp, trackColor = Color.Transparent)
+            CircularProgressIndicator(Modifier.size(outer), color = t.accent, strokeWidth = 2.dp, trackColor = Color.Transparent)
         }
     }
 }

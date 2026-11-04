@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -83,7 +84,8 @@ fun WaveRoot(vm: AppViewModel = viewModel()) {
                             selected = selected,
                             onClick = { nav.open(tab) },
                             icon = { LucideIcon(tab.icon, if (selected) t.text else t.muted, 22.dp) },
-                            label = { Text(tab.label) },
+                            // Fixed-width slots under icons: cap growth and never break a word.
+                            label = { CapFontScale(1.5f) { Text(tab.label, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
                             colors = NavigationBarItemDefaults.colors(
                                 selectedTextColor = t.text,
                                 unselectedTextColor = t.muted,

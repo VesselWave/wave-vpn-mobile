@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -63,42 +65,53 @@ fun AppsScreen(vm: AppViewModel, onBack: () -> Unit) {
             IconButton(onClick = onBack) { LucideIcon(Lucide.ChevronLeft, tokens.text, 22.dp, contentDescription = "Back") }
             Text("Split tunneling", style = MaterialTheme.typography.titleLarge)
         }
-        SegmentTrack(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-            val modes = listOf(SplitMode.Off to "All apps", SplitMode.Exclude to "Bypass", SplitMode.Include to "Only selected")
-            for ((mode, label) in modes) {
-                Segment(label, settings.splitMode == mode, { vm.updateSettings { it.copy(splitMode = mode) } }, fill = true)
-            }
-        }
-        Text(
-            when (settings.splitMode) {
-                SplitMode.Off -> "Every app's traffic goes through the VPN."
-                SplitMode.Exclude -> "Checked apps connect directly, outside the VPN."
-                SplitMode.Include -> "Only checked apps use the VPN. Everything else connects directly."
-            },
-            style = MaterialTheme.typography.bodyMedium,
-            color = tokens.muted,
-            modifier = Modifier.padding(16.dp),
-        )
-        Text(
-            "These settings apply to this Android profile. With Block connections without VPN enabled, apps outside the VPN are blocked.",
-            style = MaterialTheme.typography.bodySmall,
-            color = tokens.muted,
-            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp),
-        )
-        if (settings.splitMode == SplitMode.Off) return@Column
-
-        SearchField(query, { query = it }, "Search apps", Modifier.fillMaxWidth().padding(horizontal = 16.dp))
         val list = apps
-        if (list == null) {
-            CircularProgressIndicator(Modifier.padding(32.dp).align(Alignment.CenterHorizontally), color = tokens.accent, strokeWidth = 2.dp)
-            return@Column
-        }
         val q = query.trim().lowercase()
         // Checked apps first so the current selection is visible at a glance.
-        val shown = list
+        val shown = list.orEmpty()
             .filter { q.isEmpty() || q in it.label.lowercase() || q in it.packageName }
             .sortedBy { it.packageName !in settings.splitApps }
-        LazyColumn(Modifier.fillMaxSize().padding(top = 8.dp)) {
+        // One list, so large text scrolls the explanations away instead of crowding out the apps.
+        LazyColumn(Modifier.fillMaxSize()) {
+            item(key = "intro") {
+                Column {
+                    SegmentTrack(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                        val modes = listOf(SplitMode.Off to "All apps", SplitMode.Exclude to "Bypass", SplitMode.Include to "Only selected")
+                        for ((mode, label) in modes) {
+                            Segment(label, settings.splitMode == mode, { vm.updateSettings { it.copy(splitMode = mode) } }, fill = true)
+                        }
+                    }
+                    Text(
+                        when (settings.splitMode) {
+                            SplitMode.Off -> "Every app's traffic goes through the VPN."
+                            SplitMode.Exclude -> "Checked apps connect directly, outside the VPN."
+                            SplitMode.Include -> "Only checked apps use the VPN. Everything else connects directly."
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = tokens.muted,
+                        modifier = Modifier.padding(16.dp),
+                    )
+                    Text(
+                        "These settings apply to this Android profile. With Block connections without VPN enabled, apps outside the VPN are blocked.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = tokens.muted,
+                        modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp),
+                    )
+                }
+            }
+            if (settings.splitMode == SplitMode.Off) return@LazyColumn
+
+            item(key = "search") {
+                SearchField(query, { query = it }, "Search apps", Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 8.dp))
+            }
+            if (list == null) {
+                item(key = "loading") {
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(Modifier.padding(32.dp), color = tokens.accent, strokeWidth = 2.dp)
+                    }
+                }
+                return@LazyColumn
+            }
             items(shown, key = { it.packageName }) { app ->
                 val checked = app.packageName in settings.splitApps
                 Row(
@@ -116,7 +129,7 @@ fun AppsScreen(vm: AppViewModel, onBack: () -> Unit) {
                     Spacer(Modifier.width(16.dp))
                     Column(Modifier.weight(1f)) {
                         Text(app.label, style = MaterialTheme.typography.bodyLarge)
-                        Text(app.packageName, style = MaterialTheme.typography.bodySmall, color = tokens.muted)
+                        Text(app.packageName, style = MaterialTheme.typography.bodySmall, color = tokens.muted, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
                     Checkbox(
                         checked = checked,

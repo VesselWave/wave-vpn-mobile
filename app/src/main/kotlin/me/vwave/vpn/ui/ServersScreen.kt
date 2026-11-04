@@ -6,16 +6,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,10 +36,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.vwave.vpn.core.Scoring
@@ -96,10 +99,13 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
     val pick = { target: Target -> vm.choose(target) }
     val idle = state is TunnelState.Down || state is TunnelState.Failed
 
-    Column(Modifier.fillMaxSize().statusBarsPadding()) {
+    // Under very large text the controls would leave room for barely one server, so they scroll
+    // away with the list instead of staying pinned above it.
+    val scrollingHeader = LocalDensity.current.fontScale >= 1.5f
+    val header = @Composable { start: Dp, end: Dp ->
         // ── Search and refresh ──
         Row(
-            Modifier.fillMaxWidth().padding(start = Dimens.md, end = Dimens.sm, top = Dimens.md),
+            Modifier.fillMaxWidth().padding(start = start, end = end, top = Dimens.md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SearchField(query, { query = it }, "Search servers, countries, cities", Modifier.weight(1f))
@@ -108,15 +114,15 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
             }
         }
 
-        // ── View and sort ──
-        Row(
-            Modifier.fillMaxWidth().padding(start = Dimens.md, end = Dimens.sm, top = 12.dp, bottom = Dimens.sm),
-            verticalAlignment = Alignment.CenterVertically,
+        // ── View and sort (sort wraps below the views when large text needs the room) ──
+        FlowRow(
+            Modifier.fillMaxWidth().padding(start = start, end = end, top = 12.dp, bottom = Dimens.sm),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            itemVerticalAlignment = Alignment.CenterVertically,
         ) {
             SegmentTrack {
                 for (option in ServerView.entries) Segment(option.label, view == option, { view = option })
             }
-            Spacer(Modifier.weight(1f))
             if (view != ServerView.Countries) {
                 SortMenu(sort, ascending) { column ->
                     if (column == sort) ascending = !ascending else {
@@ -126,6 +132,10 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
                 }
             }
         }
+    }
+
+    Column(Modifier.fillMaxSize().statusBarsPadding()) {
+        if (!scrollingHeader) header(Dimens.md, Dimens.sm)
 
         PullToRefreshBox(
             isRefreshing = refreshing || pinging,
@@ -137,6 +147,8 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
                 contentPadding = PaddingValues(start = Dimens.sm, end = Dimens.sm, bottom = Dimens.lg),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
+                // The list already insets by Dimens.sm on both sides.
+                if (scrollingHeader) item(key = "header") { Column { header(Dimens.md - Dimens.sm, 0.dp) } }
                 if (servers.isEmpty()) {
                     item {
                         EmptyState(
@@ -307,16 +319,19 @@ private fun CountryRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        CodeTag(code)
+        val stacked = stackedMetrics()
+        // The name already says it; under very large text the room goes to the name instead.
+        if (!stacked) CodeTag(code)
         Column(Modifier.weight(1f)) {
-            Text(countryName(code), style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(countryName(code), style = MaterialTheme.typography.titleMedium, maxLines = if (stacked) 2 else 1, overflow = TextOverflow.Ellipsis)
             Text(
                 "${openServers.size} ${if (openServers.size == 1) "server" else "servers"}",
                 style = MaterialTheme.typography.bodySmall,
                 color = t.muted,
             )
+            if (stacked) Metrics(bestPing, load, dim = openServers.isEmpty(), inline = true)
         }
-        Metrics(bestPing, load, dim = openServers.isEmpty())
+        if (!stacked) Metrics(bestPing, load, dim = openServers.isEmpty())
         IconButton(onClick = onToggle) {
             LucideIcon(
                 if (open) Lucide.ChevronUp else Lucide.ChevronDown,
@@ -350,6 +365,7 @@ private fun ServerRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        val stacked = stackedMetrics()
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Dimens.sm)) {
                 if (connected) Dot(DotKind.On, 7.dp)
@@ -358,17 +374,19 @@ private fun ServerRow(
                     style = MaterialTheme.typography.titleMedium,
                     color = if (enabled && warning == null) t.text else t.faint,
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
             Text(
                 warning ?: locationLabel(server.location, server.countryCode),
                 style = MaterialTheme.typography.bodySmall,
                 color = if (warning != null) t.warning else t.muted,
-                maxLines = 1,
+                maxLines = if (stacked) 2 else 1,
                 overflow = TextOverflow.Ellipsis,
             )
+            if (stacked) Metrics(ping, server.loadPercent, dim = !enabled || warning != null, inline = true)
         }
-        Metrics(ping, server.loadPercent, dim = !enabled || warning != null)
+        if (!stacked) Metrics(ping, server.loadPercent, dim = !enabled || warning != null)
         IconButton(onClick = { toggleFavorite(server.name) }) {
             LucideIcon(
                 if (favorite) Lucide.StarFilled else Lucide.Star,
@@ -380,11 +398,15 @@ private fun ServerRow(
     }
 }
 
-/** Ping over load, right-aligned, in the desktop's quality colors. */
+/** Under very large text, rows put their metrics below the name so names and places stay whole. */
 @Composable
-private fun Metrics(ping: Int?, load: Int, dim: Boolean) {
+private fun stackedMetrics() = LocalDensity.current.fontScale >= 1.5f
+
+/** Ping over load, right-aligned, in the desktop's quality colors; [inline] puts them in one row. */
+@Composable
+private fun Metrics(ping: Int?, load: Int, dim: Boolean, inline: Boolean = false) {
     val t = tokens
-    Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    val pingText = @Composable {
         Text(
             ping?.let { "$it ms" } ?: "—",
             style = MonoSmall,
@@ -393,9 +415,22 @@ private fun Metrics(ping: Int?, load: Int, dim: Boolean) {
                 else -> Quality.fromPing(ping).color
             },
         )
+    }
+    val loadRow = @Composable {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             LoadBar(load, 40.dp)
-            Text("$load%", style = MonoSmall, color = if (dim) t.faint else t.text, modifier = Modifier.width(36.dp), maxLines = 1)
+            Text("$load%", style = MonoSmall, color = if (dim) t.faint else t.text, modifier = Modifier.widthIn(min = 36.dp), maxLines = 1)
+        }
+    }
+    if (inline) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Dimens.md)) {
+            pingText()
+            loadRow()
+        }
+    } else {
+        Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            pingText()
+            loadRow()
         }
     }
 }
@@ -405,7 +440,7 @@ private fun Metrics(ping: Int?, load: Int, dim: Boolean) {
 private fun CodeTag(code: String) {
     val shape = RoundedCornerShape(Dimens.radiusSm)
     Box(
-        Modifier.size(width = 36.dp, height = 26.dp).clip(shape).border(1.dp, tokens.borderStrong, shape),
+        Modifier.sizeIn(minWidth = 36.dp, minHeight = 26.dp).clip(shape).border(1.dp, tokens.borderStrong, shape).padding(horizontal = Dimens.xs),
         contentAlignment = Alignment.Center,
     ) {
         Text(code.uppercase(), style = MonoSmall, color = tokens.muted)

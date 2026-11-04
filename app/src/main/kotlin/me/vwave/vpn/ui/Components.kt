@@ -19,12 +19,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -35,22 +35,30 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlin.math.ceil
 
 // The desktop's building blocks (src/gui/theme.rs and views/settings.rs), for touch.
 
@@ -58,6 +66,17 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Rule(modifier: Modifier = Modifier) {
     Box(modifier.fillMaxWidth().height(1.dp).background(tokens.border))
+}
+
+/**
+ * Caps the system font scale for compact chrome (tab labels, segmented controls) whose text sits
+ * in fixed slots beside icons. Content text keeps the user's full scale.
+ */
+@Composable
+fun CapFontScale(max: Float, content: @Composable () -> Unit) {
+    val density = LocalDensity.current
+    if (density.fontScale <= max) content()
+    else CompositionLocalProvider(LocalDensity provides Density(density.density, max), content = content)
 }
 
 /** Bordered panel grouping related content (stats, settings list, log). */
@@ -101,7 +120,10 @@ fun Group(title: String, description: String? = null, modifier: Modifier = Modif
     }
 }
 
-/** Label (and optional hint) on the left, control on the right. */
+/**
+ * Label (and optional hint) on the left, control on the right. When large text leaves the control
+ * more than about half the row, the control moves below the label instead of crushing it.
+ */
 @Composable
 fun SettingRow(
     label: String,
@@ -111,20 +133,46 @@ fun SettingRow(
     role: Role? = null,
     trailing: @Composable RowScope.() -> Unit = {},
 ) {
-    Row(
-        Modifier
+    Layout(
+        content = {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(label, style = MaterialTheme.typography.bodyLarge, color = labelColor)
+                if (hint != null) Text(hint, style = MaterialTheme.typography.bodySmall, color = tokens.muted)
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Dimens.sm),
+                content = trailing,
+            )
+        },
+        modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 56.dp)
             .then(if (onClick != null) Modifier.clickable(role = role, onClick = onClick) else Modifier)
             .padding(horizontal = Dimens.md, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Dimens.md),
-    ) {
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(label, style = MaterialTheme.typography.bodyLarge, color = labelColor)
-            if (hint != null) Text(hint, style = MaterialTheme.typography.bodySmall, color = tokens.muted)
+    ) { (text, control), constraints ->
+        val width = constraints.maxWidth
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val gap = Dimens.md.roundToPx()
+        val controlWidth = control.maxIntrinsicWidth(constraints.maxHeight)
+        if (controlWidth <= width * 0.45f) {
+            val c = control.measure(loose)
+            val t = text.measure(loose.copy(maxWidth = (width - c.width - if (c.width > 0) gap else 0).coerceAtLeast(0)))
+            val height = maxOf(t.height, c.height, constraints.minHeight)
+            layout(width, height) {
+                t.place(0, (height - t.height) / 2)
+                c.place(width - c.width, (height - c.height) / 2)
+            }
+        } else {
+            val t = text.measure(loose)
+            val c = control.measure(loose)
+            val between = Dimens.xs.roundToPx()
+            val height = maxOf(t.height + between + c.height, constraints.minHeight)
+            layout(width, height) {
+                t.place(0, 0)
+                c.place(0, t.height + between)
+            }
         }
-        trailing()
     }
 }
 
@@ -137,9 +185,10 @@ fun ValueRow(label: String, value: String?, hint: String? = null, onClick: () ->
                 value,
                 style = MaterialTheme.typography.bodyMedium,
                 color = tokens.muted,
-                maxLines = 1,
+                // SettingRow moves a long value under the label rather than truncating it early.
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.widthIn(max = 160.dp),
+                modifier = Modifier.weight(1f, fill = false),
             )
         }
         LucideIcon(Lucide.ChevronRight, tokens.faint, 18.dp)
@@ -161,6 +210,33 @@ fun ToggleRow(label: String, hint: String? = null, checked: Boolean, onChange: (
                 uncheckedBorderColor = Color.Transparent,
             ),
         )
+    }
+}
+
+/**
+ * Text that, once wrapped, is only as wide as its longest line. Plain wrapped text fills the
+ * whole width, which pushes a button's icons away from a label that large text broke in two.
+ */
+@Composable
+fun TightText(
+    text: String,
+    style: TextStyle,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
+    maxLines: Int = Int.MAX_VALUE,
+    textAlign: TextAlign = TextAlign.Center,
+) {
+    val measurer = rememberTextMeasurer()
+    val resolved = LocalTextStyle.current.merge(style)
+    Layout(
+        content = { Text(text, style = style, color = color, maxLines = maxLines, overflow = TextOverflow.Ellipsis, textAlign = textAlign) },
+        modifier = modifier,
+    ) { measurables, constraints ->
+        val lines = measurer.measure(text, resolved, maxLines = maxLines, constraints = Constraints(maxWidth = constraints.maxWidth))
+        val widest = (0 until lines.lineCount).maxOf { lines.getLineRight(it) - lines.getLineLeft(it) }
+        val width = ceil(widest).toInt().coerceIn(constraints.minWidth, constraints.maxWidth)
+        val placeable = measurables.single().measure(constraints.copy(minWidth = width, maxWidth = width))
+        layout(placeable.width, placeable.height) { placeable.place(0, 0) }
     }
 }
 
@@ -190,14 +266,20 @@ fun PrimaryButton(
             disabledContentColor = t.onAccent.copy(alpha = 0.7f),
         ),
         elevation = null,
-        contentPadding = PaddingValues(horizontal = 20.dp),
-        modifier = modifier.height(height),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = Dimens.sm),
+        modifier = modifier.heightIn(min = height),
     ) {
         if (icon != null) {
             LucideIcon(icon, if (enabled) t.onAccent else t.onAccent.copy(alpha = 0.7f), 18.dp)
             Spacer(Modifier.width(10.dp))
         }
-        Text(text, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold), maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(
+            text,
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
@@ -211,10 +293,10 @@ fun SecondaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modi
         shape = ButtonShape,
         border = BorderStroke(1.dp, if (enabled) t.borderStrong else t.border),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = t.text, disabledContentColor = t.faint),
-        contentPadding = PaddingValues(horizontal = 20.dp),
-        modifier = modifier.height(height),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = Dimens.sm),
+        modifier = modifier.heightIn(min = height),
     ) {
-        Text(text, style = MaterialTheme.typography.labelLarge, maxLines = 1)
+        Text(text, style = MaterialTheme.typography.labelLarge, maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
     }
 }
 
@@ -232,7 +314,7 @@ fun GhostButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier
             LucideIcon(icon, color, 15.dp)
             Spacer(Modifier.width(6.dp))
         }
-        Text(text, style = MaterialTheme.typography.bodyMedium)
+        TightText(text, MaterialTheme.typography.bodyMedium, Modifier.weight(1f, fill = false), maxLines = 2)
         if (trailingIcon != null) {
             Spacer(Modifier.width(4.dp))
             LucideIcon(trailingIcon, color, 14.dp)
@@ -251,7 +333,7 @@ fun LinkButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier,
         contentPadding = PaddingValues(horizontal = 0.dp, vertical = 4.dp),
         modifier = modifier.heightIn(min = 40.dp),
     ) {
-        Text(text, style = MaterialTheme.typography.bodyLarge)
+        TightText(text, MaterialTheme.typography.bodyLarge, Modifier.weight(1f, fill = false))
         if (chevron) {
             Spacer(Modifier.width(2.dp))
             LucideIcon(Lucide.ChevronRight, t.accentFg, 16.dp)
@@ -335,19 +417,21 @@ fun ErrorBanner(text: String, modifier: Modifier = Modifier) {
 
 // ── Segmented control ────────────────────────────────────────────────────
 
-/** Track behind a row of [Segment]s. */
+/** Track behind a row of [Segment]s. Labels stop growing at 1.5× so the options stay on screen. */
 @Composable
 fun SegmentTrack(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
     val shape = RoundedCornerShape(Dimens.radiusMd)
-    Row(
-        modifier
-            .clip(shape)
-            .background(tokens.hover)
-            .border(1.dp, tokens.border, shape)
-            .padding(3.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-        content = content,
-    )
+    CapFontScale(1.5f) {
+        Row(
+            modifier
+                .clip(shape)
+                .background(tokens.hover)
+                .border(1.dp, tokens.border, shape)
+                .padding(3.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            content = content,
+        )
+    }
 }
 
 /** One option inside a segmented control. */
@@ -367,14 +451,16 @@ fun RowScope.Segment(label: String, active: Boolean, onClick: () -> Unit, fill: 
                 role = Role.Tab
                 selected = active
             }
-            .padding(horizontal = 14.dp),
+            .padding(horizontal = 14.dp, vertical = Dimens.xs),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             label,
             style = MaterialTheme.typography.bodyMedium,
             color = if (active) t.text else t.muted,
-            maxLines = 1,
+            // Equal-width segments may need a second line; content-sized ones never wrap.
+            maxLines = if (fill) 2 else 1,
+            overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
         )
     }
@@ -436,7 +522,7 @@ fun SearchField(value: String, onChange: (String) -> Unit, placeholder: String, 
     OutlinedTextField(
         value = value,
         onValueChange = onChange,
-        placeholder = { Text(placeholder, style = MaterialTheme.typography.bodyLarge) },
+        placeholder = { Text(placeholder, style = MaterialTheme.typography.bodyLarge, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         leadingIcon = { LucideIcon(Lucide.Search, tokens.muted, 18.dp) },
         singleLine = true,
         textStyle = MaterialTheme.typography.bodyLarge,

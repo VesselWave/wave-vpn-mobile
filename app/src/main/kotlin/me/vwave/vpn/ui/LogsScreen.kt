@@ -3,9 +3,9 @@ package me.vwave.vpn.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,13 +40,16 @@ fun LogsScreen(vm: AppViewModel) {
     val t = tokens
 
     Column(Modifier.fillMaxSize().statusBarsPadding().padding(Dimens.md), verticalArrangement = Arrangement.spacedBy(Dimens.md)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        FlowRow(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            itemVerticalAlignment = Alignment.CenterVertically,
+        ) {
             SegmentTrack {
                 for (level in LogLevel.entries) {
                     Segment(level.name, level in shown, { shown = if (level in shown) shown - level else shown + level })
                 }
             }
-            Spacer(Modifier.weight(1f))
             GhostButton("Clear", vm::clearLog)
         }
 
