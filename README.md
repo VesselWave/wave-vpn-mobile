@@ -26,9 +26,10 @@ An unofficial WireGuard client for [AirVPN](https://airvpn.org). Sign in with yo
 - Choice of WireGuard port, and optional IPv6 server entry
 - Credentials encrypted with Android Keystore and excluded from cloud backups
 
-> [!WARNING]
-> **v0.1.0 is an experimental test build, not production-qualified VPN protection.**
-> On stock Samsung Android 16, DNS was observed outside the tunnel during a crash, Wi-Fi recovery and force-stop, even with Always-on VPN and blocking enabled. The exact origin is unproven, and the investigation found no app-side fix. Don't rely on this build where that exposure is unacceptable. Details: [known limits](docs/RELEASE-v0.1.0.md).
+> [!NOTE]
+> **v0.1.0 is an early release.** Anyone is welcome to use it, but it hasn't been fully tested on every device and system yet.
+>
+> **Known issue, Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and blocking enabled. If that matters for how you use a VPN, keep it in mind. See the [full Samsung test report](docs/qa/RELEASE-SAMSUNG-STOCK.md).
 
 ## Setup
 

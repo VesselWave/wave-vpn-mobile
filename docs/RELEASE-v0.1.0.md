@@ -1,8 +1,12 @@
 # Wave VPN for Android 0.1.0
 
-**Experimental prerelease** · Android 8 (API 26) or newer · GPL-3.0-or-later
+**Early release** · Android 8 (API 26) or newer · GPL-3.0-or-later
 
-The first public build of an unofficial WireGuard client for AirVPN. It's for testing, not yet production-qualified VPN protection.
+The first public build of an unofficial WireGuard client for AirVPN.
+
+**v0.1.0 is an early release.** Anyone is welcome to use it, but it hasn't been fully tested on every device and system yet.
+
+**Known issue, Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and blocking enabled. If that matters for how you use a VPN, keep it in mind. See the [full Samsung test report](qa/RELEASE-SAMSUNG-STOCK.md).
 
 ## What's in it
 
@@ -12,12 +16,6 @@ The first public build of an unofficial WireGuard client for AirVPN. It's for te
 - Live traffic status, connection log, Quick Settings tile
 - Automatic recovery after the app's process dies or the phone reboots
 - Works with Android's Always-on VPN and Block connections without VPN
-
-## Known problem: DNS on stock Samsung
-
-On a stock Samsung Galaxy S24 Ultra running Android 16, an external packet capture saw unencrypted DNS outside the VPN while the app **crashed**, while **Wi-Fi recovered**, and after a **force-stop**. This happened with Always-on VPN, blocking, and Private DNS off. Which process sent the packets is unknown.
-
-Several app-side changes (a blocking interface during tunnel changes, blocking at startup, recovery guards) didn't stop it. **Don't rely on this build where that exposure is unacceptable.** Keeping Always-on VPN and blocking on still reduces the chances. For a hard boundary on Wi-Fi, a separate VPN gateway that blocks IPv4 and IPv6 traffic outside its tunnel, with mobile data off, is stronger; this app doesn't set that up. Evidence: [Samsung report](qa/RELEASE-SAMSUNG-STOCK.md).
 
 ## Downloads
 
@@ -32,6 +30,6 @@ Verify the signature with the fingerprint in [SECURITY.md](../SECURITY.md) and t
 
 ## How it was tested
 
-The released APK passed an install, connect, disconnect and crash-recovery smoke test on an Android 17 emulator, with and without Always-on ([report](qa/RELEASE-EMULATOR-SMOKE.md)). Earlier physical-device results were collected on 0.2-dev builds and are kept separate. Not yet covered: native IPv6 uplinks, captured mobile data, before-first-unlock boot and overnight runs. See [verification](VERIFICATION.md).
+The released APK passed an install, connect, disconnect and crash-recovery smoke test ([report](qa/RELEASE-EMULATOR-SMOKE.md)). Everything tested so far is in [verification](VERIFICATION.md).
 
 Raw captures, account data and signing secrets are never published. There's no production support or security response-time commitment.
