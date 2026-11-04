@@ -1,10 +1,16 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 · 2026-11-03 · early release
+
+New look; interface only. [Release notes](docs/RELEASE-v0.1.1.md).
 
 **Changed**
 
 - VesselWave family look shared with Wave Remote and both websites: blue-black dark theme, pill buttons and segments, one corner scale (8/12/16)
+
+**Fixed**
+
+- Every screen stays usable at the largest font and display sizes: labels wrap instead of being crushed, long screens scroll, and buttons grow instead of clipping
 
 ## 0.1.0 · 2026-11-02 · early release
 

@@ -10,7 +10,7 @@
 
 An unofficial WireGuard client for [AirVPN](https://airvpn.org). Sign in with your AirVPN account, pick a server and connect: no config files to copy around. Open source, signed releases, and an honest account of what it protects and what it doesn't.
 
-**[Download from vpn.vwave.me](https://vpn.vwave.me)** · [Release notes](docs/RELEASE-v0.1.0.md) · [Linux app](https://github.com/VesselWave/wave-vpn-desktop)
+**[Download from vpn.vwave.me](https://vpn.vwave.me)** · [Release notes](docs/RELEASE-v0.1.1.md) · [Linux app](https://github.com/VesselWave/wave-vpn-desktop)
 
 <p align="center">
   <img src="docs/screenshots/overview.png" alt="Overview: connected to a Toronto server, with live download and upload rates and session totals" width="32%">
@@ -27,7 +27,7 @@ An unofficial WireGuard client for [AirVPN](https://airvpn.org). Sign in with yo
 - Credentials encrypted with Android Keystore and excluded from cloud backups
 
 > [!NOTE]
-> **v0.1.0 is an early release.** Anyone is welcome to use it, but it hasn't been fully tested on every device and system yet.
+> **Wave VPN is in early release.** Anyone is welcome to use it, but it hasn't been fully tested on every device and system yet.
 >
 > **Known issue, Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and blocking enabled. If that matters for how you use a VPN, keep it in mind. See the [full Samsung test report](docs/qa/RELEASE-SAMSUNG-STOCK.md).
 
@@ -51,9 +51,9 @@ APK certificate       29:95:0A:57:56:87:67:59:B2:89:84:A0:E6:B4:4A:27:6E:FD:94:8
 
 ```sh
 gpg --recv-keys 414018C0BBB8C0A70A80BF570AA32CCB2C0B3951
-gpg --verify wave-vpn-android-0.1.0-SHA256SUMS.asc wave-vpn-android-0.1.0-SHA256SUMS
-sha256sum --ignore-missing -c wave-vpn-android-0.1.0-SHA256SUMS
-apksigner verify --print-certs wave-vpn-android-0.1.0.apk
+gpg --verify wave-vpn-android-0.1.1-SHA256SUMS.asc wave-vpn-android-0.1.1-SHA256SUMS
+sha256sum --ignore-missing -c wave-vpn-android-0.1.1-SHA256SUMS
+apksigner verify --print-certs wave-vpn-android-0.1.1.apk
 ```
 
 If any fingerprint differs from these, from [SECURITY.md](SECURITY.md) and from the website, don't install; report it privately. See [release signing](docs/RELEASE-SIGNING.md).

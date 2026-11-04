@@ -1,6 +1,6 @@
 # Installation and support
 
-**v0.1.0 is an early release.** Anyone is welcome to use it, but it hasn't been fully tested on every device and system yet.
+**Wave VPN is in early release.** Anyone is welcome to use it, but it hasn't been fully tested on every device and system yet.
 
 **Known issue, Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and blocking enabled. If that matters for how you use a VPN, keep it in mind. See the [full Samsung test report](qa/RELEASE-SAMSUNG-STOCK.md).
 
