@@ -144,7 +144,7 @@ fun SettingsScreen(vm: AppViewModel, onSplitTunneling: () -> Unit) {
         "logout" -> AlertDialog(
             onDismissRequest = { dialog = null },
             containerColor = t.surface,
-            shape = RoundedCornerShape(Dimens.radiusLg),
+            shape = RoundedCornerShape(Dimens.radiusMd),
             title = { Text("Sign out?", style = MaterialTheme.typography.titleLarge) },
             // Dialog text doesn't scroll on its own; large text would cut the message off.
             text = {
@@ -176,7 +176,7 @@ fun <T> ChoiceDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = t.surface,
-        shape = RoundedCornerShape(Dimens.radiusLg),
+        shape = RoundedCornerShape(Dimens.radiusMd),
         title = { Text(title, style = MaterialTheme.typography.titleLarge) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {

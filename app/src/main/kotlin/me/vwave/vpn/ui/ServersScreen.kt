@@ -244,7 +244,7 @@ private fun SortMenu(sort: SortColumn, ascending: Boolean, onSort: (SortColumn) 
             expanded = open,
             onDismissRequest = { open = false },
             containerColor = t.surface,
-            shape = RoundedCornerShape(Dimens.radiusMd),
+            shape = RoundedCornerShape(Dimens.radiusSm),
         ) {
             for (column in SortColumn.entries) {
                 val active = column == sort
@@ -267,7 +267,7 @@ private fun SortMenu(sort: SortColumn, ascending: Boolean, onSort: (SortColumn) 
 @Composable
 private fun Modifier.serverRow(selected: Boolean, enabled: Boolean = true, onClick: () -> Unit): Modifier {
     val t = tokens
-    val shape = RoundedCornerShape(Dimens.radiusMd)
+    val shape = RoundedCornerShape(Dimens.radiusSm)
     return this
         .fillMaxWidth()
         .heightIn(min = 60.dp)
@@ -287,7 +287,7 @@ private fun BestRow(best: Server?, selected: Boolean, onClick: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Box(
-            Modifier.size(36.dp).clip(RoundedCornerShape(Dimens.radiusMd)).background(t.accentSoft),
+            Modifier.size(36.dp).clip(RoundedCornerShape(Dimens.radiusSm)).background(t.accentSoft),
             contentAlignment = Alignment.Center,
         ) { LucideIcon(Lucide.Zap, t.accentFg, 18.dp) }
         Column(Modifier.weight(1f)) {

@@ -20,8 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.vwave.vpn.R
 
-// Shared with the desktop client (archived desktop theme): monochrome with one electric-blue
-// accent, light and dark following the system. Keep the two in step.
+// The VesselWave family palette, shared with the desktop client, Wave Remote and both websites:
+// blue-black greys (tinted toward the accent hue) with one electric-blue accent in dark, plain
+// greys in light, following the system. This file is the origin; keep the others in step.
 
 val Geist = FontFamily(
     Font(R.font.geist_regular, FontWeight.Normal),
@@ -61,16 +62,16 @@ data class Tokens(
 )
 
 val DarkTokens = Tokens(
-    bg = Color(0xFF0A0A0A),
-    sidebar = Color(0xFF111111),
-    surface = Color(0xFF141414),
-    hover = Color(0xFF1C1C1C),
-    pressed = Color(0xFF242424),
-    border = Color(0xFF262626),
-    borderStrong = Color(0xFF3A3A3A),
-    text = Color(0xFFEDEDED),
-    muted = Color(0xFFA1A1A1),
-    faint = Color(0xFF6B6B6B),
+    bg = Color(0xFF090B10),
+    sidebar = Color(0xFF0F1117),
+    surface = Color(0xFF12151C),
+    hover = Color(0xFF1A1E27),
+    pressed = Color(0xFF222731),
+    border = Color(0xFF252A35),
+    borderStrong = Color(0xFF383E4B),
+    text = Color(0xFFECEEF3),
+    muted = Color(0xFF9FA6B5),
+    faint = Color(0xFF6A7182),
     accent = Color(0xFF2F6BFF),
     accentHover = Color(0xFF4A7FFF),
     onAccent = Color.White,
@@ -113,17 +114,25 @@ val LocalTokens = staticCompositionLocalOf { DarkTokens }
 /** The active color tokens. */
 val tokens: Tokens @Composable get() = LocalTokens.current
 
-/** Spacing and corner radii, the desktop's scale in dp. */
+/**
+ * Spacing and corner radii in dp. The radii are the shared VesselWave scale, the same in the
+ * desktop client, Wave Remote and both websites: 8 rows, inputs, menus and tags; 12 cards and
+ * panels; 16 sheets and dialogs; [PillShape] for buttons, chips, segments and badges; circles
+ * for round icon actions.
+ */
 object Dimens {
     val xs = 4.dp
     val sm = 8.dp
     val md = 16.dp
     val lg = 24.dp
     val xl = 32.dp
-    val radiusSm = 6.dp
-    val radiusMd = 8.dp
-    val radiusLg = 12.dp
+    val radiusSm = 8.dp
+    val radiusMd = 12.dp
+    val radiusLg = 16.dp
 }
+
+/** Fully rounded ends: buttons, chips, segment tracks, status badges. */
+val PillShape = RoundedCornerShape(percent = 50)
 
 /**
  * The desktop's type scale (12 / 13 / 14 / 16 / 20 / 34), one step larger for body copy, since a
@@ -197,10 +206,10 @@ fun WaveTheme(content: @Composable () -> Unit) {
             typography = WaveTypography,
             shapes = Shapes(
                 extraSmall = RoundedCornerShape(Dimens.radiusSm),
-                small = RoundedCornerShape(Dimens.radiusMd),
-                medium = RoundedCornerShape(Dimens.radiusLg),
+                small = RoundedCornerShape(Dimens.radiusSm),
+                medium = RoundedCornerShape(Dimens.radiusMd),
                 large = RoundedCornerShape(Dimens.radiusLg),
-                extraLarge = RoundedCornerShape(16.dp),
+                extraLarge = RoundedCornerShape(Dimens.radiusLg),
             ),
             content = content,
         )

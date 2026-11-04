@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+**Changed**
+
+- VesselWave family look shared with Wave Remote and both websites: blue-black dark theme, pill buttons and segments, one corner scale (8/12/16)
+
 ## 0.1.0 · 2026-11-02 · early release
 
 First public build. [Release notes](docs/RELEASE-v0.1.0.md).

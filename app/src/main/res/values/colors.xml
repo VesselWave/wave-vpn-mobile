@@ -4,5 +4,5 @@
     <color name="background">#FFFFFFFF</color>
     <color name="accent">#FF2F6BFF</color>
     <!-- Launcher icon background: the dark theme's bg. -->
-    <color name="ink">#FF0A0A0A</color>
+    <color name="ink">#FF090B10</color>
 </resources>

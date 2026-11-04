@@ -82,7 +82,7 @@ fun CapFontScale(max: Float, content: @Composable () -> Unit) {
 /** Bordered panel grouping related content (stats, settings list, log). */
 @Composable
 fun Panel(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    val shape = RoundedCornerShape(Dimens.radiusLg)
+    val shape = RoundedCornerShape(Dimens.radiusMd)
     Column(
         modifier
             .fillMaxWidth()
@@ -242,7 +242,7 @@ fun TightText(
 
 // ── Buttons ──────────────────────────────────────────────────────────────
 
-private val ButtonShape = RoundedCornerShape(Dimens.radiusMd)
+private val ButtonShape = PillShape
 
 /** Filled accent button: the one primary action on a screen. */
 @Composable
@@ -399,7 +399,7 @@ fun StatusChip(kind: DotKind, label: String) {
 @Composable
 fun ErrorBanner(text: String, modifier: Modifier = Modifier) {
     val t = tokens
-    val shape = RoundedCornerShape(Dimens.radiusMd)
+    val shape = RoundedCornerShape(Dimens.radiusSm)
     Row(
         modifier
             .fillMaxWidth()
@@ -420,7 +420,7 @@ fun ErrorBanner(text: String, modifier: Modifier = Modifier) {
 /** Track behind a row of [Segment]s. Labels stop growing at 1.5× so the options stay on screen. */
 @Composable
 fun SegmentTrack(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
-    val shape = RoundedCornerShape(Dimens.radiusMd)
+    val shape = PillShape
     CapFontScale(1.5f) {
         Row(
             modifier
@@ -438,7 +438,7 @@ fun SegmentTrack(modifier: Modifier = Modifier, content: @Composable RowScope.()
 @Composable
 fun RowScope.Segment(label: String, active: Boolean, onClick: () -> Unit, fill: Boolean = false) {
     val t = tokens
-    val shape = RoundedCornerShape(Dimens.radiusSm)
+    val shape = PillShape
     Box(
         Modifier
             .then(if (fill) Modifier.weight(1f) else Modifier)
@@ -488,7 +488,7 @@ val Quality.color: Color
 @Composable
 fun LoadBar(percent: Int, width: Dp = 56.dp) {
     val fraction = percent.coerceIn(0, 100) / 100f
-    val shape = RoundedCornerShape(2.dp)
+    val shape = PillShape
     Box(Modifier.width(width).height(4.dp).clip(shape).background(tokens.border)) {
         Box(Modifier.width(width * fraction).height(4.dp).clip(shape).background(Quality.fromLoad(percent).color))
     }
@@ -526,7 +526,7 @@ fun SearchField(value: String, onChange: (String) -> Unit, placeholder: String, 
         leadingIcon = { LucideIcon(Lucide.Search, tokens.muted, 18.dp) },
         singleLine = true,
         textStyle = MaterialTheme.typography.bodyLarge,
-        shape = RoundedCornerShape(Dimens.radiusMd),
+        shape = RoundedCornerShape(Dimens.radiusSm),
         colors = waveFieldColors(),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         modifier = modifier,
