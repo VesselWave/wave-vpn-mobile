@@ -8,25 +8,14 @@ import me.vwave.vpn.core.FakeAirNetwork.Companion.keyB
 import me.vwave.vpn.core.FakeAirNetwork.Companion.manifest
 import me.vwave.vpn.core.FakeAirNetwork.Companion.user
 import org.junit.Assert.*
-import org.junit.Assume.assumeTrue
-import org.junit.Before
 import org.junit.Test
 import java.io.IOException
 import java.io.InterruptedIOException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-/**
- * Open findings from the independent recheck of 9320cd6, written as the behavior a fix should
- * produce. They FAIL on 9320cd6 and are skipped by default so the required suite stays green:
- *
- *     WAVE_RECHECK=1 ./gradlew :core:test --rerun-tasks --tests '*RecheckFindingsTest'
- *
- * Remove the gate (or the individual test) once its finding is fixed. See docs/NETWORK-POLICY-RECHECK.md.
- */
+/** Always-on regressions from the independent recheck. */
 class RecheckFindingsTest {
-    @Before fun gate() = assumeTrue("Opt in with WAVE_RECHECK=1", System.getenv("WAVE_RECHECK") == "1")
-
     private val t = FakeAirNetwork.Time()
     private val net = FakeAirNetwork { t.ms }
     private val stored = (1..6).map { "http://192.0.2.$it" }
@@ -38,7 +27,7 @@ class RecheckFindingsTest {
      * never tried again in this process. If the embedded copy is outdated (rotated key here), refresh
      * and sign-in never recover once the network is back.
      */
-    @Test fun `R1 stored routing is retried after an offline period even when embedded routing is outdated`() {
+    @Test(timeout = 15000) fun `R1 stored routing is retried after an offline period even when embedded routing is outdated`() {
         val current = manifest(keyB, stored)
         var online = false
         stored.forEach { url -> net.route(url, keyB) { p ->
@@ -63,7 +52,7 @@ class RecheckFindingsTest {
     }
 
     /** R1b (high): same stickiness when the embedded hosts were retired rather than re-keyed. */
-    @Test fun `R1b stored routing is retried after an offline period when embedded hosts are dead`() {
+    @Test(timeout = 15000) fun `R1b stored routing is retried after an offline period when embedded hosts are dead`() {
         val current = manifest(keyA, stored)
         var online = false
         stored.forEach { url -> net.route(url, keyA) { p ->
@@ -92,7 +81,7 @@ class RecheckFindingsTest {
      * backoff. Fix: record cancellation in AirApi.cancel() and treat non-timeout InterruptedIOException
      * as cancellation.
      */
-    @Test fun `R2 cancellation stops failover even when the platform clears the interrupt flag`() = runBlocking {
+    @Test(timeout = 15000) fun `R2 cancellation stops failover even when the platform clears the interrupt flag`() = runBlocking {
         val entered = CountDownLatch(1)
         val release = CountDownLatch(1)
         val posts = mutableListOf<String>()
@@ -101,7 +90,8 @@ class RecheckFindingsTest {
                 synchronized(posts) { posts += url }
                 if (posts.size == 1) {
                     entered.countDown()
-                    while (release.count > 0) Thread.onSpinWait() // blocking socket: ignores, but keeps, the interrupt
+                    val deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5)
+                    while (release.count > 0 && System.nanoTime() < deadline) Thread.onSpinWait() // blocking socket: ignores, but keeps, the interrupt
                     Thread.interrupted() // Okio 1.x Timeout.throwIfReached() style: consumes the flag
                     throw InterruptedIOException("thread interrupted")
                 }
@@ -131,7 +121,7 @@ class RecheckFindingsTest {
      * explanation (expired account, identity mismatch, service message), is replaced with a generic
      * "check your credentials" text.
      */
-    @Test fun `R3 AirVPN rejection text reaches the sign-in error`() {
+    @Test(timeout = 15000) fun `R3 AirVPN rejection text reaches the sign-in error`() {
         stored.forEach { net.route(it, keyA) { "<user error=\"Your account has expired\"/>" } }
         val session = RefreshSession(AirApi(transport = net, clock = { t.ms }), null, {},
             clock = { t.wall }, fallback = keyA.bootstrap(stored), elapsed = { t.ms })
@@ -145,7 +135,7 @@ class RecheckFindingsTest {
      * city from automatic Best for ten minutes. Successes may be shared; a failure should mark only
      * the probed server (or the next sweep should try another representative).
      */
-    @Test fun `R4 one failed representative does not exclude its healthy location peers from Best`() = runBlocking {
+    @Test(timeout = 15000) fun `R4 one failed representative does not exclude its healthy location peers from Best`() = runBlocking {
         val fleet = fixtureServers()
         val group = fleet.filter { it.isOpen && it.warningOpen == null }
             .groupBy { it.countryCode to it.location }.values.maxBy { it.size }
@@ -154,5 +144,14 @@ class RecheckFindingsTest {
         val pings = cache.cached(fleet)
         val healthyPeers = group.count { pings[it.name] != -1 }
         assertTrue("all ${group.size} servers in ${group.first().location} marked failed by one probe", healthyPeers >= group.size - 1)
+        var now = 0L
+        val hosts = mutableListOf<String>()
+        val rotating = LatencyCache({ host -> hosts += host; -1 }, clock = { now }, budget = 1)
+        val favorite = setOf(group.first().name)
+        rotating.measure(group.toList(), favorite)
+        now += 180_000
+        rotating.measure(group.toList(), favorite)
+        assertEquals(2, hosts.size)
+        assertNotEquals("failed favorite must yield to an unmeasured peer", hosts[0], hosts[1])
     }
 }

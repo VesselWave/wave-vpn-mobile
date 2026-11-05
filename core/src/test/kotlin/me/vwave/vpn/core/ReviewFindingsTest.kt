@@ -127,7 +127,7 @@ class ReviewFindingsTest {
     }
 
     /** F8 (low): a cancelled/interrupted request marks the healthy endpoint as failing and demotes it. */
-    @Test fun `F8 cancellation does not put a healthy endpoint into backoff`() {
+    @Test(timeout = 15000) fun `F8 cancellation does not put a healthy endpoint into backoff`() {
         var cancel = true
         net.route(urls[0], keyA) { if (cancel) { Thread.currentThread().interrupt(); throw InterruptedIOException() } else doc }
         serve(urls[1])

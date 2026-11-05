@@ -55,7 +55,7 @@ class LatencyCache(
         return servers.filter { it.isOpen }.mapNotNull { server ->
             view[server.name]?.takeIf { it.host in server.entries && clock() - it.at < ttl }
                 ?.let { server.name to it.ping }
-        }.toMap()
+        }.toMap().also { values.value = it }
     }
 
     suspend fun measure(servers: List<Server>, priority: Set<String> = emptySet()) {
@@ -72,7 +72,8 @@ class LatencyCache(
             val locations = servers.filter { it.isOpen && it.warningOpen == null }
                 .groupBy { it.countryCode to it.location }
             val groups = locations.values.map { group ->
-                group.sortedWith(compareBy<Server> { it.name !in priority }
+                group.sortedWith(compareBy<Server> { samples[it.name]?.let { s -> s.ping < 0 && clock() - s.at < ttl } == true }
+                    .thenBy { it.name !in priority }
                     .thenBy { Scoring.score(it, null, Factors(), false) })
             }.filter { group -> group.any { s -> s.entries.any { ':' !in it } } }
             val countries = groups.groupBy { it.first().countryCode }
@@ -81,7 +82,8 @@ class LatencyCache(
                     .thenBy { it.first }
                     .thenBy { (_, g) -> g.mapNotNull { samples[it.name]?.at }.maxOrNull() ?: Long.MIN_VALUE })
             val candidates = order.map { it.second }.filter { group ->
-                group.none { s -> samples[s.name]?.let { clock() - it.at < ttl && it.host in s.entries } == true }
+                group.none { s -> samples[s.name]?.let { it.ping > 0 && clock() - it.at < ttl && it.host in s.entries } == true } &&
+                    group.any { s -> samples[s.name]?.let { clock() - it.at < ttl && it.host in s.entries } != true }
             }.map { group -> group to group.firstNotNullOf { s -> s.entries.firstOrNull { ':' !in it } } }.take(budget)
             active.value = true
             coroutineScope {
@@ -107,7 +109,7 @@ class LatencyCache(
                                 if (allowed() && version == generation) {
                                     // Location estimate is shared, but retain each server's address for
                                     // invalidation when routing changes in a later manifest.
-                                    item.first.forEach { server ->
+                                    (if (ping > 0) item.first else item.first.filter { item.second in it.entries }.take(1)).forEach { server ->
                                         server.entries.firstOrNull { ':' !in it }?.let { host ->
                                             samples[server.name] = Sample(host, ping, clock())
                                         }

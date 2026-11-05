@@ -171,3 +171,49 @@ check; pick a server or retry" would be clearer.
 - No live AirVPN traffic. Rate limits and error texts the real bootstrap servers send are unknown.
 - This says nothing about whether "Best" picks the best server in the real world. TCP 443 location
   estimates and the median neutral are a heuristic. That needs a separate Best-server assessment.
+
+## Round 2 implementation (local, offline)
+
+Built on reviewer commit `4a8041fe8d1d4a1eb66740015a3e428a516b9c7b`, directly above
+`9320cd6`. R1–R4 and A1–A5 are repaired; the two additional observations (repeated
+rejections and cancellation-test hangs) are addressed too.
+
+- Routing alternates recovery/current sets after failure, keeping the combined three-attempt
+  cap. Health is keyed by URL and bootstrap key, so a rotated key on the same URL remains eligible.
+- API cancellation has an explicit generation, checked by both API and session. Non-timeout
+  `InterruptedIOException` cancels without endpoint/outage penalties; socket timeouts still fail.
+- After no handshake, the next connect must complete a bounded account refresh before reading
+  device keys. Only this bootstrap recovery uses `Network.openConnection` on a non-VPN internet
+  network. The existing TUN stays installed: no app exclusion, process binding or general socket
+  bypass. Ordinary background refresh starts only after a verified handshake.
+- Application-owned logout closes request admission and cancels the registered job atomically;
+  deletion waits for cleanup under `NonCancellable`, independently of the ViewModel.
+- Rejection messages retain AirVPN's explanation and append a wait: the first three allow 5-second
+  corrections, subsequent consecutive rejections wait 60 seconds. Success resets the streak.
+- Only positive location estimates are shared. Failed representatives are cached individually;
+  subsequent eligible sweeps select an unmeasured peer before retrying a failed favorite.
+- Refresh reports cooldown seconds and still runs its independently budgeted latency check.
+  UI samples are refreshed through the same TTL/host-validation reader as connect; marker and
+  connect rank the same full fleet with the same neutral score and warning filter. Empty Best
+  produces a specific latency-check message.
+
+All five original `RecheckFindingsTest` repros are now unconditional, retaining their assertions.
+Cancellation fixtures have JUnit deadlines, and blocking transport fixtures have bounded release
+waits. Existing failure-cache assertions remain; the four-failure fixture now uses distinct
+locations so it actually probes four servers. The all-failed-location ranking assertion is retained
+with explicit individual failures, alongside the new healthy-peer check. The old 720-rejection/hour
+expectation is replaced by the requested escalation bound; single-post and spacing assertions stay.
+Five app JVM tests exercise the production admission/logout, refresh-feedback and handshake policy
+seams used by the repository, ViewModel and tunnel manager. No external code/assets were imported;
+GPL notices and provenance remain intact.
+
+Validation: `./gradlew :core:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug`.
+No live fleet traffic, agents, emulator, or device checks were used. Device acceptance still must
+verify Android HTTP cancellation, physical-network recovery and lockdown refusal, and lifecycle /
+Keystore storage failures. Lockdown can deny underlying-network recovery; the implementation keeps
+traffic protection and does not silently proceed with the stale keys. Best-server quality remains
+for the parent's separate assessment. No UX finding is waived.
+
+Final local result: BUILD SUCCESSFUL; core 87 tests, 0 failures, 1 opt-in live test skipped;
+app 5 JVM tests, 0 failures/skips; lint 16 warnings, 0 errors; debug APK assembled.
+`git diff --check` passes. Device claims above remain unverified locally.

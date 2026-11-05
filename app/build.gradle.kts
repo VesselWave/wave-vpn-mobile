@@ -69,6 +69,7 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.junit)
     implementation(project(":core"))
     implementation(libs.wireguard.tunnel)
     implementation(libs.coroutines.android)

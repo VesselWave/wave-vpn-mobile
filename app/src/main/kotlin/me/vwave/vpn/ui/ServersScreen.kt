@@ -76,7 +76,7 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
         else Scoring.scores(servers, pings, factors)
     }
     val best = remember(servers, pings, factors) {
-        factors?.let { Scoring.rank(servers.filter { it.warningOpen == null }, pings, it).firstOrNull() }
+        factors?.let { Scoring.rank(servers, pings, it, allowFailedFallback = false) { s -> s.warningOpen == null }.firstOrNull() }
     }
     val connectedName = (state as? TunnelState.Connected)?.server?.name
     val q = query.trim().lowercase()

@@ -69,7 +69,7 @@ class RetryTest {
         assertEquals(6, count)
     }
 
-    @Test fun `auth rejection stops failover and cancellation is never retried`() {
+    @Test(timeout = 15000) fun `auth rejection stops failover and cancellation is never retried`() {
         var calls = 0
         val api = AirApi(transport = Transport { _, body -> calls++; reply(body, "<user error=\"denied\"/>") })
         assertThrows(LoginException::class.java) { api.request(bootstrap, "user", "x", "x") }

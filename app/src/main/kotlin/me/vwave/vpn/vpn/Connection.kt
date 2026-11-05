@@ -86,6 +86,7 @@ class TunnelManager(private val context: Context, private val repository: AirRep
         return ready.await()
     }
     private var operation: Job? = null
+    private val handshakeRefresh = HandshakeRefresh()
     var lastServerName: String? = null
         private set
     private val status = MutableStateFlow<TunnelState>(TunnelState.Down)
@@ -156,30 +157,24 @@ class TunnelManager(private val context: Context, private val repository: AirRep
         since.value = null; counters.value = null
         try {
             vpnService()
-            // Reconnect using saved keys while traffic is blocked; bootstrap requests
-            // cannot succeed through the sink and must not delay tunnel restoration.
-            if (WaveVpnService.instance?.isBlocking != true) {
-                if (repository.manifest.value == null) {
-                    withTimeout(3_000) { repository.refresh() }
-                } else {
-                    scope.launch {
-                        try { withTimeout(3_000) { repository.refresh() } }
-                        catch (e: CancellationException) { throw e }
-                        catch (_: Exception) { log.warn("Using cached account and server information") }
-                    }
-                }
-            }
+            // Recovery uses only the bootstrap transport on an underlying network, before
+            // another attempt consumes cached device keys. Keep the existing tunnel installed.
+            handshakeRefresh.recover { withTimeout(3_000) { repository.refreshAccount() } }
+            if (repository.manifest.value == null && WaveVpnService.instance?.isBlocking != true)
+                withTimeout(3_000) { repository.refresh() }
             val m = repository.manifest.value ?: error("Refresh the server list first")
             val a = repository.account.value ?: error("Sign in first")
             val prefs = preferences.current
             val device = a.key(prefs.deviceKey) ?: error("Select an available device")
             val mode = m.wireguardModes.find { it.port == prefs.port } ?: error("Select a supported WireGuard port")
             val candidates = Scoring.rank(m.servers, pinger.cached(m.servers), m.factors, allowFailedFallback = target != Target.Best) { s -> when(target) {
-                Target.Best -> true
+                Target.Best -> s.warningOpen == null
                 is Target.Country -> s.countryCode.equals(target.code, true)
                 is Target.Server -> s.name == target.name
             } }.take(if (target is Target.Server) 1 else 3)
-            require(candidates.isNotEmpty()) { "No available server for this choice" }
+            if (candidates.isEmpty()) throw NoCandidateException(if (target == Target.Best)
+                "No server answered the latency check; pick a server or retry."
+                else "No available server for this choice")
             var selected = candidates.last()
             var anyHandshake = false
             for (server in candidates) {
@@ -217,11 +212,7 @@ class TunnelManager(private val context: Context, private val repository: AirRep
                 }
                 if (handshook) { anyHandshake = true; break }
             }
-            if (!anyHandshake) scope.launch {
-                try { withTimeout(3_000) { repository.refreshAccount() } }
-                catch (e: CancellationException) { throw e }
-                catch (_: Exception) { log.warn("Account refresh unavailable; retry from the app") }
-            }
+            handshakeRefresh.outcome(anyHandshake)
             // Keep an unanswered tunnel installed; Android blocking settings protect any teardown gap.
             val server = selected
             var lastRx = 0L; var lastTx = 0L; var lastAt = System.nanoTime()
@@ -239,7 +230,15 @@ class TunnelManager(private val context: Context, private val repository: AirRep
                 val alive = handshake > 0 && System.currentTimeMillis() - handshake < 180_000
                 status.value = if (alive) TunnelState.Connected(server) else TunnelState.Stalled(server)
                 if (alive && !recorded) {
-                    recorded = true; count.value += 1; since.value = android.os.SystemClock.elapsedRealtime()
+                    recorded = true
+                    handshakeRefresh.verifiedHandshake {
+                        scope.launch {
+                            try { withTimeout(3_000) { repository.refresh() } }
+                            catch (e: CancellationException) { throw e }
+                            catch (_: Exception) { log.warn("Using cached account and server information") }
+                        }
+                    }
+                    count.value += 1; since.value = android.os.SystemClock.elapsedRealtime()
                     log.info("WireGuard handshake established")
                 }
             }
@@ -249,7 +248,7 @@ class TunnelManager(private val context: Context, private val repository: AirRep
             // Cancellation is followed by another serialized connect or disconnect.
             // Keep the current TUN until the next serialized operation replaces it.
             throw e
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             // Keep an existing tunnel in place on monitor errors instead of opening a traffic gap.
             if (started && WaveVpnService.instance?.isBlocking != true) {
                 selectedServer?.let { status.value = TunnelState.Stalled(it) }
@@ -257,9 +256,11 @@ class TunnelManager(private val context: Context, private val repository: AirRep
             } else {
                 if (WaveVpnService.instance?.isBlocking != true)
                     context.stopService(Intent(context, ConnectionService::class.java))
-                status.value = TunnelState.Failed("Check account, server and WireGuard settings")
+                status.value = TunnelState.Failed(if (e is NoCandidateException || e is CooldownException) e.message!! else "Check account, server and WireGuard settings")
                 log.error("Unable to start WireGuard")
             }
         }
     }
 }
+
+private class NoCandidateException(message: String) : Exception(message)

@@ -19,7 +19,7 @@ class WaveApp : Application() {
     override fun onCreate() {
         super.onCreate()
         settings = SettingsStore(this)
-        repository = AirRepository(SessionVault(this))
+        repository = AirRepository(SessionVault(this), this)
         tunnels = TunnelManager(this, repository, settings, pinger, log, scope)
         pinger.allowed = { foreground && !tunnels.isActive && WaveVpnService.instance?.isBlocking != true }
         GoBackend.setAlwaysOnCallback {

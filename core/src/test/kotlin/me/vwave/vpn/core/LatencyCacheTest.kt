@@ -45,7 +45,7 @@ class LatencyCacheTest {
         assertEquals(12, cache.pings.value["server1"])
     }
 
-    @Test fun `no probes while connected connecting blocked or background and stop midway`() = runBlocking {
+    @Test(timeout = 15000) fun `no probes while connected connecting blocked or background and stop midway`() = runBlocking {
         var allowed = false; var calls = 0; var now = 0L
         val cache = LatencyCache({ calls++; allowed = false; 5 }, { now }, { allowed })
         repeat(20) { cache.measure(servers()) }
@@ -60,7 +60,7 @@ class LatencyCacheTest {
         cache.measure(servers()); assertEquals(2, calls)
     }
 
-    @Test fun `cancellation releases guard and suppresses immediate retry storm`() = runBlocking {
+    @Test(timeout = 15000) fun `cancellation releases guard and suppresses immediate retry storm`() = runBlocking {
         var now = 0L; var calls = 0
         val entered = CompletableDeferred<Unit>()
         var wait = true

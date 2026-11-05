@@ -28,7 +28,7 @@ class RecheckPolicyTest {
             initialBudget = budget, saveBudget = save, elapsed = { t.ms })
     private fun snapshot() = SessionSnapshot("tester", "secret", user(), doc, t.wall, t.wall)
 
-    @Test fun `only the last bootstrap URL alive is reached quickly and the hour stays bounded`() {
+    @Test(timeout = 15000) fun `only the last bootstrap URL alive is reached quickly and the hour stays bounded`() {
         serve(urls[5])
         val s = session(snapshot())
         var reachedAt = -1L
@@ -44,7 +44,7 @@ class RecheckPolicyTest {
         assertEquals(urls[5], net.posts.last().url)
     }
 
-    @Test fun `every URL is tried once before any URL is retried`() {
+    @Test(timeout = 15000) fun `every URL is tried once before any URL is retried`() {
         val s = session(snapshot())
         repeat(30) { runCatching { s.update(force = true) }; t.advance(15 * 60_000) }
         val firstRound = net.posts.take(urls.size).map { it.url }
@@ -52,7 +52,7 @@ class RecheckPolicyTest {
         assertTrue(net.posts.size <= 30 * 3)
     }
 
-    @Test fun `cancellation through networkWork sends no further request, keeps endpoint health and backoff`() = runBlocking {
+    @Test(timeout = 15000) fun `cancellation through networkWork sends no further request, keeps endpoint health and backoff`() = runBlocking {
         val entered = CountDownLatch(1); val release = CountDownLatch(1)
         var block = true
         val posts = mutableListOf<String>()
@@ -82,16 +82,16 @@ class RecheckPolicyTest {
         assertEquals("healthy first URL not demoted", urls[0], posts.first())
     }
 
-    @Test fun `password rejections send exactly one request each and at most one per five seconds`() {
+    @Test(timeout = 15000) fun `password rejections send exactly one request each and at most one per five seconds`() {
         urls.forEach { net.route(it, keyA) { "<user error=\"Wrong password\"/>" } }
         val s = session(null)
         repeat(3600) { runCatching { s.update("tester", "typo") }; t.advance(1_000) }
-        assertEquals(720, net.count("user"))
+        assertTrue("repeated rejection should escalate after three short corrections", net.count("user") <= 64)
         assertEquals(setOf(urls[0]), net.posts.map { it.url }.toSet())
         net.posts.zipWithNext().forEach { (a, b) -> assertTrue(b.at!! - a.at!! >= 5_000) }
     }
 
-    @Test fun `sign-out and sign-in with a process restart every cycle stays within one attempt per minute`() {
+    @Test(timeout = 15000) fun `sign-out and sign-in with a process restart every cycle stays within one attempt per minute`() {
         serve(*urls.toTypedArray())
         var budget = 0L to 0
         repeat(600) {
@@ -104,7 +104,7 @@ class RecheckPolicyTest {
         assertEquals(net.count("user"), net.count("manifest"))
     }
 
-    @Test fun `explicit server in a location whose representative failed stays connectable`() = runBlocking {
+    @Test(timeout = 15000) fun `explicit server in a location whose representative failed stays connectable`() = runBlocking {
         val fleet = fixtureServers()
         val group = fleet.filter { it.isOpen && it.warningOpen == null }
             .groupBy { it.countryCode to it.location }.values.first { it.size > 2 }
@@ -113,15 +113,19 @@ class RecheckPolicyTest {
         val pings = cache.cached(fleet)
         val target = group.last()
         assertEquals(listOf(target.name), Scoring.rank(fleet, pings, Factors(), allowFailedFallback = true) { it.name == target.name }.map { it.name })
-        assertTrue(Scoring.rank(fleet, pings, Factors(), allowFailedFallback = false) { true }.none { it.name in group.map { g -> g.name } })
+        assertTrue(Scoring.rank(fleet, pings, Factors(), allowFailedFallback = false) { true }.none { pings[it.name] == -1 })
+        assertTrue("unprobed location peers stay eligible", group.count { pings[it.name] != -1 } >= group.size - 1)
+        // Retain the original all-failed-location rule when each peer really failed.
+        assertTrue(Scoring.rank(fleet, pings + group.associate { it.name to -1 }, Factors(), allowFailedFallback = false) { true }
+            .none { it.name in group.map { g -> g.name } })
     }
 
-    @Test fun `Best with every candidate failed yields no server (documented behavior)`() {
+    @Test(timeout = 15000) fun `Best with every candidate failed yields no server (documented behavior)`() {
         val fleet = fixtureServers().filter { it.isOpen }
         assertTrue(Scoring.rank(fleet, fleet.associate { it.name to -1 }, Factors(), allowFailedFallback = false) { true }.isEmpty())
     }
 
-    @Test fun `latency still orders equal-load servers and unmeasured ones take the median`() {
+    @Test(timeout = 15000) fun `latency still orders equal-load servers and unmeasured ones take the median`() {
         val base = fixtureServers().first { it.isOpen && it.warningOpen == null }.copy(users = 10, usersMax = 100, bandwidth = 0, scoreBase = 0)
         val fleet = listOf("Near", "Mid", "Far", "Unmeasured").map { base.copy(name = it) }
         val ranked = Scoring.rank(fleet, mapOf("Near" to 10, "Mid" to 100, "Far" to 300), Factors()).map { it.name }

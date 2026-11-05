@@ -133,7 +133,7 @@ class BootstrapLoadRegressionTest {
         } finally { release.countDown(); pool.shutdownNow() }
     }
 
-    @Test fun `interrupt during a transport stops failover to other endpoints`() {
+    @Test(timeout = 15000) fun `interrupt during a transport stops failover to other endpoints`() {
         net.route(urls[0], keyA) { Thread.currentThread().interrupt(); throw InterruptedIOException("cancelled") }
         serve(urls[1])
         val api = api()

@@ -62,7 +62,7 @@ class LatencyLoadRegressionTest {
         assertTrue(measuredBeforeRouteChange.all { (it.countryCode to it.location) in safeLocations })
     }
 
-    @Test fun `stop with uncancellable in-flight sockets starts nothing new and discards late results`() = runBlocking {
+    @Test(timeout = 15000) fun `stop with uncancellable in-flight sockets starts nothing new and discards late results`() = runBlocking {
         var calls = 0
         val inFlight = CompletableDeferred<Unit>(); val release = CompletableDeferred<Unit>()
         val cache = LatencyCache({
@@ -99,7 +99,8 @@ class LatencyLoadRegressionTest {
     @Test fun `zero negative or failed probe results are cached as unreachable not fast`() = runBlocking {
         val replies = ArrayDeque(listOf(0, -7, Int.MIN_VALUE))
         val cache = LatencyCache({ replies.removeFirstOrNull() ?: throw java.net.SocketTimeoutException() }, clock = { now })
-        val four = fleet.filter { it.isOpen }.take(4)
+        // Distinct locations ensure all four responses are individually probed.
+        val four = fleet.filter { it.isOpen && it.warningOpen == null }.take(4).mapIndexed { i, s -> s.copy(location = "location$i") }
         cache.measure(four)
         assertEquals(four.associate { it.name to -1 }, cache.pings.value)
         assertEquals(Double.POSITIVE_INFINITY, Scoring.score(four[0], cache.pings.value[four[0].name], Factors()), 0.0)

@@ -28,7 +28,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val refreshing = MutableStateFlow(false)
     val notice = MutableStateFlow<String?>(null)
     private var signingIn: Job? = null
-    init { if (app.repository.isLoggedIn) refresh(false) }
+    init {
+        if (app.repository.isLoggedIn) refresh(false)
+        viewModelScope.launch {
+            while (isActive) { app.pinger.cached(manifest.value?.servers.orEmpty()); delay(500) }
+        }
+    }
     fun login(user: String, password: String) {
         if (loginBusy.value) return
         if (user.isBlank() || password.isEmpty()) { loginError.value = "Enter your username and password"; return }
@@ -47,7 +52,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         refreshing.value = true
         viewModelScope.launch {
             try {
-                app.repository.refresh(force)
+                refreshAndMeasure({ app.repository.refresh(force) }, { e ->
+                    notice.value = if (e is me.vwave.vpn.core.CooldownException) e.message
+                        else "Unable to refresh AirVPN information. Cached servers are still available; retry later."
+                }) {
                 val servers = manifest.value?.servers.orEmpty()
                 val prefs = app.settings.current
                 val priority = prefs.favorites + listOfNotNull(app.tunnels.lastServerName) + servers.filter { s ->
@@ -58,6 +66,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     }
                 }.map { it.name }
                 app.pinger.measure(servers, priority.toSet())
+                }
             }
             catch (e: CancellationException) { throw e }
             catch (_: Exception) { notice.value = "Unable to refresh AirVPN information. Cached servers are still available; retry later." }
@@ -78,6 +87,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         app.pinger.clear()
         signingIn?.cancel()
         app.tunnels.disconnect()
-        viewModelScope.launch { app.repository.logout(); app.settings.clear(); app.log.clear() }
+        app.repository.logout(app.scope) { app.settings.clear(); app.log.clear() }
     }
 }

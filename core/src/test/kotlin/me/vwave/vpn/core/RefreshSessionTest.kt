@@ -98,7 +98,7 @@ class RefreshSessionTest {
         assertSame(old, brokenDisk.snapshot)
     }
 
-    @Test fun `cancelled attempt cannot be hammered immediately`() {
+    @Test(timeout = 15000) fun `cancelled attempt cannot be hammered immediately`() {
         val session = engine()
         response = { throw CancellationException() }
         assertThrows(CancellationException::class.java) { session.update("tester", "secret") }

@@ -8,8 +8,6 @@ import android.util.AtomicFile
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.vwave.vpn.core.*
 import org.json.JSONObject
@@ -71,10 +69,25 @@ class SessionVault(context: Context) {
     fun clear() = file.delete()
 }
 
-class AirRepository(private val vault: SessionVault) {
-    private val mutex = Mutex()
-    @Volatile private var activeJob: Job? = null
-    private val api = AirApi(arch = android.os.Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown")
+class AirRepository(private val vault: SessionVault, context: Context) {
+    @Volatile private var recoveryTransport = false
+    private val connectivity = context.getSystemService(android.net.ConnectivityManager::class.java)
+    private val transport = HttpTransport { url ->
+        if (!recoveryTransport) url.openConnection() as java.net.HttpURLConnection
+        else {
+            // Only this bootstrap request may use the physical network; no app exclusion,
+            // process binding, or general socket protection. Lockdown may refuse it.
+            val network = connectivity.allNetworks.firstOrNull { n ->
+                connectivity.getNetworkCapabilities(n)?.let {
+                    it.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                        it.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_NOT_VPN)
+                } == true
+            } ?: throw java.io.IOException("No underlying network for account recovery")
+            network.openConnection(url) as java.net.HttpURLConnection
+        }
+    }
+    private val api = AirApi(arch = android.os.Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown", transport = transport)
+    private val work = SessionWork(api::cancel)
     private val a = MutableStateFlow<Account?>(null)
     private val m = MutableStateFlow<Manifest?>(null)
     val account = a.asStateFlow()
@@ -96,28 +109,23 @@ class AirRepository(private val vault: SessionVault) {
         initialBudget = vault.readBudget(), saveBudget = vault::writeBudget)
     private var session = engine(restore())
     private suspend fun update(login: String? = null, password: String? = null, force: Boolean = false, account: Boolean = false) {
-        // Drop overlapping intents instead of queueing forced requests behind a slow network call.
-        if (!mutex.tryLock()) {
-            if (login != null) throw java.io.IOException("Another AirVPN request is busy. Retry shortly.")
-            return
-        }
-        try {
-            activeJob = currentCoroutineContext().job
-            networkWork(api::cancel) { session.update(login, password, force, account) }
-        } finally {
-            session.snapshot?.let { s -> a.value = parseUser(s.user, s.login); m.value = parseManifest(s.manifest) }
-            activeJob = null
-            mutex.unlock()
+        work.update(login != null || account) {
+            try {
+                recoveryTransport = account
+                networkWork(api::cancel) { session.update(login, password, force, account, reportCooldown = true) }
+            } finally {
+                recoveryTransport = false
+                session.snapshot?.let { s -> a.value = parseUser(s.user, s.login); m.value = parseManifest(s.manifest) }
+            }
         }
     }
     suspend fun login(login: String, password: String) = update(login, password)
     suspend fun refresh(force: Boolean = false) = update(force = force)
     suspend fun refreshAccount() = update(account = true)
-    suspend fun logout() {
-        activeJob?.cancel()
-        withContext(Dispatchers.IO) { api.cancel() }
-        mutex.withLock {
+    fun logout(scope: CoroutineScope, after: () -> Unit = {}): Job = work.logout(scope) {
+        withContext(NonCancellable + Dispatchers.IO) {
             session.clear(); vault.clear(); a.value = null; m.value = null
         }
+        after()
     }
 }
