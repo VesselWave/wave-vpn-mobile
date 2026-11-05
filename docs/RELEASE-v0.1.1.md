@@ -1,38 +1,40 @@
-# Wave VPN for Android 0.1.1
+A refreshed interface and better support for large text make Wave VPN easier to use on your phone.
 
-**Early release** · Android 8 (API 26) or newer · GPL-3.0-or-later
-
-**v0.1.1 is an early release.** Anyone is welcome to use it, but it hasn't been fully tested on every device and system yet.
-
-**Known issue, Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and blocking enabled. If that matters for how you use a VPN, keep it in mind. See the [full Samsung test report](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.1/docs/qa/RELEASE-SAMSUNG-STOCK.md).
+Early release · Android 8 or newer (API 26+) · Testing across devices is still in progress.
 
 ## What's new
 
-- **New look**, shared with the other Wave apps and websites: a blue-black dark theme, pill-shaped buttons and segments, and one consistent set of corner sizes.
-- **Large text works on every screen.** At the biggest font and display sizes, labels wrap instead of getting crushed, long screens scroll, and buttons grow instead of clipping. At normal size nothing moves.
+- **Refreshed interface:** blue-black dark theme, pill-shaped controls and consistent corners, shared with the other Wave apps.
+- **Better large-text support:** labels wrap, buttons grow and longer screens scroll at the largest font and display sizes.
 
-Only the interface changed. The VPN, protocol and account code is the same as in 0.1.0.
+This is an interface update; VPN, protocol and account behavior is unchanged from 0.1.0.
 
-## Install or update
+> [!WARNING]
+> **Known issue on Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and **Block connections without VPN** enabled. [Samsung test report →](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.1/docs/qa/RELEASE-SAMSUNG-STOCK.md)
 
-- **F-Droid:** add the [Wave repository](https://f-droid.vwave.me/fdroid/repo?fingerprint=47841BF725DA7B106B2D05DF097E4898C7B5576411804A23D6A5505C5AD17933) to get this and future updates automatically.
-- **APK:** download `wave-vpn-android-0.1.1.apk` below. It's signed with the same key as 0.1.0 and installs over it, keeping your sign-in and settings.
+## Get Wave VPN
 
-## Downloads
+**[Download APK · 12 MB](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.1/wave-vpn-android-0.1.1.apk)**
 
-| File | What it is |
-| --- | --- |
-| `wave-vpn-android-0.1.1.apk` | The app, signed with the production key |
-| `wave-vpn-android-0.1.1.tar.gz` | Same APK with notices and build records |
-| `wave-vpn-android-0.1.1-source.tar.gz` | Exact tagged source |
-| `…-SHA256SUMS`, `…-SHA256SUMS.asc`, `…-signing-key.asc` | Checksums, their OpenPGP signature and the public key |
+For ongoing updates through F-Droid, add the **[Wave repository](https://f-droid.vwave.me/fdroid/repo?fingerprint=47841BF725DA7B106B2D05DF097E4898C7B5576411804A23D6A5505C5AD17933)**. F-Droid offers the current version; use the APK link above for this exact release.
 
-## Verify
+**Updating from 0.1.0?** Install over your existing copy to keep your sign-in and settings. Both releases use the same signing certificate.
 
-```text
-OpenPGP release key   4140 18C0 BBB8 C0A7 0A80  BF57 0AA3 2CCB 2C0B 3951
-APK certificate       29:95:0A:57:56:87:67:59:B2:89:84:A0:E6:B4:4A:27:6E:FD:94:8F:8E:70:08:C3:FF:F4:71:D4:AD:41:88:21
-```
+<details>
+<summary>Installing the APK</summary>
+
+1. Download the APK to your phone.
+2. Open the file and, if Android asks, allow your browser or file manager to install apps from this source.
+3. Install and open **Wave VPN**. Sign in with your AirVPN account and choose a server.
+
+Release updates install in place when signed with the same certificate. See [installation and support](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.1/docs/SUPPORT.md) for device notes and Android VPN settings.
+
+</details>
+
+<details>
+<summary>Verify the download</summary>
+
+Download [SHA256SUMS](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.1/wave-vpn-android-0.1.1-SHA256SUMS) and [its signature](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.1/wave-vpn-android-0.1.1-SHA256SUMS.asc) alongside the APK. On a computer with GnuPG, `sha256sum` and Android SDK's `apksigner`, run:
 
 ```sh
 gpg --recv-keys 414018C0BBB8C0A70A80BF570AA32CCB2C0B3951
@@ -41,6 +43,19 @@ sha256sum --ignore-missing -c wave-vpn-android-0.1.1-SHA256SUMS
 apksigner verify --print-certs wave-vpn-android-0.1.1.apk
 ```
 
-Compare the fingerprints with [SECURITY.md](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.1/SECURITY.md) or [vpn.vwave.me](https://vpn.vwave.me/#verify), not with this page. Built and signed by the [release workflow](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.1/.github/workflows/release.yml) from the `v0.1.1` tag.
+Expected fingerprints:
 
-Earlier notes: [0.1.0](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.1/docs/RELEASE-v0.1.0.md) · [changelog](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.1/CHANGELOG.md)
+```text
+OpenPGP release key   4140 18C0 BBB8 C0A7 0A80 BF57 0AA3 2CCB 2C0B 3951
+APK certificate       29:95:0A:57:56:87:67:59:B2:89:84:A0:E6:B4:4A:27:6E:FD:94:8F:8E:70:08:C3:FF:F4:71:D4:AD:41:88:21
+```
+
+Confirm these independently against [SECURITY.md](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.1/SECURITY.md) or [vpn.vwave.me](https://vpn.vwave.me/#verify). All commands must succeed and the APK certificate must match.
+
+The [release bundle](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.1/wave-vpn-android-0.1.1.tar.gz) contains the same APK with notices and build records. A [public signing key](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.1/wave-vpn-android-0.1.1-signing-key.asc) is also available.
+
+</details>
+
+---
+
+[Installation and support](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.1/docs/SUPPORT.md) · [Full changelog](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.1/CHANGELOG.md) · [Source archive](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.1/wave-vpn-android-0.1.1-source.tar.gz) · [Report an issue](https://github.com/VesselWave/wave-vpn-mobile/issues)

@@ -1,35 +1,63 @@
-# Wave VPN for Android 0.1.0
+The first public release of Wave VPN for Android: sign in to AirVPN, choose a server and connect over WireGuard.
 
-**Early release** · Android 8 (API 26) or newer · GPL-3.0-or-later
+Early release · Android 8 or newer (API 26+) · Testing across devices is still in progress.
 
-The first public build of an unofficial WireGuard client for AirVPN.
+## What's new
 
-**v0.1.0 is an early release.** Anyone is welcome to use it, but it hasn't been fully tested on every device and system yet.
+- **AirVPN sign-in** with credentials encrypted using Android Keystore.
+- **Server selection** with best-server choice, search and favorites.
+- **Split tunneling** to bypass the VPN or tunnel only selected apps.
+- **Everyday controls:** live traffic, connection logs and a Quick Settings tile.
+- **Connection recovery** after process death and after reboot once the phone is unlocked, with support for Android's Always-on VPN and blocking settings.
 
-**Known issue, Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and blocking enabled. If that matters for how you use a VPN, keep it in mind. See the [full Samsung test report](qa/RELEASE-SAMSUNG-STOCK.md).
+> [!WARNING]
+> **Known issue on Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and **Block connections without VPN** enabled. [Samsung test report →](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.0/docs/RELEASE-SAMSUNG-STOCK.md)
 
-## What's in it
+> [!NOTE]
+> **Repackaged 2026-11-03:** source history and release packages were cleaned of private lab details. If you downloaded earlier, fetch the current archives, checksums and signature together. App binaries and signing keys are unchanged.
 
-- Sign in with your AirVPN account; credentials encrypted with Android Keystore
-- Best-server choice, server search and favorites
-- Split tunneling (bypass or tunnel only chosen apps)
-- Live traffic status, connection log, Quick Settings tile
-- Automatic recovery after the app's process dies or the phone reboots
-- Works with Android's Always-on VPN and Block connections without VPN
+## Get Wave VPN
 
-## Downloads
+**[Download APK · 12 MB](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.0/wave-vpn-android-0.1.0.apk)**
 
-| File | What it is |
-| --- | --- |
-| `wave-vpn-android-0.1.0.apk` | The app, signed with the production key, minified |
-| `wave-vpn-android-0.1.0.tar.gz` | Same APK with notices and toolchain records |
-| `wave-vpn-android-0.1.0-source.tar.gz` | Exact tagged source |
-| `…-SHA256SUMS` and `…-SHA256SUMS.asc` | Checksums and their OpenPGP signature |
+For ongoing updates through F-Droid, add the **[Wave repository](https://f-droid.vwave.me/fdroid/repo?fingerprint=47841BF725DA7B106B2D05DF097E4898C7B5576411804A23D6A5505C5AD17933)**. F-Droid offers the current version; use the APK link above for this exact release.
 
-Verify the signature with the fingerprint in [SECURITY.md](../SECURITY.md) and the APK certificate with `apksigner` ([how](../README.md#verify-your-download)). The version code is 3, so it updates earlier development builds signed with the same key in place.
+<details>
+<summary>Installing the APK</summary>
 
-## How it was tested
+1. Download the APK to your phone.
+2. Open the file and, if Android asks, allow your browser or file manager to install apps from this source.
+3. Install and open **Wave VPN**. Sign in with your AirVPN account and choose a server.
 
-The released APK passed an install, connect, disconnect and crash-recovery smoke test ([report](qa/RELEASE-EMULATOR-SMOKE.md)). Everything tested so far is in [verification](VERIFICATION.md).
+Release updates install in place when signed with the same certificate. See [installation and support](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.0/docs/SUPPORT.md) for device notes and Android VPN settings.
 
-Raw captures, account data and signing secrets are never published. There's no production support or security response-time commitment.
+</details>
+
+<details>
+<summary>Verify the download</summary>
+
+Download [SHA256SUMS](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.0/wave-vpn-android-0.1.0-SHA256SUMS) and [its signature](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.0/wave-vpn-android-0.1.0-SHA256SUMS.asc) alongside the APK. On a computer with GnuPG, `sha256sum` and Android SDK's `apksigner`, run:
+
+```sh
+gpg --recv-keys 414018C0BBB8C0A70A80BF570AA32CCB2C0B3951
+gpg --verify wave-vpn-android-0.1.0-SHA256SUMS.asc wave-vpn-android-0.1.0-SHA256SUMS
+sha256sum --ignore-missing -c wave-vpn-android-0.1.0-SHA256SUMS
+apksigner verify --print-certs wave-vpn-android-0.1.0.apk
+```
+
+Expected fingerprints:
+
+```text
+OpenPGP release key   4140 18C0 BBB8 C0A7 0A80 BF57 0AA3 2CCB 2C0B 3951
+APK certificate       29:95:0A:57:56:87:67:59:B2:89:84:A0:E6:B4:4A:27:6E:FD:94:8F:8E:70:08:C3:FF:F4:71:D4:AD:41:88:21
+```
+
+Confirm these independently against [SECURITY.md](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.0/SECURITY.md) or [vpn.vwave.me](https://vpn.vwave.me/#verify). All commands must succeed and the APK certificate must match.
+
+The [release bundle](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.0/wave-vpn-android-0.1.0.tar.gz) contains the same APK with notices and build records. A [public signing key](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.0/wave-vpn-android-0.1.0-signing-key.asc) is also available.
+
+</details>
+
+---
+
+[Installation and support](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.0/docs/SUPPORT.md) · [Full changelog](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.0/CHANGELOG.md) · [Source archive](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.0/wave-vpn-android-0.1.0-source.tar.gz) · [Report an issue](https://github.com/VesselWave/wave-vpn-mobile/issues)

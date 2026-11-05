@@ -34,6 +34,8 @@ Without these, release builds stay unsigned; a partial set fails rather than fal
 
 ### Releasing through CI
 
+Write the release body using the [release notes style](RELEASE-STYLE.md).
+
 Pick the version (`X.Y.Z` or `X.Y.Z-rc.N`), bump `versionName` and `versionCode`, add `docs/RELEASE-v<VERSION>.md`, commit, and push the tag `v<VERSION>`. The [release workflow](../.github/workflows/release.yml) runs `scripts/release.py` with the signing key, checks the result and publishes the GitHub release, using the release notes file as its text. Versions below 1.0, and `-rc` versions, are marked as prereleases.
 
 The signing keys are stored as secrets in the repository's `release` environment, which only `v*` tags can use. The workflow uses the four variables above plus `WAVE_ANDROID_KEYSTORE_BASE64` (the keystore, base64-encoded), `RELEASE_GPG_KEY_BASE64` (the armored OpenPGP secret key, base64-encoded) and `RELEASE_GPG_PASSPHRASE`. It removes them from the runner once signing is done. The secrets can't be read back, so they don't count as a backup.
