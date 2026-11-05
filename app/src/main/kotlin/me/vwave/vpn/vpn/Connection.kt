@@ -250,8 +250,12 @@ class TunnelManager(private val context: Context, private val repository: AirRep
             throw e
         } catch (e: Exception) {
             // Keep an existing tunnel in place on monitor errors instead of opening a traffic gap.
-            if (started && WaveVpnService.instance?.isBlocking != true) {
-                selectedServer?.let { status.value = TunnelState.Stalled(it) }
+            val retainedServer = selectedServer ?: repository.manifest.value?.servers?.find { it.name == lastServerName }
+            val retainedTunnel = started || withContext(Dispatchers.IO) {
+                runCatching { backend.getState(tunnel) == Tunnel.State.UP }.getOrDefault(false)
+            }
+            if (retainedTunnel && retainedServer != null && WaveVpnService.instance?.isBlocking != true) {
+                status.value = TunnelState.Stalled(retainedServer)
                 log.error("Connection monitoring failed; disconnect and retry")
             } else {
                 if (WaveVpnService.instance?.isBlocking != true)

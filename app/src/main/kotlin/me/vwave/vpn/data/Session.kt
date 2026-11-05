@@ -77,12 +77,19 @@ class AirRepository(private val vault: SessionVault, context: Context) {
         else {
             // Only this bootstrap request may use the physical network; no app exclusion,
             // process binding, or general socket protection. Lockdown may refuse it.
-            val network = connectivity.allNetworks.firstOrNull { n ->
-                connectivity.getNetworkCapabilities(n)?.let {
-                    it.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
-                        it.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_NOT_VPN)
-                } == true
-            } ?: throw java.io.IOException("No underlying network for account recovery")
+            val active = connectivity.activeNetwork
+            val candidates = connectivity.allNetworks.mapNotNull { network ->
+                connectivity.getNetworkCapabilities(network)?.let { caps ->
+                    RecoveryNetwork(network,
+                        internet = caps.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET),
+                        nonVpn = caps.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_NOT_VPN),
+                        validated = caps.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED),
+                        active = network == active,
+                        wifi = caps.hasTransport(android.net.NetworkCapabilities.TRANSPORT_WIFI))
+                }
+            }
+            val network = recoveryNetwork(candidates)
+                ?: throw java.io.IOException("No validated underlying network for account recovery")
             network.openConnection(url) as java.net.HttpURLConnection
         }
     }
