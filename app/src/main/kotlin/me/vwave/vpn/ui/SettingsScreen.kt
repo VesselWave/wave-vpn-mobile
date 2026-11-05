@@ -45,7 +45,11 @@ fun SettingsScreen(vm: AppViewModel, onSplitTunneling: () -> Unit) {
     val t = tokens
 
     val ports = manifest?.wireguardModes?.map { it.port }?.distinct()?.ifEmpty { null } ?: listOf(1637, 47107, 51820)
+    val keys = account?.keys.orEmpty()
     val device = account?.key(settings.deviceKey)?.name
+    // Devices are created in the AirVPN Client Area; only offer a choice when there is one,
+    // or when the saved device no longer exists on the account.
+    val showDevice = keys.size > 1 || (keys.isNotEmpty() && device == null)
 
     Column(
         Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState()).padding(Dimens.md),
@@ -56,7 +60,7 @@ fun SettingsScreen(vm: AppViewModel, onSplitTunneling: () -> Unit) {
             account?.expiration?.let { expiry ->
                 row { SettingRow("Plan ends") { Text(expiry.substringBefore(' '), style = MaterialTheme.typography.bodyMedium, color = t.muted) } }
             }
-            row { ValueRow("Device", device, hint = "Each device has its own WireGuard key", onClick = { dialog = "device" }) }
+            if (showDevice) row { ValueRow("Device", device, hint = "Each device has its own WireGuard key", onClick = { dialog = "device" }) }
             row { SettingRow("Sign out", labelColor = t.danger, onClick = { dialog = "logout" }) }
         }
 
@@ -116,7 +120,7 @@ fun SettingsScreen(vm: AppViewModel, onSplitTunneling: () -> Unit) {
     when (dialog) {
         "device" -> ChoiceDialog(
             title = "Device",
-            options = account?.keys?.map { it.name }.orEmpty(),
+            options = keys.map { it.name },
             selected = device,
             label = { it },
             onDismiss = { dialog = null },

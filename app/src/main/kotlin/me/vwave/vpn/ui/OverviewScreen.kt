@@ -159,11 +159,12 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
                     (state as? TunnelState.Failed)?.let { ErrorBanner("Couldn't connect. ${it.message}") }
                 }
 
-                // ── Device picker (only before connecting, only with a choice to make) ──
+                // ── Device picker (only before connecting, only with a choice to make or a stale selection) ──
                 val keys = account?.keys.orEmpty()
-                if (idle && keys.size > 1) {
+                val device = account?.key(settings.deviceKey)?.name
+                if (idle && (keys.size > 1 || (keys.isNotEmpty() && device == null))) {
                     Panel {
-                        ValueRow("Device", account?.key(settings.deviceKey)?.name, onClick = { deviceDialog = true })
+                        ValueRow("Device", device, onClick = { deviceDialog = true })
                     }
                 }
 
