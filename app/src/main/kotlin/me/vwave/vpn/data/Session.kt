@@ -23,6 +23,17 @@ import javax.crypto.spec.GCMParameterSpec
 /** A single atomic encrypted snapshot, excluded from Android cloud backup. */
 class SessionVault(context: Context) {
     private val file = AtomicFile(File(context.noBackupFilesDir, "wave-session-v2"))
+    // Public routing/key material survives logout; credentials remain solely in the encrypted snapshot.
+    private val publicManifest = AtomicFile(File(context.noBackupFilesDir, "wave-bootstrap-v1"))
+    fun readBootstrap(): Bootstrap = runCatching {
+        parseManifest(publicManifest.readFully().toString(Charsets.UTF_8)).bootstrap
+    }.getOrDefault(Defaults.bootstrap)
+    fun writeBootstrap(manifest: String) {
+        parseManifest(manifest)
+        val stream = publicManifest.startWrite()
+        try { stream.write(manifest.toByteArray(Charsets.UTF_8)); publicManifest.finishWrite(stream) }
+        catch (e: Exception) { publicManifest.failWrite(stream); throw e }
+    }
     private fun key(): SecretKey {
         val store = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
         (store.getKey("wave-session-v2", null) as? SecretKey)?.let { return it }
@@ -58,38 +69,42 @@ class SessionVault(context: Context) {
 class AirRepository(private val vault: SessionVault) {
     private val mutex = Mutex()
     private val api = AirApi(arch = android.os.Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown")
-    private var snapshot = vault.read()
     private val a = MutableStateFlow<Account?>(null)
     private val m = MutableStateFlow<Manifest?>(null)
     val account = a.asStateFlow()
     val manifest = m.asStateFlow()
     val isLoggedIn get() = a.value != null
-    init {
-        snapshot?.let { s -> runCatching {
-            val user = parseUser(s.getString("user"), s.getString("login"))
-            val manifest = parseManifest(s.getString("manifest"))
-            a.value = user; m.value = manifest
-        }.onFailure { snapshot = null; vault.clear() } }
+    private fun restore(): SessionSnapshot? = vault.read()?.let { s -> runCatching {
+        val user = parseUser(s.getString("user"), s.getString("login"))
+        val manifest = parseManifest(s.getString("manifest"))
+        a.value = user; m.value = manifest
+        SessionSnapshot(s.getString("login"), s.getString("password"), s.getString("user"),
+            s.getString("manifest"), s.optLong("userAt", s.optLong("fetchedAt")),
+            s.optLong("manifestAt", s.optLong("fetchedAt")))
+    }.getOrElse { vault.clear(); null } }
+    private fun engine(initial: SessionSnapshot?) = RefreshSession(api, initial, { s ->
+        vault.writeBootstrap(s.manifest)
+        vault.write(JSONObject().put("login", s.login).put("password", s.password).put("user", s.user)
+            .put("manifest", s.manifest).put("userAt", s.userAt).put("manifestAt", s.manifestAt))
+    }, fallback = vault.readBootstrap())
+    private var session = engine(restore())
+    private suspend fun update(login: String? = null, password: String? = null, force: Boolean = false) {
+        // Drop overlapping intents instead of queueing forced requests behind a slow network call.
+        if (!mutex.tryLock()) return
+        try {
+            withContext(Dispatchers.IO) {
+                kotlinx.coroutines.runInterruptible {
+                    session.update(login, password, force)
+                }
+            }
+            session.snapshot?.let { s ->
+                a.value = parseUser(s.user, s.login); m.value = parseManifest(s.manifest)
+            }
+        } finally { mutex.unlock() }
     }
-    suspend fun login(login: String, password: String) = mutex.withLock {
-        withContext(Dispatchers.IO) { fetch(login, password) }
+    suspend fun login(login: String, password: String) = update(login, password)
+    suspend fun refresh(force: Boolean = false) = update(force = force)
+    suspend fun logout() = mutex.withLock {
+        session = engine(null); vault.clear(); a.value = null; m.value = null
     }
-    suspend fun refresh(force: Boolean = false) = mutex.withLock {
-        val s = snapshot ?: return@withLock
-        val interval = (m.value?.nextUpdateMinutes ?: 30) * 60_000L
-        if (!force && System.currentTimeMillis() - s.optLong("fetchedAt") < interval) return@withLock
-        withContext(Dispatchers.IO) { fetch(s.getString("login"), s.getString("password")) }
-    }
-    private fun fetch(login: String, password: String) {
-        val boot = m.value?.bootstrap ?: Defaults.bootstrap
-        val userXml = api.request(boot, "user", login, password)
-        val user = parseUser(userXml, login)
-        val manifestXml = api.request(boot, "manifest", login, password)
-        val manifest = parseManifest(manifestXml)
-        val s = JSONObject().put("login", login).put("password", password).put("user", userXml)
-            .put("manifest", manifestXml).put("fetchedAt", System.currentTimeMillis())
-        vault.write(s)
-        snapshot = s; a.value = user; m.value = manifest
-    }
-    suspend fun logout() = mutex.withLock { snapshot = null; vault.clear(); a.value = null; m.value = null }
 }

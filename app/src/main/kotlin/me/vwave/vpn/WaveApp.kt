@@ -13,6 +13,7 @@ class WaveApp : Application() {
     val log = EventLog()
     lateinit var settings: SettingsStore
     lateinit var repository: AirRepository
+    @Volatile var foreground = false
     val pinger = Pinger()
     lateinit var tunnels: TunnelManager
     override fun onCreate() {
@@ -20,6 +21,7 @@ class WaveApp : Application() {
         settings = SettingsStore(this)
         repository = AirRepository(SessionVault(this))
         tunnels = TunnelManager(this, repository, settings, pinger, log, scope)
+        pinger.allowed = { foreground && !tunnels.isActive && WaveVpnService.instance?.isBlocking != true }
         GoBackend.setAlwaysOnCallback {
             scope.launch {
                 if (repository.isLoggedIn && tunnels.shouldReconnect && !tunnels.isActive) tunnels.connect()

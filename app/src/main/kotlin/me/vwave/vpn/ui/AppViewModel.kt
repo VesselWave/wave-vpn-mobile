@@ -32,21 +32,24 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun login(user: String, password: String) {
         if (loginBusy.value) return
         if (user.isBlank() || password.isEmpty()) { loginError.value = "Enter your username and password"; return }
+        loginBusy.value = true; loginError.value = null
         signingIn = viewModelScope.launch {
-            loginBusy.value = true; loginError.value = null
             try { app.repository.login(user.trim(), password); app.log.info("Signed in"); refresh(false) }
             catch (e: CancellationException) { throw e }
-            catch (_: Exception) { loginError.value = "Sign-in failed. Check your account and network." }
+            catch (_: Exception) { loginError.value = "Sign-in failed. Check your account and network, then wait a minute before retrying." }
             finally { loginBusy.value = false }
         }
     }
     fun refresh(force: Boolean = true) {
         if (refreshing.value) return
+        refreshing.value = true
         viewModelScope.launch {
-            refreshing.value = true
-            try { app.repository.refresh(force); app.pinger.measure(manifest.value?.servers.orEmpty()) }
+            try {
+                app.repository.refresh(force)
+                app.pinger.measure(manifest.value?.servers.orEmpty())
+            }
             catch (e: CancellationException) { throw e }
-            catch (_: Exception) { notice.value = "Unable to refresh AirVPN information" }
+            catch (_: Exception) { notice.value = "Unable to refresh AirVPN information. Cached servers are still available; retry later." }
             finally { refreshing.value = false }
         }
     }
@@ -61,6 +64,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun clearLog() = app.log.clear()
     fun noticeShown() { notice.value = null }
     fun logout() {
+        app.pinger.clear()
         signingIn?.cancel()
         app.tunnels.disconnect()
         viewModelScope.launch { app.repository.logout(); app.settings.clear(); app.log.clear() }

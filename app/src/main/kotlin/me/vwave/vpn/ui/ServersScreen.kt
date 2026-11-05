@@ -91,10 +91,12 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
             SortColumn.Load -> compareBy { it.loadPercent }
             SortColumn.Users -> compareBy { it.users }
             // Unanswered pings sort last either way.
-            SortColumn.Ping -> compareBy { pings[it.name] ?: Int.MAX_VALUE }
+            SortColumn.Ping -> compareBy { pings[it.name]?.takeIf { ping -> ping > 0 } ?: Int.MAX_VALUE }
             SortColumn.Score -> compareBy { scores[it.name] ?: Double.POSITIVE_INFINITY }
         }
-        if (ascending) base else base.reversed()
+        val ordered = if (ascending) base else base.reversed()
+        if (sort == SortColumn.Ping) compareBy<Server> { (pings[it.name] ?: -1) <= 0 }.then(ordered)
+        else ordered
     }
     val pick = { target: Target -> vm.choose(target) }
     val idle = state is TunnelState.Down || state is TunnelState.Failed
@@ -166,14 +168,14 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
                         }
                         val shown = servers.filter(matches).sortedWith(comparator)
                         items(shown, key = { it.name }) { server ->
-                            ServerRow(server, pings[server.name], settings, connectedName == server.name, pick, vm::toggleFavorite)
+                            ServerRow(server, pings[server.name]?.takeIf { it > 0 }, settings, connectedName == server.name, pick, vm::toggleFavorite)
                         }
                         if (shown.isEmpty() && q.isNotEmpty()) item { NoMatch(query) }
                     }
                     ServerView.Favorites -> {
                         val shown = servers.filter { it.name in settings.favorites && matches(it) }.sortedWith(comparator)
                         items(shown, key = { it.name }) { server ->
-                            ServerRow(server, pings[server.name], settings, connectedName == server.name, pick, vm::toggleFavorite)
+                            ServerRow(server, pings[server.name]?.takeIf { it > 0 }, settings, connectedName == server.name, pick, vm::toggleFavorite)
                         }
                         if (shown.isEmpty() && servers.isNotEmpty()) {
                             item {
@@ -196,7 +198,7 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
                                 CountryRow(
                                     code = code,
                                     servers = list,
-                                    bestPing = list.mapNotNull { pings[it.name] }.minOrNull(),
+                                    bestPing = list.mapNotNull { pings[it.name]?.takeIf { ping -> ping > 0 } }.minOrNull(),
                                     selected = settings.target == Target.Country(code),
                                     open = open,
                                     onClick = { pick(Target.Country(code)) },
@@ -205,7 +207,7 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
                             }
                             if (open) {
                                 items(list.filter(matches).sortedWith(comparator), key = { "in-$code-" + it.name }) { server ->
-                                    ServerRow(server, pings[server.name], settings, connectedName == server.name, pick, vm::toggleFavorite, indent = true)
+                                    ServerRow(server, pings[server.name]?.takeIf { it > 0 }, settings, connectedName == server.name, pick, vm::toggleFavorite, indent = true)
                                 }
                             }
                         }

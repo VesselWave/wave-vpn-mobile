@@ -98,28 +98,51 @@ class HttpTransport : Transport {
     }
 }
 
+fun interface AirRequests {
+    fun request(bootstrap: Bootstrap, action: String, login: String, password: String): String
+}
+
 class AirApi(
     private val software: String = "WaveVPN_0.2-dev",
     private val system: String = "Android",
     private val arch: String = "unknown",
     private val transport: Transport = HttpTransport(),
-) {
-    fun request(bootstrap: Bootstrap, action: String, login: String, password: String): String {
+    private val clock: () -> Long = { System.nanoTime() / 1_000_000 },
+    private val maxAttempts: Int = 3,
+) : AirRequests {
+    init { require(maxAttempts in 1..6) }
+    private data class Endpoint(var failures: Int = 0, var retryAt: Long = 0)
+    private val endpoints = mutableMapOf<String, Endpoint>()
+    private var preferred: String? = null
+
+    @Synchronized override fun request(bootstrap: Bootstrap, action: String, login: String, password: String): String {
         require(action in setOf("user", "manifest"))
         val parameters = linkedMapOf("act" to action, "login" to login, "password" to password,
             "software" to software, "system" to system, "arch" to arch, "version" to "295")
         var failure: Exception? = null
-        for (url in bootstrap.urls.sortedBy { URI(it).host?.contains(':') == true }) {
+        val urls = bootstrap.urls.distinct().sortedWith(compareBy<String> { it != preferred }
+            .thenBy { URI(it).host?.contains(':') == true })
+        var attempts = 0
+        for (url in urls) {
+            val endpoint = endpoints.getOrPut(url) { Endpoint() }
+            if (clock() < endpoint.retryAt) continue
+            if (attempts++ >= maxAttempts) break
             if (Thread.currentThread().isInterrupted) throw InterruptedException()
             try {
                 val xml = RequestEnvelope(bootstrap).use { it.decode(transport.post(url, it.encode(parameters))) }
                 val root = Xml.root(xml)
                 if (root.getAttribute("error").isNotBlank()) throw LoginException(root.getAttribute("error"))
                 if (root.tagName != action) throw ProtocolException("Unexpected AirVPN document")
+                endpoint.failures = 0; endpoint.retryAt = 0; preferred = url
                 return xml
             } catch (e: LoginException) { throw e }
             catch (e: InterruptedException) { throw e }
-            catch (e: Exception) { failure = e }
+            catch (e: java.util.concurrent.CancellationException) { throw e }
+            catch (e: Exception) {
+                endpoint.failures = (endpoint.failures + 1).coerceAtMost(7)
+                endpoint.retryAt = clock() + (1_000L shl endpoint.failures).coerceAtMost(120_000)
+                failure = e
+            }
         }
         throw IOException("No AirVPN bootstrap server returned a valid response", failure)
     }

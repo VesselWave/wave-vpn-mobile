@@ -73,12 +73,23 @@ fun parseManifest(text: String): Manifest {
     val exponent = root.getAttribute("auth_rsa_exponent")
     val urls = Xml.descendants(root, "url").map { it.getAttribute("address") }.filter(String::isNotBlank)
     require(modulus.isNotBlank() && exponent.isNotBlank() && urls.isNotEmpty()) { "Incomplete bootstrap manifest" }
+    // Reject invalid advertised routing/key material before replacing the last usable snapshot.
+    val bootstrap = Bootstrap(urls.distinct(), modulus, exponent)
+    for (url in bootstrap.urls) {
+        val uri = java.net.URI(url)
+        require(uri.scheme in setOf("http", "https") && uri.host != null && uri.userInfo == null)
+    }
+    val rsaModulus = java.math.BigInteger(1, java.util.Base64.getDecoder().decode(modulus))
+    val rsaExponent = java.math.BigInteger(1, java.util.Base64.getDecoder().decode(exponent))
+    require(rsaModulus.bitLength() in 2048..8192 && rsaModulus.testBit(0))
+    require(rsaExponent >= java.math.BigInteger.valueOf(3) && rsaExponent < rsaModulus && rsaExponent.testBit(0))
+    RequestEnvelope(bootstrap).close()
     val modes = Xml.descendants(root, "mode").filter { it.getAttribute("type") == "wireguard" }.map {
         WireguardMode(it.getAttribute("port").toInt(), it.getAttribute("entry_index").toInt()).also { m ->
             require(m.port in 1..65535 && m.entryIndex in 0..15)
         }
     }
-    return Manifest(servers, modes, Bootstrap(urls, modulus, exponent),
+    return Manifest(servers, modes, bootstrap,
         Factors(factor("speed_factor"), factor("load_factor"), factor("users_factor")),
         (root.getAttribute("next_update").toIntOrNull() ?: 30).coerceIn(1, 1440),
         Xml.descendants(root, "message").map { Notice(it.getAttribute("text")) }.filter { it.text.isNotBlank() })
@@ -109,11 +120,11 @@ fun parseUser(text: String, expectedLogin: String): Account {
 /** Eddie's base/load/user weighting, plus Wave's explicit latency tie-break preference. */
 object Scoring {
     fun score(s: Server, ping: Int?, factors: Factors, usePing: Boolean = true): Double =
-        if (!s.isOpen || s.warningOpen != null) Double.POSITIVE_INFINITY else
+        if (!s.isOpen || s.warningOpen != null || (usePing && (ping == null || ping <= 0))) Double.POSITIVE_INFINITY else
             s.scoreBase / factors.speed + s.loadPercent / factors.load +
             100.0 * s.users / s.usersMax.coerceAtLeast(1) / factors.users +
             if (usePing) (ping ?: 2000).toDouble() else 0.0
     fun rank(servers: List<Server>, pings: Map<String, Int>, factors: Factors,
-        include: (Server) -> Boolean = { true }): List<Server> = servers.filter { it.isOpen && include(it) }
+        include: (Server) -> Boolean = { true }): List<Server> = servers.filter { it.isOpen && pings[it.name] != -1 && include(it) }
         .sortedWith(compareBy<Server> { score(it, pings[it.name], factors, pings.isNotEmpty()) }.thenBy { it.name })
 }

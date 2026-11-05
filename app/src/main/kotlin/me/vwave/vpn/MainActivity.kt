@@ -9,6 +9,15 @@ import me.vwave.vpn.ui.WaveRoot
 import me.vwave.vpn.ui.WaveTheme
 
 class MainActivity : ComponentActivity() {
+    override fun onStart() {
+        super.onStart()
+        app.foreground = true
+    }
+    override fun onStop() {
+        app.foreground = false
+        app.pinger.stop()
+        super.onStop()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

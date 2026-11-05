@@ -14,9 +14,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.sync.withPermit
 import me.vwave.vpn.core.*
 import me.vwave.vpn.data.*
 import me.vwave.vpn.data.Target
@@ -35,29 +33,20 @@ data class TunnelStats(val rxBytes: Long, val txBytes: Long, val rxRate: Double,
 
 /** TCP connect latency, not ICMP. No root/raw-socket privileges are required. */
 class Pinger {
-    private val guard = Mutex()
-    private val values = MutableStateFlow<Map<String, Int>>(emptyMap())
-    private val active = MutableStateFlow(false)
-    val pings = values.asStateFlow()
-    val running = active.asStateFlow()
-    suspend fun measure(servers: List<Server>) = guard.withLock {
-        active.value = true
-        try {
-            val slots = Semaphore(12)
-            val results = coroutineScope {
-                servers.filter { it.isOpen }.map { s -> async(Dispatchers.IO) {
-                    slots.withPermit {
-                        val host = s.entries.firstOrNull { ':' !in it } ?: return@withPermit null
-                        val start = System.nanoTime()
-                        runCatching { Socket().use { it.connect(InetSocketAddress(host, 443), 1200) }
-                            s.name to ((System.nanoTime() - start) / 1_000_000).toInt().coerceAtLeast(1)
-                        }.getOrNull()
-                    }
-                } }.awaitAll().filterNotNull().toMap()
-            }
-            values.value = results
-        } finally { active.value = false }
-    }
+    var allowed: () -> Boolean = { false }
+    private val cache = LatencyCache(probe = { host ->
+        runInterruptible(Dispatchers.IO) {
+            val start = System.nanoTime()
+            Socket().use { it.connect(InetSocketAddress(host, 443), 1200) }
+            ((System.nanoTime() - start) / 1_000_000).toInt().coerceAtLeast(1)
+        }
+    }, allowed = { allowed() })
+    val pings = cache.pings
+    val running = cache.running
+    suspend fun measure(servers: List<Server>) = cache.measure(servers)
+    suspend fun cached(servers: List<Server>) = cache.cached(servers)
+    fun stop() = cache.stop()
+    fun clear() = cache.clear()
 }
 
 /** All changes to the backend are serialized, including disconnect and cancel cleanup. */
@@ -112,6 +101,8 @@ class TunnelManager(private val context: Context, private val repository: AirRep
     }
     fun permissionIntent() = VpnService.prepare(context)
     fun connect(target: Target = preferences.current.target) {
+        pinger.stop()
+        status.value = TunnelState.Connecting(null)
         shouldReconnect = true
         context.startForegroundService(Intent(context, ConnectionService::class.java))
         operation?.cancel()
@@ -166,7 +157,7 @@ class TunnelManager(private val context: Context, private val repository: AirRep
             val prefs = preferences.current
             val device = a.key(prefs.deviceKey) ?: error("Select an available device")
             val mode = m.wireguardModes.find { it.port == prefs.port } ?: error("Select a supported WireGuard port")
-            val candidates = Scoring.rank(m.servers, pinger.pings.value, m.factors) { s -> when(target) {
+            val candidates = Scoring.rank(m.servers, pinger.cached(m.servers), m.factors) { s -> when(target) {
                 Target.Best -> true
                 is Target.Country -> s.countryCode.equals(target.code, true)
                 is Target.Server -> s.name == target.name
