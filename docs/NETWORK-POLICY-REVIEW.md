@@ -1,3 +1,10 @@
+> Implementation follow-up: the findings below describe eca93f0, not current behavior.
+> All 11 `ReviewFindingsTest` reproductions now run unconditionally. F2b uses a
+> one-location budget to retain an unsampled country under representative sampling.
+> Additional `FixPolicyTest` coverage checks persisted budgets, fixed auth delay,
+> overlapping login, nonblocking cache reads, priority sampling and transport
+> cancellation. See NETWORK-POLICY.md for the current policy and device limits.
+
 # Independent review: bootstrap and latency load policy (eca93f0)
 
 This is an independent test review of eca93f0 against AirVPN Staff's forum comment 268064

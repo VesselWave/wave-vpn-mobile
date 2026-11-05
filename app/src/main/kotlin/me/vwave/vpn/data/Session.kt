@@ -5,7 +5,7 @@ import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.AtomicFile
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
@@ -22,6 +22,11 @@ import javax.crypto.spec.GCMParameterSpec
 
 /** A single atomic encrypted snapshot, excluded from Android cloud backup. */
 class SessionVault(context: Context) {
+    private val budget = context.getSharedPreferences("wave-network-budget", Context.MODE_PRIVATE)
+    fun readBudget() = budget.getLong("retryAt", 0) to budget.getInt("failures", 0)
+    fun writeBudget(at: Long, failures: Int) {
+        check(budget.edit().putLong("retryAt", at).putInt("failures", failures).commit()) { "Unable to save request budget" }
+    }
     private val file = AtomicFile(File(context.noBackupFilesDir, "wave-session-v2"))
     // Public routing/key material survives logout; credentials remain solely in the encrypted snapshot.
     private val publicManifest = AtomicFile(File(context.noBackupFilesDir, "wave-bootstrap-v1"))
@@ -68,6 +73,7 @@ class SessionVault(context: Context) {
 
 class AirRepository(private val vault: SessionVault) {
     private val mutex = Mutex()
+    @Volatile private var activeJob: Job? = null
     private val api = AirApi(arch = android.os.Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown")
     private val a = MutableStateFlow<Account?>(null)
     private val m = MutableStateFlow<Manifest?>(null)
@@ -86,25 +92,32 @@ class AirRepository(private val vault: SessionVault) {
         vault.writeBootstrap(s.manifest)
         vault.write(JSONObject().put("login", s.login).put("password", s.password).put("user", s.user)
             .put("manifest", s.manifest).put("userAt", s.userAt).put("manifestAt", s.manifestAt))
-    }, fallback = vault.readBootstrap())
+    }, fallback = vault.readBootstrap(), recovery = Defaults.bootstrap,
+        initialBudget = vault.readBudget(), saveBudget = vault::writeBudget)
     private var session = engine(restore())
-    private suspend fun update(login: String? = null, password: String? = null, force: Boolean = false) {
+    private suspend fun update(login: String? = null, password: String? = null, force: Boolean = false, account: Boolean = false) {
         // Drop overlapping intents instead of queueing forced requests behind a slow network call.
-        if (!mutex.tryLock()) return
+        if (!mutex.tryLock()) {
+            if (login != null) throw java.io.IOException("Another AirVPN request is busy. Retry shortly.")
+            return
+        }
         try {
-            withContext(Dispatchers.IO) {
-                kotlinx.coroutines.runInterruptible {
-                    session.update(login, password, force)
-                }
-            }
-            session.snapshot?.let { s ->
-                a.value = parseUser(s.user, s.login); m.value = parseManifest(s.manifest)
-            }
-        } finally { mutex.unlock() }
+            activeJob = currentCoroutineContext().job
+            networkWork(api::cancel) { session.update(login, password, force, account) }
+        } finally {
+            session.snapshot?.let { s -> a.value = parseUser(s.user, s.login); m.value = parseManifest(s.manifest) }
+            activeJob = null
+            mutex.unlock()
+        }
     }
     suspend fun login(login: String, password: String) = update(login, password)
     suspend fun refresh(force: Boolean = false) = update(force = force)
-    suspend fun logout() = mutex.withLock {
-        session = engine(null); vault.clear(); a.value = null; m.value = null
+    suspend fun refreshAccount() = update(account = true)
+    suspend fun logout() {
+        activeJob?.cancel()
+        withContext(Dispatchers.IO) { api.cancel() }
+        mutex.withLock {
+            session.clear(); vault.clear(); a.value = null; m.value = null
+        }
     }
 }

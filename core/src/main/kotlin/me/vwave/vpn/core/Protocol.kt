@@ -67,14 +67,21 @@ class RequestEnvelope(bootstrap: Bootstrap) : AutoCloseable {
     override fun close() { sessionKey.fill(0); iv.fill(0) }
 }
 
-fun interface Transport { fun post(url: String, body: String): ByteArray }
+fun interface Transport {
+    fun post(url: String, body: String): ByteArray
+    fun cancel() {}
+}
 
 class HttpTransport : Transport {
+    @Volatile private var active: HttpURLConnection? = null
+    override fun cancel() { active?.disconnect() }
     override fun post(url: String, body: String): ByteArray {
         val uri = URI(url)
         require(uri.scheme in setOf("http", "https") && uri.host != null && uri.userInfo == null)
         val c = uri.toURL().openConnection() as HttpURLConnection
+        active = c
         try {
+            if (Thread.currentThread().isInterrupted) throw InterruptedException()
             c.connectTimeout = 8_000
             c.readTimeout = 8_000
             c.instanceFollowRedirects = false
@@ -94,12 +101,14 @@ class HttpTransport : Transport {
                 }
                 out.toByteArray()
             }
-        } finally { c.disconnect() }
+        } finally { active = null; c.disconnect() }
     }
 }
 
 fun interface AirRequests {
     fun request(bootstrap: Bootstrap, action: String, login: String, password: String): String
+    fun requestWithFallback(bootstrap: Bootstrap, fallback: Bootstrap, action: String, login: String, password: String): String =
+        request(bootstrap, action, login, password)
 }
 
 class AirApi(
@@ -110,26 +119,36 @@ class AirApi(
     private val clock: () -> Long = { System.nanoTime() / 1_000_000 },
     private val maxAttempts: Int = 3,
 ) : AirRequests {
+    fun cancel() = transport.cancel()
     init { require(maxAttempts in 1..6) }
     private data class Endpoint(var failures: Int = 0, var retryAt: Long = 0)
     private val endpoints = mutableMapOf<String, Endpoint>()
     private var preferred: String? = null
 
     @Synchronized override fun request(bootstrap: Bootstrap, action: String, login: String, password: String): String {
+        return requestWithFallback(bootstrap, bootstrap, action, login, password)
+    }
+
+    @Synchronized override fun requestWithFallback(bootstrap: Bootstrap, fallback: Bootstrap, action: String, login: String, password: String): String {
         require(action in setOf("user", "manifest"))
         val parameters = linkedMapOf("act" to action, "login" to login, "password" to password,
             "software" to software, "system" to system, "arch" to arch, "version" to "295")
         var failure: Exception? = null
-        val urls = bootstrap.urls.distinct().sortedWith(compareBy<String> { it != preferred }
-            .thenBy { URI(it).host?.contains(':') == true })
+        val recover = bootstrap.urls.all { (endpoints[it]?.failures ?: 0) > 0 }
+        val routes = (bootstrap.urls.map { it to bootstrap } +
+            if (fallback != bootstrap) fallback.urls.map { it to fallback } else emptyList()).distinct()
+            .sortedWith(compareBy<Pair<String, Bootstrap>> { if (recover) it.second == bootstrap else it.second != bootstrap }
+                .thenBy { endpoints[it.first]?.failures ?: 0 }
+                .thenBy { it.first != preferred }
+                .thenBy { endpoints[it.first]?.retryAt ?: 0L })
         var attempts = 0
-        for (url in urls) {
+        for ((url, key) in routes) {
             val endpoint = endpoints.getOrPut(url) { Endpoint() }
             if (clock() < endpoint.retryAt) continue
             if (attempts++ >= maxAttempts) break
             if (Thread.currentThread().isInterrupted) throw InterruptedException()
             try {
-                val xml = RequestEnvelope(bootstrap).use { it.decode(transport.post(url, it.encode(parameters))) }
+                val xml = RequestEnvelope(key).use { it.decode(transport.post(url, it.encode(parameters))) }
                 val root = Xml.root(xml)
                 if (root.getAttribute("error").isNotBlank()) throw LoginException(root.getAttribute("error"))
                 if (root.tagName != action) throw ProtocolException("Unexpected AirVPN document")
@@ -139,6 +158,7 @@ class AirApi(
             catch (e: InterruptedException) { throw e }
             catch (e: java.util.concurrent.CancellationException) { throw e }
             catch (e: Exception) {
+                if (Thread.currentThread().isInterrupted) throw InterruptedException()
                 endpoint.failures = (endpoint.failures + 1).coerceAtMost(7)
                 endpoint.retryAt = clock() + (1_000L shl endpoint.failures).coerceAtMost(120_000)
                 failure = e

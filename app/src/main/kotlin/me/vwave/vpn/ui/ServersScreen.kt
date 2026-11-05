@@ -73,10 +73,10 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
     val factors = manifest?.factors
     val scores = remember(servers, pings, factors) {
         if (factors == null) emptyMap()
-        else servers.associate { it.name to Scoring.score(it, pings[it.name], factors, usePing = pings.isNotEmpty()) }
+        else Scoring.scores(servers, pings, factors)
     }
-    val best = remember(servers, scores) {
-        servers.filter { it.isOpen && it.warningOpen == null }.minByOrNull { scores[it.name] ?: Double.POSITIVE_INFINITY }
+    val best = remember(servers, pings, factors) {
+        factors?.let { Scoring.rank(servers.filter { it.warningOpen == null }, pings, it).firstOrNull() }
     }
     val connectedName = (state as? TunnelState.Connected)?.server?.name
     val q = query.trim().lowercase()

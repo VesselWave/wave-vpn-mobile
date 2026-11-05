@@ -120,11 +120,27 @@ fun parseUser(text: String, expectedLogin: String): Account {
 /** Eddie's base/load/user weighting, plus Wave's explicit latency tie-break preference. */
 object Scoring {
     fun score(s: Server, ping: Int?, factors: Factors, usePing: Boolean = true): Double =
-        if (!s.isOpen || s.warningOpen != null || (usePing && (ping == null || ping <= 0))) Double.POSITIVE_INFINITY else
+        if (!s.isOpen || s.warningOpen != null || (usePing && (ping != null && ping <= 0))) Double.POSITIVE_INFINITY else
             s.scoreBase / factors.speed + s.loadPercent / factors.load +
             100.0 * s.users / s.usersMax.coerceAtLeast(1) / factors.users +
             if (usePing) (ping ?: 2000).toDouble() else 0.0
+    /** One fleet-relative neutral latency for both UI scores and connection ranking. */
+    fun scores(servers: List<Server>, pings: Map<String, Int>, factors: Factors): Map<String, Double> {
+        val measured = pings.values.filter { it > 0 }.sorted()
+        val neutral = measured.getOrNull(measured.size / 2)
+        return servers.associate { it.name to score(it, pings[it.name] ?: neutral, factors,
+            neutral != null || pings[it.name] == -1) }
+    }
+
     fun rank(servers: List<Server>, pings: Map<String, Int>, factors: Factors,
-        include: (Server) -> Boolean = { true }): List<Server> = servers.filter { it.isOpen && pings[it.name] != -1 && include(it) }
-        .sortedWith(compareBy<Server> { score(it, pings[it.name], factors, pings.isNotEmpty()) }.thenBy { it.name })
+        allowFailedFallback: Boolean = true,
+        include: ((Server) -> Boolean)? = null): List<Server> {
+        val eligible = servers.filter { it.isOpen && (include?.invoke(it) ?: true) }
+        val candidates = eligible.filter { pings[it.name] != -1 }
+            .ifEmpty { if (include != null && allowFailedFallback) eligible else emptyList() }
+        val scores = scores(servers, pings, factors)
+        return candidates.sortedWith(compareBy<Server> { pings[it.name] == -1 }
+            .thenBy { if (pings[it.name] == -1) score(it, null, factors, false) else scores[it.name] }
+            .thenBy { pings[it.name] == null }.thenBy { it.name })
+    }
 }

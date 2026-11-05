@@ -14,8 +14,10 @@ class MainActivity : ComponentActivity() {
         app.foreground = true
     }
     override fun onStop() {
-        app.foreground = false
-        app.pinger.stop()
+        if (!isChangingConfigurations) {
+            app.foreground = false
+            app.pinger.stop()
+        }
         super.onStop()
     }
     override fun onCreate(savedInstanceState: Bundle?) {

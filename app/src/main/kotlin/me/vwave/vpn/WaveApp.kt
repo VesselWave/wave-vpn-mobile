@@ -14,7 +14,7 @@ class WaveApp : Application() {
     lateinit var settings: SettingsStore
     lateinit var repository: AirRepository
     @Volatile var foreground = false
-    val pinger = Pinger()
+    val pinger by lazy { Pinger(this) }
     lateinit var tunnels: TunnelManager
     override fun onCreate() {
         super.onCreate()

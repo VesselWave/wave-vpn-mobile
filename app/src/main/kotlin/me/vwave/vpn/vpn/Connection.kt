@@ -32,7 +32,8 @@ data class TunnelStats(val rxBytes: Long, val txBytes: Long, val rxRate: Double,
     val txRate: Double, val lastHandshakeMillis: Long)
 
 /** TCP connect latency, not ICMP. No root/raw-socket privileges are required. */
-class Pinger {
+class Pinger(context: Context) {
+    private val budget = context.getSharedPreferences("wave-probe-budget", Context.MODE_PRIVATE)
     var allowed: () -> Boolean = { false }
     private val cache = LatencyCache(probe = { host ->
         runInterruptible(Dispatchers.IO) {
@@ -40,10 +41,14 @@ class Pinger {
             Socket().use { it.connect(InetSocketAddress(host, 443), 1200) }
             ((System.nanoTime() - start) / 1_000_000).toInt().coerceAtLeast(1)
         }
-    }, allowed = { allowed() })
+    }, allowed = { allowed() },
+        initialDelay = budget.getLong("nextSweep", 0) - System.currentTimeMillis(),
+        reserveSweep = {
+            check(budget.edit().putLong("nextSweep", System.currentTimeMillis() + 180_000).commit())
+        })
     val pings = cache.pings
     val running = cache.running
-    suspend fun measure(servers: List<Server>) = cache.measure(servers)
+    suspend fun measure(servers: List<Server>, priority: Set<String> = emptySet()) = cache.measure(servers, priority)
     suspend fun cached(servers: List<Server>) = cache.cached(servers)
     fun stop() = cache.stop()
     fun clear() = cache.clear()
@@ -81,6 +86,8 @@ class TunnelManager(private val context: Context, private val repository: AirRep
         return ready.await()
     }
     private var operation: Job? = null
+    var lastServerName: String? = null
+        private set
     private val status = MutableStateFlow<TunnelState>(TunnelState.Down)
     private val counters = MutableStateFlow<TunnelStats?>(null)
     private val since = MutableStateFlow<Long?>(null)
@@ -101,8 +108,9 @@ class TunnelManager(private val context: Context, private val repository: AirRep
     }
     fun permissionIntent() = VpnService.prepare(context)
     fun connect(target: Target = preferences.current.target) {
-        pinger.stop()
+        if (!repository.isLoggedIn) return
         status.value = TunnelState.Connecting(null)
+        pinger.stop()
         shouldReconnect = true
         context.startForegroundService(Intent(context, ConnectionService::class.java))
         operation?.cancel()
@@ -150,24 +158,35 @@ class TunnelManager(private val context: Context, private val repository: AirRep
             vpnService()
             // Reconnect using saved keys while traffic is blocked; bootstrap requests
             // cannot succeed through the sink and must not delay tunnel restoration.
-            try { if (WaveVpnService.instance?.isBlocking != true) repository.refresh() } catch (e: CancellationException) { throw e }
-            catch (_: Exception) { log.warn("Using cached account and server information") }
+            if (WaveVpnService.instance?.isBlocking != true) {
+                if (repository.manifest.value == null) {
+                    withTimeout(3_000) { repository.refresh() }
+                } else {
+                    scope.launch {
+                        try { withTimeout(3_000) { repository.refresh() } }
+                        catch (e: CancellationException) { throw e }
+                        catch (_: Exception) { log.warn("Using cached account and server information") }
+                    }
+                }
+            }
             val m = repository.manifest.value ?: error("Refresh the server list first")
             val a = repository.account.value ?: error("Sign in first")
             val prefs = preferences.current
             val device = a.key(prefs.deviceKey) ?: error("Select an available device")
             val mode = m.wireguardModes.find { it.port == prefs.port } ?: error("Select a supported WireGuard port")
-            val candidates = Scoring.rank(m.servers, pinger.cached(m.servers), m.factors) { s -> when(target) {
+            val candidates = Scoring.rank(m.servers, pinger.cached(m.servers), m.factors, allowFailedFallback = target != Target.Best) { s -> when(target) {
                 Target.Best -> true
                 is Target.Country -> s.countryCode.equals(target.code, true)
                 is Target.Server -> s.name == target.name
             } }.take(if (target is Target.Server) 1 else 3)
             require(candidates.isNotEmpty()) { "No available server for this choice" }
             var selected = candidates.last()
+            var anyHandshake = false
             for (server in candidates) {
                 currentCoroutineContext().ensureActive()
                 selected = server
                 selectedServer = server
+                lastServerName = server.name
                 status.value = TunnelState.Connecting(server)
                 val config = Config.parse(wgQuickConfig(a, device, server, WgOptions(prefs.port, mode.entryIndex,
                     prefs.ipv6Endpoint,
@@ -196,7 +215,12 @@ class TunnelManager(private val context: Context, private val repository: AirRep
                     val s = withContext(Dispatchers.IO) { backend.getStatistics(tunnel).peer(config.peers.first().publicKey) }
                     if ((s?.latestHandshakeEpochMillis ?: 0) > 0) { handshook = true; break }
                 }
-                if (handshook) break
+                if (handshook) { anyHandshake = true; break }
+            }
+            if (!anyHandshake) scope.launch {
+                try { withTimeout(3_000) { repository.refreshAccount() } }
+                catch (e: CancellationException) { throw e }
+                catch (_: Exception) { log.warn("Account refresh unavailable; retry from the app") }
             }
             // Keep an unanswered tunnel installed; Android blocking settings protect any teardown gap.
             val server = selected

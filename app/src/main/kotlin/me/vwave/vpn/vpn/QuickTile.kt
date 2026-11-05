@@ -11,6 +11,6 @@ class QuickTile : TileService() {
         updateTile()
     } }
     override fun onClick() {
-        if (app.tunnels.permissionIntent() == null) unlockAndRun { app.tunnels.toggle(); onStartListening() }
+        if (app.repository.isLoggedIn && app.tunnels.permissionIntent() == null) unlockAndRun { app.tunnels.toggle(); onStartListening() }
     }
 }

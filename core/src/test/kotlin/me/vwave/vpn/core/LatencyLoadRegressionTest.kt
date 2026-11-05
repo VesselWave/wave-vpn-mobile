@@ -44,8 +44,9 @@ class LatencyLoadRegressionTest {
 
     @Test fun `tunnel coming up mid-sweep starts no further probe and publishes nothing measured through it`() = runBlocking {
         var allowed = true
+        val startedHosts = mutableListOf<String>()
         val started = mutableListOf<Boolean>() // allowed() at probe start
-        val cache = LatencyCache({ started += allowed; if (started.size == 6) allowed = false; yield(); 25 },
+        val cache = LatencyCache({ host -> startedHosts += host; started += allowed; if (started.size == 6) allowed = false; yield(); 25 },
             clock = { now }, allowed = { allowed })
         cache.measure(fleet)
         assertTrue(started.all { it })
@@ -55,7 +56,10 @@ class LatencyLoadRegressionTest {
         repeat(50) { now += 60_000; cache.measure(fleet) } // connected for 50 minutes
         assertEquals(count, started.size)
         assertTrue("nothing new published while connected", cache.pings.value.size <= before)
-        assertTrue(before < started.size)
+        val measuredBeforeRouteChange = fleet.filter { it.name in cache.pings.value }
+        val safeLocations = fleet.filter { it.entries.firstOrNull() in startedHosts.take(5) }
+            .map { it.countryCode to it.location }.toSet()
+        assertTrue(measuredBeforeRouteChange.all { (it.countryCode to it.location) in safeLocations })
     }
 
     @Test fun `stop with uncancellable in-flight sockets starts nothing new and discards late results`() = runBlocking {
@@ -86,7 +90,7 @@ class LatencyLoadRegressionTest {
     @Test fun `samples from before sign-out are invisible to the next account`() = runBlocking {
         val cache = LatencyCache({ 10 }, clock = { now })
         cache.measure(fleet)
-        assertEquals(24, cache.pings.value.size)
+        assertTrue("location estimates cover more than the 24 sockets", cache.pings.value.size > 24)
         cache.clear()
         assertTrue(cache.pings.value.isEmpty())
         assertTrue(cache.cached(fleet).isEmpty())

@@ -7,7 +7,7 @@ import org.junit.Test
 
 class LatencyCacheTest {
     private fun servers(n: Int = 250) = (1..n).map {
-        Server("server$it", "nl", "City", listOf("192.0.2.$it"), 0, 100, 0, 100, 0, null, null)
+        Server("server$it", "nl", "City$it", listOf("192.0.2.$it"), 0, 100, 0, 100, 0, null, null)
     }
 
     @Test fun `sweep budget and fixed worker limit with concurrent clicks`() = runBlocking {

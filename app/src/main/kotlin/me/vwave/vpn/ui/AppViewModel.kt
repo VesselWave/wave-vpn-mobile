@@ -36,7 +36,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         signingIn = viewModelScope.launch {
             try { app.repository.login(user.trim(), password); app.log.info("Signed in"); refresh(false) }
             catch (e: CancellationException) { throw e }
-            catch (_: Exception) { loginError.value = "Sign-in failed. Check your account and network, then wait a minute before retrying." }
+            catch (e: me.vwave.vpn.core.CooldownException) { loginError.value = e.message }
+            catch (e: me.vwave.vpn.core.LoginException) { loginError.value = e.message }
+            catch (_: Exception) { loginError.value = "Sign-in failed. Check your network and retry shortly." }
             finally { loginBusy.value = false }
         }
     }
@@ -46,7 +48,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 app.repository.refresh(force)
-                app.pinger.measure(manifest.value?.servers.orEmpty())
+                val servers = manifest.value?.servers.orEmpty()
+                val prefs = app.settings.current
+                val priority = prefs.favorites + listOfNotNull(app.tunnels.lastServerName) + servers.filter { s ->
+                    when (val target = prefs.target) {
+                        is Target.Country -> s.countryCode.equals(target.code, true)
+                        is Target.Server -> s.name == target.name
+                        Target.Best -> false
+                    }
+                }.map { it.name }
+                app.pinger.measure(servers, priority.toSet())
             }
             catch (e: CancellationException) { throw e }
             catch (_: Exception) { notice.value = "Unable to refresh AirVPN information. Cached servers are still available; retry later." }

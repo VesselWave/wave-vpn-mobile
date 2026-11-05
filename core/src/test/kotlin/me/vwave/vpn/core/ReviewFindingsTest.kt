@@ -7,25 +7,14 @@ import me.vwave.vpn.core.FakeAirNetwork.Companion.keyA
 import me.vwave.vpn.core.FakeAirNetwork.Companion.manifest
 import me.vwave.vpn.core.FakeAirNetwork.Companion.user
 import org.junit.Assert.*
-import org.junit.Assume.assumeTrue
-import org.junit.Before
 import org.junit.Test
 import java.io.IOException
 import java.io.InterruptedIOException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-/**
- * Open review findings against eca93f0, written as the behavior a fix should produce.
- * They FAIL on eca93f0 and are skipped by default so the required suite stays green:
- *
- *     WAVE_FINDINGS=1 ./gradlew :core:test --rerun-tasks --tests '*ReviewFindingsTest'
- *
- * Remove the gate (or the individual test) once its finding is fixed. See docs/NETWORK-POLICY-REVIEW.md.
- */
+/** Always-on offline reproductions from the independent network-policy review. */
 class ReviewFindingsTest {
-    @Before fun gate() = assumeTrue("Opt in with WAVE_FINDINGS=1", System.getenv("WAVE_FINDINGS") == "1")
-
     private val t = FakeAirNetwork.Time()
     private val net = FakeAirNetwork { t.ms }
     private val urls = listOf("http://192.0.2.1", "http://192.0.2.2", "http://192.0.2.3",
@@ -65,7 +54,7 @@ class ReviewFindingsTest {
     /** F2b (high): Country target whose servers were not in the 24-sample budget is picked alphabetically. */
     @Test fun `F2b country target picks its least loaded server when only other countries were sampled`() = runBlocking {
         val fleet = fixtureServers()
-        val cache = LatencyCache({ 50 }, clock = { 0L })
+        val cache = LatencyCache({ 50 }, clock = { 0L }, budget = 1)
         cache.measure(fleet) // launch sweep
         val country = fleet.filter { it.isOpen && it.warningOpen == null }.groupBy { it.countryCode }
             .entries.first { (_, l) -> l.size >= 3 && l.none { it.name in cache.pings.value } }
