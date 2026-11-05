@@ -3,7 +3,8 @@
 ## Using Wave VPN
 
 - [Installation and support](SUPPORT.md): devices, installing and updating, reporting problems
-- [v0.1.1 release notes](RELEASE-v0.1.1.md): what's new in the current release
+- [v0.1.3 release notes](RELEASE-v0.1.3.md): infrastructure load, recovery and server selection
+- [v0.1.1 release notes](RELEASE-v0.1.1.md): previous release
 - [v0.1.0 release notes](RELEASE-v0.1.0.md): the first release and its known limits
 - [Release signing](RELEASE-SIGNING.md): how to verify downloads and the APK certificate
 - [Security policy](../SECURITY.md): private reporting and the signing fingerprints
