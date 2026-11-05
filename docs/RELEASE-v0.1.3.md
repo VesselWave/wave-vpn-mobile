@@ -15,7 +15,7 @@ Best server remains a latency/load estimate; throughput and long-term reliabilit
 
 ## Get Wave VPN
 
-**[Download APK](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.3/wave-vpn-android-0.1.3.apk)**
+**[Download APK · 12 MB](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.3/wave-vpn-android-0.1.3.apk)**
 
 For ongoing updates through F-Droid, add the **[Wave repository](https://f-droid.vwave.me/fdroid/repo?fingerprint=47841BF725DA7B106B2D05DF097E4898C7B5576411804A23D6A5505C5AD17933)**. F-Droid offers the current version; use the APK link above for this exact release.
 
