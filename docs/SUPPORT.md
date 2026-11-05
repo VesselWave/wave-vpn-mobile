@@ -2,8 +2,6 @@
 
 **Wave VPN is in early release.** Anyone is welcome to use it, but it hasn't been fully tested on every device and system yet.
 
-**Known issue, Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and blocking enabled. If that matters for how you use a VPN, keep it in mind. See the [full Samsung test report](qa/RELEASE-SAMSUNG-STOCK.md).
-
 ## Devices
 
 Android 8 or newer. The release build has been run on:
@@ -27,11 +25,13 @@ Release builds use the package `me.vwave.vpn`; debug builds use `me.vwave.vpn.de
 
 ## Recommended settings
 
-Turn on **Always-on VPN** and **Block connections without VPN** (Settings → Open Android VPN settings). Android then blocks traffic whenever the tunnel is down. Some Android versions can still let DNS out during tunnel changes.
+Turn on **Always-on VPN** and **Block connections without VPN** (Settings → Open Android VPN settings). Android then blocks traffic whenever the tunnel is down, subject to the platform limitation below.
 
 - With blocking on, apps you exclude through split tunneling are blocked rather than sent around the VPN. Test your exclusions with blocking enabled.
 - After you press Disconnect, or after Android closes the app following repeated crashes, traffic stays blocked and the app shows Disconnected. Open Wave VPN and tap Connect.
 - Force-stopping the app stops the VPN on purpose; it won't restart by itself.
+
+Android platform note: some Android versions can leak DNS during VPN reconnects or app crashes, even with Always-on VPN and blocking enabled. See [background and test results](qa/RELEASE-VPN-COMPARISON.md).
 
 ## Reporting a problem
 

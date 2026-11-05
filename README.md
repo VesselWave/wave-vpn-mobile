@@ -28,8 +28,6 @@ An unofficial WireGuard client for [AirVPN](https://airvpn.org). Sign in with yo
 
 > [!NOTE]
 > **Wave VPN is in early release.** Anyone is welcome to use it, but it hasn't been fully tested on every device and system yet.
->
-> **Known issue, Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and blocking enabled. If that matters for how you use a VPN, keep it in mind. See the [full Samsung test report](docs/qa/RELEASE-SAMSUNG-STOCK.md).
 
 ## Setup
 

@@ -10,9 +10,6 @@ Early release · Android 8 or newer (API 26+) · Testing across devices is still
 - **Everyday controls:** live traffic, connection logs and a Quick Settings tile.
 - **Connection recovery** after process death and after reboot once the phone is unlocked, with support for Android's Always-on VPN and blocking settings.
 
-> [!WARNING]
-> **Known issue on Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and **Block connections without VPN** enabled. [Samsung test report →](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.0/docs/RELEASE-SAMSUNG-STOCK.md)
-
 > [!NOTE]
 > **Repackaged 2026-11-03:** source history and release packages were cleaned of private lab details. If you downloaded earlier, fetch the current archives, checksums and signature together. App binaries and signing keys are unchanged.
 

@@ -14,7 +14,9 @@ Use the GitHub title `Wave VPN <version> for Android`. Write the body in
   when an update changes only the interface.
 - Keep known protection issues, required migrations and repackaging notices
   visible. A GitHub warning or note should explain the consequence and link
-  to the relevant report.
+  to the relevant report. General Android platform limitations belong in the
+  support page as a brief informational note; do not repeat them as app defects
+  in every release.
 - Give the APK one prominent download link with a rounded size checked against
   the published asset. Follow with the fingerprint-pinned F-Droid repository
   link for ongoing updates. Make clear that F-Droid offers the current version,

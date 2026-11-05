@@ -6,10 +6,6 @@
 
 Email **vesselwave@protonmail.com** (monitored by the maintainer). Include the app version, Android version and steps to reproduce. Don't put passwords, private profiles, WireGuard keys, account names or unredacted logs in public issues. There's no response-time commitment yet.
 
-## Known issue
-
-**Known issue, Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and blocking enabled. If that matters for how you use a VPN, keep it in mind. See the [full Samsung test report](docs/qa/RELEASE-SAMSUNG-STOCK.md).
-
 ## Verifying releases
 
 Two separate identities sign each release:

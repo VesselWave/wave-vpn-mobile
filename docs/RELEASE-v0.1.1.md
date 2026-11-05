@@ -9,9 +9,6 @@ Early release · Android 8 or newer (API 26+) · Testing across devices is still
 
 This is an interface update; VPN, protocol and account behavior is unchanged from 0.1.0.
 
-> [!WARNING]
-> **Known issue on Samsung Android 16:** DNS can leak outside the VPN during a crash, Wi-Fi reconnect or force-stop, even with Always-on VPN and **Block connections without VPN** enabled. [Samsung test report →](https://github.com/VesselWave/wave-vpn-mobile/blob/v0.1.1/docs/qa/RELEASE-SAMSUNG-STOCK.md)
-
 ## Get Wave VPN
 
 **[Download APK · 12 MB](https://github.com/VesselWave/wave-vpn-mobile/releases/download/v0.1.1/wave-vpn-android-0.1.1.apk)**
