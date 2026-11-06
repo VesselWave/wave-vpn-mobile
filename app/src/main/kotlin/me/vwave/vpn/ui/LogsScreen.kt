@@ -70,11 +70,11 @@ fun LogsScreen(vm: AppViewModel) {
                         val levelColor = when (entry.level) {
                             LogLevel.Warn -> t.warning
                             LogLevel.Error -> t.danger
-                            else -> t.faint
+                            else -> t.muted
                         }
                         Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             Row(horizontalArrangement = Arrangement.spacedBy(Dimens.sm)) {
-                                Text(time.format(Date(entry.timeMillis)), style = MonoSmall.copy(fontSize = MaterialTheme.typography.labelSmall.fontSize), color = t.faint)
+                                Text(time.format(Date(entry.timeMillis)), style = MonoSmall.copy(fontSize = MaterialTheme.typography.labelSmall.fontSize), color = t.muted)
                                 Text(
                                     entry.level.name.uppercase(),
                                     style = MonoSmall.copy(fontSize = MaterialTheme.typography.labelSmall.fontSize, fontWeight = FontWeight.Medium),

@@ -240,7 +240,7 @@ fun Wordmark(modifier: Modifier = Modifier) {
     CapFontScale(1.5f) {
         Row(modifier) {
             Text("Wave", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
-            Text(" VPN", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold), color = tokens.faint)
+            Text(" VPN", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold), color = tokens.muted)
         }
     }
 }

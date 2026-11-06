@@ -1,7 +1,9 @@
 package me.vwave.vpn.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -12,6 +14,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -211,7 +214,15 @@ fun WaveTheme(content: @Composable () -> Unit) {
                 large = RoundedCornerShape(Dimens.radiusLg),
                 extraLarge = RoundedCornerShape(Dimens.radiusLg),
             ),
-            content = content,
-        )
+        ) {
+            // MaterialTheme defines the palette; Surface also supplies the inherited content
+            // color and paints the window, including screens outside the signed-in Scaffold.
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = t.bg,
+                contentColor = t.text,
+                content = content,
+            )
+        }
     }
 }

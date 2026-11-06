@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+**Fixed**
+
+- Sign-in headings and the wordmark inherit the correct text color in dark mode; all screens share a themed root surface
+- Search placeholders, log timestamps and log level labels use readable secondary text colors in both themes
+
 ## 0.1.3 · 2026-11-05 · early release
 
 Lower infrastructure load and more reliable recovery, following [AirVPN Staff feedback](https://airvpn.org/forums/topic/82017-wave-vpn-open-source-wireguard-client-for-android-and-linux-unofficial-v011/?do=findComment&comment=268064). [Release notes](docs/RELEASE-v0.1.3.md).
