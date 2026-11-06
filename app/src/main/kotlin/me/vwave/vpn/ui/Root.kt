@@ -3,6 +3,8 @@ package me.vwave.vpn.ui
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
@@ -98,7 +100,16 @@ fun WaveRoot(vm: AppViewModel = viewModel()) {
         },
     ) { padding ->
         // Screens pad for the status bar themselves; consume what the Scaffold already applied.
-        NavHost(nav, startDestination = Tab.Overview.route, modifier = Modifier.padding(padding).consumeWindowInsets(padding)) {
+        // Switch screens instantly, like the desktop sidebar; the default 700 ms crossfade overlaps both.
+        NavHost(
+            nav,
+            startDestination = Tab.Overview.route,
+            modifier = Modifier.padding(padding).consumeWindowInsets(padding),
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None },
+        ) {
             composable(Tab.Overview.route) {
                 OverviewScreen(
                     vm,
