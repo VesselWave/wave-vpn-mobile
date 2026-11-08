@@ -3,8 +3,6 @@ package me.vwave.vpn.core
 
 import kotlinx.coroutines.*
 import org.junit.Assert.*
-import org.junit.Assume.assumeTrue
-import org.junit.Before
 import org.junit.Test
 import java.net.SocketTimeoutException
 import java.util.Collections
@@ -12,7 +10,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 class ForumTimeoutContractTest {
-    @Before fun optIn() { assumeTrue(System.getenv("WAVE_FORUM_CONTRACTS") == "1") }
 
     @Test(timeout = 8000) fun `caller deadline penalizes blackholed URL before next request`() = runBlocking {
         val urls = listOf("https://blackhole.example/", "https://healthy.example/")
@@ -26,17 +23,20 @@ class ForumTimeoutContractTest {
             if (posts.size == 1) { entered.countDown(); never.await(); error("unreachable") }
             network.post(url, body)
         }, clock = { 0L }, maxAttempts = 1)
-        // Start deadline only after the actual request is blocked, avoiding RSA/JVM warmup races.
+        // Exercise the same local deadline boundary as the production repository.
         val request = async(Dispatchers.Default) {
-            try {
-                networkWork(api::cancel) {
-                    api.request(FakeAirNetwork.keyA.bootstrap(urls), "user", "tester", "synthetic")
+            assertThrows(TimeoutCancellationException::class.java) {
+                runBlocking {
+                    withTimeout(1000) {
+                        networkWork(api::cancel, api::timeout) {
+                            api.request(FakeAirNetwork.keyA.bootstrap(urls), "user", "tester", "synthetic")
+                        }
+                    }
                 }
-            } catch (_: CancellationException) { }
+            }
         }
         assertTrue(withContext(Dispatchers.IO) { entered.await(3, TimeUnit.SECONDS) })
-        try { withTimeout(25) { request.await() }; fail("deadline expected") }
-        catch (_: TimeoutCancellationException) { request.cancelAndJoin() }
+        request.await()
         assertEquals("<user/>", api.request(FakeAirNetwork.keyA.bootstrap(urls), "user", "tester", "synthetic"))
         assertEquals("a deadline must move the next request away from the blackholed URL", urls, posts.toList())
     }

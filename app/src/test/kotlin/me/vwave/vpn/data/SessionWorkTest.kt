@@ -61,12 +61,12 @@ class SessionWorkTest {
         } catch (_: CancellationException) { }
     }
 
-    @Test(timeout = 5000) fun `failed handshake requires successful recovery before next tunnel attempt`() = runBlocking {
+    @Test(timeout = 5000) fun `failed handshake recovery is best effort and remains pending after outage`() = runBlocking {
         val policy = HandshakeRefresh()
         var calls = 0
         policy.recover { calls++ }; assertEquals(0, calls)
         policy.outcome(false)
-        try { policy.recover { calls++; throw IOException() }; fail() } catch (_: IOException) { }
+        policy.recover { calls++; throw IOException() }
         assertTrue(policy.recoveryNeeded)
         policy.recover { calls++ }
         assertFalse(policy.recoveryNeeded); assertEquals(2, calls)

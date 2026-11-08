@@ -2,16 +2,13 @@
 package me.vwave.vpn.core
 
 import org.junit.Assert.*
-import org.junit.Assume.assumeTrue
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
-/** Desired contracts, intentionally RED on v0.1.4. Run scripts/check-forum.py. */
+/** Required server-data and safe-routing regression contracts. */
 @RunWith(Parameterized::class)
 class ForumManifestContractTest(private val label: String, private val broken: String) {
-    @Before fun optIn() { assumeTrue(System.getenv("WAVE_FORUM_CONTRACTS") == "1") }
 
     @Test fun `usable servers survive optional bootstrap corruption`() {
         val good = parseManifest(FakeAirNetwork.fixture)
@@ -27,6 +24,7 @@ class ForumManifestContractTest(private val label: String, private val broken: S
         }, null, {})
         session.update("tester", "synthetic")
         assertEquals(parseManifest(FakeAirNetwork.fixture).servers, parseManifest(session.snapshot!!.manifest).servers)
+        assertEquals("invalid metadata must never become active routing", Defaults.bootstrap, parseManifest(session.snapshot!!.manifest).bootstrap)
     }
 
     @Test fun `refresh accepts servers and keeps last usable routing across restore`() {

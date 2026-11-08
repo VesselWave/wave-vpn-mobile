@@ -80,9 +80,10 @@ fun SettingsScreen(vm: AppViewModel, onSplitTunneling: () -> Unit) {
                     when (settings.splitMode) {
                         SplitMode.Off -> "Off"
                         SplitMode.Exclude -> "${settings.splitApps.size} bypass"
-                        SplitMode.Include -> "${settings.splitApps.size} only"
+                        SplitMode.Include -> if (settings.noAppsSelected) "No apps selected" else "${settings.splitApps.size} only"
                     },
                     hint = "Choose which apps use the VPN",
+                    warn = settings.noAppsSelected,
                     onClick = onSplitTunneling,
                 )
             }

@@ -2,12 +2,9 @@
 package me.vwave.vpn.core
 
 import org.junit.Assert.*
-import org.junit.Assume.assumeTrue
-import org.junit.Before
 import org.junit.Test
 
 class ForumManifestControlsContractTest {
-    @Before fun optIn() { assumeTrue(System.getenv("WAVE_FORUM_CONTRACTS") == "1") }
 
     @Test fun `valid bootstrap rotation and server list still accepted`() {
         val key = FakeAirNetwork.keyB

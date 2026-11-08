@@ -57,7 +57,7 @@ fun WaveRoot(vm: AppViewModel = viewModel()) {
         if (it.resultCode == Activity.RESULT_OK) vm.connect() else context.app.tunnels.permissionDenied()
     }
     val connect = {
-        val intent = context.app.tunnels.permissionIntent()
+        val intent = if (vm.needsConsentFirst) context.app.tunnels.permissionIntent() else null
         if (intent != null) consent.launch(intent) else vm.connect()
     }
     val connectRequested by context.app.connectRequested.collectAsStateWithLifecycle()
@@ -125,6 +125,7 @@ fun WaveRoot(vm: AppViewModel = viewModel()) {
                     connect,
                     onChooseServer = { nav.open(Tab.Servers) },
                     onLockSettings = { nav.open(Tab.Settings) },
+                    onSplitTunneling = { nav.navigate("apps") },
                 )
             }
             composable(Tab.Servers.route) { ServersScreen(vm, connect, onConnected = { nav.open(Tab.Overview) }) }

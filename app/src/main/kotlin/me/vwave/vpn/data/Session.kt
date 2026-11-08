@@ -119,7 +119,7 @@ class AirRepository(private val vault: SessionVault, context: Context) {
         work.update(login != null || account) {
             try {
                 recoveryTransport = account
-                networkWork(api::cancel) { session.update(login, password, force, account, reportCooldown = true) }
+                networkWork(api::cancel, api::timeout) { session.update(login, password, force, account, reportCooldown = true) }
             } finally {
                 recoveryTransport = false
                 session.snapshot?.let { s -> a.value = parseUser(s.user, s.login); m.value = parseManifest(s.manifest) }

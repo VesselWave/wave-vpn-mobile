@@ -122,7 +122,10 @@ class AirApi(
 ) : AirRequests {
     private val cancellation = java.util.concurrent.atomic.AtomicLong()
     override val cancellationVersion: Long get() = cancellation.get()
+    private val activeDeadline = java.util.concurrent.atomic.AtomicReference<java.util.concurrent.atomic.AtomicBoolean?>()
     fun cancel() { cancellation.incrementAndGet(); transport.cancel() }
+    /** A local request deadline is endpoint evidence; logout/cancel is not. */
+    fun timeout() { activeDeadline.get()?.set(true); cancel() }
     init { require(maxAttempts in 1..6) }
     private data class Endpoint(var failures: Int = 0, var retryAt: Long = 0)
     private val endpoints = mutableMapOf<Pair<String, Bootstrap>, Endpoint>()
@@ -159,6 +162,12 @@ class AirApi(
             if (clock() < endpoint.retryAt) continue
             if (attempts++ >= maxAttempts) break
             checkCancelled()
+            val deadline = java.util.concurrent.atomic.AtomicBoolean()
+            activeDeadline.set(deadline)
+            fun failed() {
+                endpoint.failures = (endpoint.failures + 1).coerceAtMost(7)
+                endpoint.retryAt = clock() + (1_000L shl endpoint.failures).coerceAtMost(120_000)
+            }
             try {
                 val xml = RequestEnvelope(key).use { it.decode(transport.post(url, it.encode(parameters))) }
                 checkCancelled()
@@ -168,15 +177,15 @@ class AirApi(
                 endpoint.failures = 0; endpoint.retryAt = 0; preferred = url
                 return xml
             } catch (e: LoginException) { checkCancelled(); throw e }
-            catch (e: InterruptedException) { throw e }
-            catch (e: java.util.concurrent.CancellationException) { throw e }
+            catch (e: InterruptedException) { if (deadline.get()) failed(); throw e }
+            catch (e: java.util.concurrent.CancellationException) { if (deadline.get()) failed(); throw e }
             catch (e: Exception) {
+                if (deadline.get()) { failed(); checkCancelled() }
                 checkCancelled()
                 if (e is java.io.InterruptedIOException && e !is java.net.SocketTimeoutException) throw InterruptedException().apply { initCause(e) }
-                endpoint.failures = (endpoint.failures + 1).coerceAtMost(7)
-                endpoint.retryAt = clock() + (1_000L shl endpoint.failures).coerceAtMost(120_000)
+                failed()
                 failure = e
-            }
+            } finally { activeDeadline.compareAndSet(deadline, null) }
         }
         throw IOException("No AirVPN bootstrap server returned a valid response", failure)
     }

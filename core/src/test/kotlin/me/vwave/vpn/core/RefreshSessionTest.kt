@@ -89,7 +89,7 @@ class RefreshSessionTest {
     @Test fun `invalid manifest or storage failure never replaces snapshot`() {
         val old = SessionSnapshot("tester", "secret", user, xml, now, now)
         val session = engine(old)
-        response = { xml.replace("auth_rsa_exponent=\"AQAB\"", "auth_rsa_exponent=\"!\"") }
+        response = { "<not-manifest/>" }
         assertThrows(Exception::class.java) { session.update(force = true) }
         assertSame(old, session.snapshot)
         assertNull(saved)
@@ -163,9 +163,9 @@ class RefreshSessionTest {
         assertEquals(listOf("user", "manifest"), calls)
     }
 
-    @Test fun `invalid manifest URLs rejected before persistence`() {
+    @Test fun `invalid optional URLs use safe embedded bootstrap`() {
         for (url in listOf("file:///etc/passwd", "http://user:password@example.com", "garbage")) {
-            assertThrows(Exception::class.java) { parseManifest(xml.replace("http://63.33.78.166", url)) }
+            assertEquals(Defaults.bootstrap, parseManifest(xml.replace("http://63.33.78.166", url)).bootstrap)
         }
     }
 }

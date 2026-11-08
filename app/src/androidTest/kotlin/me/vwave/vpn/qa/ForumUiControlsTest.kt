@@ -24,7 +24,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class ForumUiControlsTest {
     private lateinit var scenario: ActivityScenario<MainActivity>
-    private lateinit var powerButton: android.graphics.Rect
     private val h = Harness
 
     @Before fun setUp() {
@@ -32,7 +31,6 @@ class ForumUiControlsTest {
         h.grantVpnConsent()
         scenario = ActivityScenario.launch(MainActivity::class.java)
         h.waitForLabel("Connect")
-        powerButton = checkNotNull(h.boundsOf("Connect"))
     }
 
     @After fun tearDown() {
@@ -49,14 +47,10 @@ class ForumUiControlsTest {
         return h.vpn()
     }
 
-    /**
-     * Cancels with a real tap on the power button before the 10 s handshake deadline, then checks
-     * the release. A tap, not an accessibility click: while Connecting the spinner hides the button
-     * from the accessibility tree (see ForumUiContractTest.busyCancelIsExposedToAccessibility).
-     */
+    /** Cancels through the accessibility tree before the 10 s handshake deadline, then checks the release. */
     private fun cancelAndCheckReleased(name: String) {
         h.evidence("$name-connecting", "control: tunnel up, before cancel")
-        h.tap(powerButton)
+        h.clickOrFail("Cancel connecting")
         h.waitFor(10_000, "Down state and no VPN after cancel", 300) { h.state() is TunnelState.Down && !h.vpn().present }
         h.waitForLabel("Disconnected")
         h.waitForLabel("Connect")

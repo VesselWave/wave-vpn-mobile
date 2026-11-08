@@ -22,13 +22,12 @@ Offline recovery and bootstrap fault-injection checks:
 python3 scripts/check-forum.py
 ```
 
-This command currently exits 1 because it detects known defects. It writes a JSON report and distinguishes failed contracts from an incomplete run. See [the regression report](docs/qa/FORUM-REGRESSIONS-2026-11-07.md). Ordinary checks skip these opt-in contracts until the fixes reconcile the older policy tests.
+These contracts also run in the ordinary core/app unit checks and CI. This command writes a focused JSON report and distinguishes failed contracts from an incomplete run. See [the regression report](docs/qa/FORUM-REGRESSIONS-2026-11-07.md).
 
 Emulator UI checks run in the isolated `me.vwave.vpn.qa` build with a synthetic offline session; they never touch a signed-in install. Use an emulator without another active VPN:
 
 ```sh
-python3 scripts/forum-ui-emulator.py --serial emulator-5556              # positive controls, must pass
-python3 scripts/forum-ui-emulator.py --serial emulator-5556 --contracts  # plus desired-behavior contracts
+python3 scripts/forum-ui-emulator.py --serial emulator-5556  # positive controls and forum contracts; must exit 0
 ```
 
 See [docs/qa/FORUM-UI-2026-11-07.md](docs/qa/FORUM-UI-2026-11-07.md).
