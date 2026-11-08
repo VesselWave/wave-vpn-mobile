@@ -1,6 +1,8 @@
 package me.vwave.vpn.ui
 
+import android.content.Intent
 import android.os.SystemClock
+import android.provider.Settings as AndroidSettings
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.size
@@ -42,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,6 +54,7 @@ import kotlinx.coroutines.delay
 import me.vwave.vpn.data.LogLevel
 import me.vwave.vpn.data.Target
 import me.vwave.vpn.vpn.TunnelState
+import me.vwave.vpn.vpn.VpnInterruption
 
 @Composable
 fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> Unit, onLockSettings: () -> Unit) {
@@ -62,6 +66,7 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
     val since by vm.connectedSince.collectAsStateWithLifecycle()
     val count by vm.connectionCount.collectAsStateWithLifecycle()
     val log by vm.log.collectAsStateWithLifecycle()
+    val interruption by vm.interruption.collectAsStateWithLifecycle()
     var deviceDialog by rememberSaveable { mutableStateOf(false) }
     val t = tokens
     val units = Units(settings.unitBits, settings.unitIec)
@@ -159,6 +164,9 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
                     (state as? TunnelState.Failed)?.let { ErrorBanner("Couldn't connect. ${it.message}") }
                 }
 
+                // ── Android refused or took back the VPN: say so, and where to fix it ──
+                interruption?.takeIf { idle }?.let { InterruptionPanel(it) }
+
                 // ── Device picker (only before connecting, only with a choice to make or a stale selection) ──
                 val keys = account?.keys.orEmpty()
                 val device = account?.key(settings.deviceKey)?.name
@@ -230,6 +238,42 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
             label = { it },
             onDismiss = { deviceDialog = false },
         ) { name -> vm.updateSettings { it.copy(deviceKey = name) } }
+    }
+}
+
+/**
+ * Stays until the next Connect or Disconnect. Android doesn't tell apps which VPN is Always-on,
+ * so the copy names the likely causes instead of guessing one.
+ */
+@Composable
+private fun InterruptionPanel(interruption: VpnInterruption) {
+    val t = tokens
+    val context = LocalContext.current
+    val (title, body) = when (interruption) {
+        VpnInterruption.PermissionDenied -> "Android didn't let Wave connect" to
+            "If another app is set as Always-on VPN, Android blocks other VPNs until you turn that off. " +
+            "Otherwise, tap Connect and allow Wave when Android asks."
+        VpnInterruption.Revoked -> "Android turned off Wave's VPN" to
+            "Another VPN app started, or the VPN was disconnected in Android settings. Tap Connect to reconnect."
+    }
+    Panel {
+        Column(
+            Modifier.padding(start = Dimens.md, end = Dimens.md, top = 14.dp, bottom = Dimens.xs),
+            verticalArrangement = Arrangement.spacedBy(Dimens.xs),
+        ) {
+            // Top-aligned so the icon stays beside the first line when large text wraps the title.
+            Row(horizontalArrangement = Arrangement.spacedBy(Dimens.sm)) {
+                val titleStyle = MaterialTheme.typography.titleSmall
+                val firstLine = with(LocalDensity.current) { titleStyle.lineHeight.toDp() }
+                Box(Modifier.height(firstLine), contentAlignment = Alignment.Center) { LucideIcon(Lucide.Alert, t.warning, 16.dp) }
+                Text(title, style = titleStyle)
+            }
+            Text(body, style = MaterialTheme.typography.bodyMedium, color = t.muted)
+            LinkButton(
+                "Open VPN settings",
+                onClick = { context.startActivity(Intent(AndroidSettings.ACTION_VPN_SETTINGS)) },
+            )
+        }
     }
 }
 

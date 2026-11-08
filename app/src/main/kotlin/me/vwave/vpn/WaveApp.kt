@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import com.wireguard.android.backend.GoBackend
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import me.vwave.vpn.data.*
 import me.vwave.vpn.vpn.*
 
@@ -14,6 +15,8 @@ class WaveApp : Application() {
     lateinit var settings: SettingsStore
     lateinit var repository: AirRepository
     @Volatile var foreground = false
+    /** Set when the Quick Settings tile opens the app to connect; the UI runs it once. */
+    val connectRequested = MutableStateFlow(false)
     val pinger by lazy { Pinger(this) }
     lateinit var tunnels: TunnelManager
     override fun onCreate() {

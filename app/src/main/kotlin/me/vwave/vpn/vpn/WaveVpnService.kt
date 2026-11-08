@@ -33,7 +33,7 @@ class WaveVpnService : GoBackend.VpnService() {
     @Synchronized fun releaseBlock() { blocking?.close(); blocking = null }
     override fun onRevoke() {
         releaseBlock()
-        app.tunnels.disconnect()
+        app.tunnels.revoked()
         super.onRevoke()
     }
     override fun onDestroy() {

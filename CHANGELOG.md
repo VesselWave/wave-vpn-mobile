@@ -13,6 +13,9 @@
 
 **Fixed**
 
+- When Android refuses VPN permission (for example, while another app is Always-on VPN) or another VPN takes over, Overview explains what happened and links to Android VPN settings instead of staying silent
+- The Quick Settings tile opens Wave to ask for VPN permission or sign-in instead of ignoring the tap
+
 - Sign-in headings and the wordmark inherit the correct text color in dark mode; all screens share a themed root surface
 - Search placeholders, log timestamps and log level labels use readable secondary text colors in both themes
 

@@ -51,14 +51,16 @@ fun WaveRoot(vm: AppViewModel = viewModel()) {
     }
 
     val context = LocalContext.current
-    // Android shows its VPN consent dialog once; connect when the user accepts.
+    // Android shows its VPN consent dialog once; connect when the user accepts. Anything else is
+    // reported on Overview: Android also closes this dialog by itself while another app is Always-on.
     val consent = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) vm.connect()
+        if (it.resultCode == Activity.RESULT_OK) vm.connect() else context.app.tunnels.permissionDenied()
     }
     val connect = {
         val intent = context.app.tunnels.permissionIntent()
         if (intent != null) consent.launch(intent) else vm.connect()
     }
+    val connectRequested by context.app.connectRequested.collectAsStateWithLifecycle()
 
     val nav = rememberNavController()
     val entry by nav.currentBackStackEntryAsState()
@@ -71,6 +73,13 @@ fun WaveRoot(vm: AppViewModel = viewModel()) {
         }
     }
     val t = tokens
+    LaunchedEffect(connectRequested) {
+        if (connectRequested) {
+            context.app.connectRequested.value = false
+            if (nav.currentDestination != null) nav.open(Tab.Overview)
+            if (!context.app.tunnels.isActive) connect()
+        }
+    }
 
     Scaffold(
         containerColor = t.bg,

@@ -22,6 +22,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val stats = app.tunnels.stats
     val connectedSince = app.tunnels.connectedSince
     val connectionCount = app.tunnels.connectionCount
+    val interruption = app.tunnels.interruption
     val log = app.log.entries
     val loginBusy = MutableStateFlow(false)
     val loginError = MutableStateFlow<String?>(null)

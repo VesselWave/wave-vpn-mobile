@@ -28,6 +28,11 @@ sealed interface TunnelState {
     data class Stalled(val server: Server) : TunnelState
     data class Failed(val message: String) : TunnelState
 }
+/**
+ * Why Android refused or stopped Wave's VPN. Apps cannot read another app's Always-on setting,
+ * so these name only what Wave observed, and stay until the user connects or disconnects.
+ */
+enum class VpnInterruption { PermissionDenied, Revoked }
 data class TunnelStats(val rxBytes: Long, val txBytes: Long, val rxRate: Double,
     val txRate: Double, val lastHandshakeMillis: Long)
 
@@ -93,10 +98,12 @@ class TunnelManager(private val context: Context, private val repository: AirRep
     private val counters = MutableStateFlow<TunnelStats?>(null)
     private val since = MutableStateFlow<Long?>(null)
     private val count = MutableStateFlow(0)
+    private val interrupted = MutableStateFlow<VpnInterruption?>(null)
     val state = status.asStateFlow()
     val stats = counters.asStateFlow()
     val connectedSince = since.asStateFlow()
     val connectionCount = count.asStateFlow()
+    val interruption = interrupted.asStateFlow()
     @Volatile var shouldReconnect = true
         private set
     val isActive get() = state.value is TunnelState.Connected || state.value is TunnelState.Connecting || state.value is TunnelState.Stalled
@@ -107,9 +114,26 @@ class TunnelManager(private val context: Context, private val repository: AirRep
             // DOWN, so callbacks must not reset the UI halfway through a connection attempt.
         }
     }
+    /**
+     * Android's VPN consent check. Only call it for a user action: when Wave was approved before,
+     * prepare() makes Wave the VPN app again and Android stops whichever VPN is running.
+     */
     fun permissionIntent() = VpnService.prepare(context)
+    /** Android's consent screen returned without approval: dismissed, or blocked by Always-on. */
+    fun permissionDenied() {
+        interrupted.value = VpnInterruption.PermissionDenied
+        log.warn("Android did not give Wave VPN permission")
+    }
+    /** Android took the VPN away: another VPN app started, or it was disconnected in Android. */
+    fun revoked() {
+        val wasActive = isActive
+        disconnect()
+        if (wasActive) interrupted.value = VpnInterruption.Revoked
+        log.warn("Android stopped Wave's VPN")
+    }
     fun connect(target: Target = preferences.current.target) {
         if (!repository.isLoggedIn) return
+        interrupted.value = null
         status.value = TunnelState.Connecting(null)
         pinger.stop()
         shouldReconnect = true
@@ -119,6 +143,7 @@ class TunnelManager(private val context: Context, private val repository: AirRep
     }
     fun disconnect() {
         shouldReconnect = false
+        interrupted.value = null
         val previousState = status.value
         operation?.cancel()
         operation = scope.launch { lock.withLock {
