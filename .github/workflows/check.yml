@@ -28,7 +28,7 @@ jobs:
           subprocess.run([str(manager), 'platforms;android-37.0', 'build-tools;37.0.0'], check=True)
           PY
       - name: Protocol tests, lint and both build types
-        run: ./gradlew --no-daemon --no-configuration-cache :core:test :app:lintDebug :app:assembleDebug :app:assembleRelease
+        run: ./gradlew --no-daemon --no-configuration-cache :core:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleRelease
       - name: Independent device-runner tests
         run: python3 -m unittest discover -s tools/vpn-probe/tests -v
       - name: Release packaging tests

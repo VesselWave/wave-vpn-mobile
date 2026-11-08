@@ -9,6 +9,8 @@ navigation = "2.10.2"
 coreKtx = "1.19.1"
 wireguard = "1.0.20260102"
 junit = "4.13.2"
+androidxTestRunner = "1.7.0"
+androidxTestJunit = "1.3.0"
 
 [libraries]
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -25,6 +27,8 @@ navigation-compose = { module = "androidx.navigation:navigation-compose", versio
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 wireguard-tunnel = { module = "com.wireguard.android:tunnel", version.ref = "wireguard" }
 junit = { module = "junit:junit", version.ref = "junit" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
+androidx-test-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestJunit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -30,7 +30,13 @@ android {
         versionCode = 6
         versionName = "0.1.4"
         ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64") }
+        // Forum UI/emulator checks: see docs/qa/FORUM-UI-2026-11-07.md. The runner seeds a
+        // synthetic offline session and refuses to run in any package except me.vwave.vpn.qa.
+        testInstrumentationRunner = "me.vwave.vpn.qa.ForumQaRunner"
     }
+    // Instrumented tests target the isolated "qa" build only, so they can never overwrite
+    // the signed-in debug (me.vwave.vpn.dev) or release installs.
+    testBuildType = "qa"
 
     signingConfigs {
         if (hasReleaseSigning) {
@@ -48,6 +54,12 @@ android {
         debug {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "+debug"
+        }
+        create("qa") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".qa"
+            versionNameSuffix = "+qa"
+            matchingFallbacks += "debug"
         }
         release {
             if (hasReleaseSigning) signingConfig = signingConfigs.getByName("release")
@@ -83,4 +95,15 @@ dependencies {
     implementation(libs.compose.icons)
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.junit)
+}
+
+// AGP 9 creates JVM unit tests only for testBuildType (qa). Keep them on the regular debug
+// build, where CI and contributors run :app:testDebugUnitTest, and off for qa/release.
+androidComponents {
+    beforeVariants { variant ->
+        variant.hostTests[com.android.build.api.variant.HostTestBuilder.UNIT_TEST_TYPE]?.enable =
+            variant.buildType == "debug"
+    }
 }

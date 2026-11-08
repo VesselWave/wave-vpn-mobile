@@ -7,7 +7,7 @@ Bug reports and pull requests are welcome. For security issues, email **vesselwa
 Needs JDK 17 and Android SDK 37. Set `ANDROID_HOME`, or put `sdk.dir=/your/android/sdk` in `local.properties`.
 
 ```sh
-./gradlew :core:test :app:lintDebug :app:assembleDebug
+./gradlew :core:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
 ```
 
 The debug APK is `app/build/outputs/apk/debug/app-debug.apk` and installs as `me.vwave.vpn.dev`, next to a release install. Optional live bootstrap test, using synthetic invalid credentials only:
@@ -15,6 +15,23 @@ The debug APK is `app/build/outputs/apk/debug/app-debug.apk` and installs as `me
 ```sh
 WAVE_LIVE=1 ./gradlew :core:test --rerun-tasks
 ```
+
+Offline recovery and bootstrap fault-injection checks:
+
+```sh
+python3 scripts/check-forum.py
+```
+
+This command currently exits 1 because it detects known defects. It writes a JSON report and distinguishes failed contracts from an incomplete run. See [the regression report](docs/qa/FORUM-REGRESSIONS-2026-11-07.md). Ordinary checks skip these opt-in contracts until the fixes reconcile the older policy tests.
+
+Emulator UI checks run in the isolated `me.vwave.vpn.qa` build with a synthetic offline session; they never touch a signed-in install. Use an emulator without another active VPN:
+
+```sh
+python3 scripts/forum-ui-emulator.py --serial emulator-5556              # positive controls, must pass
+python3 scripts/forum-ui-emulator.py --serial emulator-5556 --contracts  # plus desired-behavior contracts
+```
+
+See [docs/qa/FORUM-UI-2026-11-07.md](docs/qa/FORUM-UI-2026-11-07.md).
 
 ## Layout
 
