@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.5 · 2026-11-08 · early release
+
+- Continue cached tunnel recovery when account refresh is unavailable, cooling down or reaches its local deadline; preserve user cancellation.
+- Settle initial server-list timeouts and back off the affected bootstrap endpoint without penalizing user cancellation.
+- Validate optional routing independently, retain usable routing across restarts and use embedded routing when optional data is invalid.
+- Explain refused or revoked VPN permission and provide access to Android VPN settings; make the Quick Settings tile request permission or sign-in.
+- Show retained traffic blocking and its recovery actions after failed connections or disconnects.
+- Refuse “Only selected” connections with no apps selected and explain the empty selection across connection entry points.
+- Keep Cancel connecting accessible to TalkBack and Switch Access.
+- Include offline recovery/bootstrap/routing regressions in ordinary tests and extend emulator UI contracts.
+
+[Release notes](docs/RELEASE-v0.1.5.md).
+
 ## 0.1.4 · 2026-11-07 · early release
 
 - Fix inherited screen colors and secondary text contrast
@@ -8,19 +21,6 @@
 - Show verified Android 0.1.3 APK download size
 
 [Release notes](docs/RELEASE-v0.1.4.md).
-
-## Unreleased
-
-**Fixed**
-
-- When Android refuses VPN permission (for example, while another app is Always-on VPN) or another VPN takes over, Overview explains what happened and links to Android VPN settings instead of staying silent
-- The Quick Settings tile opens Wave to ask for VPN permission or sign-in instead of ignoring the tap
-- When Wave is still blocking traffic after a failed connection or a disconnect, Overview says "Blocking traffic", explains that apps have no internet, and offers Stop blocking (or Android VPN settings when Block connections without VPN is on) instead of showing Disconnected
-- "Only selected" with no apps checked no longer tunnels every app: Wave refuses to connect from every entry point, disconnects a running tunnel, and Overview, Settings and Split tunneling say why
-- TalkBack and Switch Access can reach Cancel connecting while Wave connects
-
-- Sign-in headings and the wordmark inherit the correct text color in dark mode; all screens share a themed root surface
-- Search placeholders, log timestamps and log level labels use readable secondary text colors in both themes
 
 ## 0.1.3 · 2026-11-05 · early release
 
