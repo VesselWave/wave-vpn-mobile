@@ -72,7 +72,7 @@ class RefreshSession(
                     save(partial); snapshot = partial
                 }
                 checkCancelled()
-                val manifestXml = if (signingIn || force || manifestDue) api.requestWithFallback(boot, recovery, "manifest", name, secret).also {
+                val manifestXml = if (signingIn || force || manifestDue) manifestWithSafeBootstrap(api.requestWithFallback(boot, recovery, "manifest", name, secret), boot).also {
                     parseManifest(it)
                 } else old.manifest
                 val updated = SessionSnapshot(name, secret, userXml, manifestXml,

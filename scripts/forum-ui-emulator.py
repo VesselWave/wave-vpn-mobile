@@ -6,9 +6,10 @@ Installs only the isolated me.vwave.vpn.qa build, which carries a synthetic offl
 no AirVPN account, credentials or network request. The signed-in me.vwave.vpn.dev and
 release installs are never touched. See docs/qa/FORUM-UI-2026-11-07.md.
 
-Exit status: 0 all executed tests passed; 1 a desired-behavior contract failed (expected
-on v0.1.4 with --contracts); 2 a positive control or the harness failed, so contract
-results are not meaningful; 3 setup refused (device busy, wrong target).
+Runs the positive controls and the forum contracts (fixed after v0.1.4; they must pass).
+Exit status: 0 all executed tests passed; 1 a forum contract failed (a regression of
+items 3/4 or the Cancel accessibility fix); 2 a positive control or the harness failed, so
+contract results are not meaningful; 3 setup refused (device busy, wrong target).
 """
 from __future__ import annotations
 
@@ -33,6 +34,7 @@ EXPECTED = {
                "allAppsRoutesEveryApp", "splitTunnelingScreenDrivesSettings"},
     CONTRACTS: {"forum3_failedStartMustNotHideABlockingInterface",
                 "forum4_onlySelectedWithNoAppsMustNotTunnelEveryApp",
+                "forum4_emptyOnlySelectedTearsDownARunningTunnel",
                 "forum4_onlySelectedWithNoAppsMustExplainTheEffect", "busyCancelIsExposedToAccessibility"},
 }
 STATUS = {"0": "passed", "-1": "error", "-2": "failed", "-3": "ignored", "-4": "skipped"}
@@ -106,7 +108,7 @@ def other_vpn_owner(serial: str) -> str | None:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--serial", required=True, help="adb serial, e.g. emulator-5556")
-    ap.add_argument("--contracts", action="store_true", help="also run the opt-in desired-behavior contracts")
+    ap.add_argument("--contracts", action="store_true", help="accepted for compatibility; contracts always run")
     ap.add_argument("--only", choices=["controls", "contracts"], help="run one class")
     ap.add_argument("--no-build", action="store_true")
     ap.add_argument("--out", type=pathlib.Path, default=ROOT / "build" / "forum-ui")
@@ -134,10 +136,8 @@ def main() -> int:
     adb(a.serial, "shell", "rm", "-rf", EVIDENCE, check=False)
 
     classes = {"controls": CONTROLS, "contracts": CONTRACTS}
-    selected = [classes[a.only]] if a.only else [CONTROLS] + ([CONTRACTS] if a.contracts else [])
+    selected = [classes[a.only]] if a.only else [CONTROLS, CONTRACTS]
     cmd = ["shell", "am", "instrument", "-w", "-r", "-e", "class", ",".join(selected)]
-    if a.contracts or a.only == "contracts":
-        cmd += ["-e", "waveForumContracts", "1"]
     started = time.time()
     raw = adb(a.serial, *cmd, RUNNER, check=False)
     results, summary = parse_instrumentation(raw)
@@ -152,9 +152,9 @@ def main() -> int:
         "working_tree_dirty": bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True)),
         "apk_sha256": {apk.name: hashlib.sha256(apk.read_bytes()).hexdigest() for apk in apks},
         "api": adb(a.serial, "shell", "getprop", "ro.build.version.sdk").strip(),
-        "serial": a.serial, "package": QA_PACKAGE, "contracts": bool(a.contracts or a.only == "contracts"),
+        "serial": a.serial, "package": QA_PACKAGE, "contracts": CONTRACTS in selected,
         "seconds": round(time.time() - started, 1), "exit": status,
-        "meaning": {0: "all passed", 1: "contract failure (defect reproduced)", 2: "control/harness failure"}[status],
+        "meaning": {0: "all passed", 1: "forum contract failure (regression)", 2: "control/harness failure"}[status],
         "results": results, "summary": summary, "evidence": str(a.out / "forum-ui"),
     }
     (a.out / "report.json").write_text(json.dumps(report, indent=2) + "\n")

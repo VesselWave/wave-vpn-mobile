@@ -73,3 +73,31 @@ runner tests also pass. CI now includes the app JVM test task. Existing
 contradictory tests have been preserved to make the policy disagreement explicit;
 the eventual fix must reconcile them and promote the desired contracts into the
 regular checks. No functional fixes or Linux changes are included here.
+
+## Production repair (8 November)
+
+The protocol and recovery defects above are now repaired. Recovery refresh is best
+effort: an outage, cooldown or its local deadline leaves recovery pending while
+allowing the cached tunnel attempt; actual user cancellation still stops it.
+The first server-list deadline settles as an ordinary connection failure. A local
+request deadline marks only its active endpoint for backoff, before transport
+closure/worker interruption; user cancellation preserves endpoint health.
+
+Manifest parsing validates optional routing independently and uses embedded safe
+routing when invalid. Session updates persist the last usable routing alongside
+the new server data, so it survives process restore. Invalid XML, wrong document
+types and missing server/mode configuration are still rejected. No unvalidated
+URL or RSA key is installed. All 41 offline contracts are now ordinary tests;
+contradictory prior policy assertions have been reconciled. The focused runner
+remains available for a complete, machine-readable qualification report.
+
+The timeout regression now exercises the actual production deadline boundary
+(`withTimeout` around `networkWork`). The former test timed out while awaiting
+a separate job and then manually canceled that job, which cannot distinguish
+a local deadline from a user cancellation at the worker boundary.
+
+Repair validation: `:core:test :app:testDebugUnitTest` passed with contracts
+included. `python3 scripts/check-forum.py` reported **41 passed, 0 failed,
+0 skipped**, exit 0. The nine script/report/packaging unit checks also passed.
+These results qualify offline production policy and persistence; they do not
+establish live-provider, physical-device or lockdown packet-capture behavior.

@@ -14,7 +14,6 @@ import me.vwave.vpn.WaveApp
 import me.vwave.vpn.vpn.TunnelManager
 import me.vwave.vpn.vpn.TunnelState
 import me.vwave.vpn.vpn.WaveVpnService
-import org.junit.Assume.assumeTrue
 import java.io.File
 
 /** What Android itself reports about the VPN network owned by this package. */
@@ -34,12 +33,6 @@ object Harness {
     val instrumentation get() = InstrumentationRegistry.getInstrumentation()
     val app get() = ApplicationProvider.getApplicationContext<WaveApp>()
     private val evidenceDir by lazy { File(app.getExternalFilesDir(null), "forum-ui").apply { mkdirs() } }
-
-    /** Opt-in desired-behavior contracts: `-e waveForumContracts 1`. They fail on the confirmed defects. */
-    val contractsEnabled get() = InstrumentationRegistry.getArguments().getString("waveForumContracts") == "1"
-    fun requireContracts() = assumeTrue(
-        "Forum UI contracts are opt-in: pass -e waveForumContracts 1 (scripts/forum-ui-emulator.py --contracts)",
-        contractsEnabled)
 
     fun shell(command: String): String {
         val pfd = instrumentation.uiAutomation.executeShellCommand(command)
@@ -118,7 +111,8 @@ object Harness {
 
     // ── The real UI, driven through accessibility (as TalkBack or a user would) ──
     // Compose test idling never settles while the Connecting spinner animates, so the tests use
-    // the accessibility tree instead of ComposeTestRule.
+    // the accessibility tree instead of ComposeTestRule. Every action goes through an accessibility
+    // node: a control that TalkBack cannot reach is a failure, never worked around with a raw touch.
 
     private fun root(): AccessibilityNodeInfo? = instrumentation.uiAutomation.rootInActiveWindow
 
@@ -148,16 +142,6 @@ object Harness {
         return (node ?: target).performAction(AccessibilityNodeInfo.ACTION_CLICK)
     }
 
-    fun boundsOf(label: String): android.graphics.Rect? = nodes()
-        .firstOrNull { it.text?.toString() == label || it.contentDescription?.toString() == label }
-        ?.let { n -> android.graphics.Rect().also(n::getBoundsInScreen) }
-
-    /** A real touch at a screen position, for controls the accessibility tree does not expose. */
-    fun tap(rect: android.graphics.Rect) {
-        shell("input tap ${rect.centerX()} ${rect.centerY()}")
-        instrumentation.waitForIdleSync()
-    }
-
     fun clickOrFail(label: String) {
         waitForLabel(label)
         check(click(label)) { "Could not click '$label'; screen=${screenText()}" }
@@ -179,7 +163,7 @@ object Harness {
             appendLine("screen=${screenText()}")
             appendLine("tree=" + nodes().joinToString("\n  ", "\n  ") { n ->
                 val r = android.graphics.Rect().also(n::getBoundsInScreen)
-                "${n.className} text=${n.text} desc=${n.contentDescription} click=${n.isClickable} $r"
+                "${n.className} text=${n.text} desc=${n.contentDescription} state=${n.stateDescription} click=${n.isClickable} $r"
             })
             appendLine("log=" + app.log.entries.value.takeLast(8).joinToString(" | ") { "${it.level}: ${it.message}" })
         })

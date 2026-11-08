@@ -5,12 +5,29 @@ package me.vwave.vpn.core
 import java.net.InetAddress
 import java.util.Base64
 
+/**
+ * [onlySelected] records the user's "Only selected" choice separately from [includedApps]: an
+ * empty IncludedApplications line would mean "every app", so that combination is refused.
+ */
 data class WgOptions(val port: Int = 1637, val entryIndex: Int = 2, val ipv6Endpoint: Boolean = false,
-    val excludedApps: Set<String> = emptySet(), val includedApps: Set<String> = emptySet())
+    val excludedApps: Set<String> = emptySet(), val includedApps: Set<String> = emptySet(),
+    val onlySelected: Boolean = false)
+
+/** "Only selected" with nothing checked. Never widened to a tunnel for every app. */
+class NoAppsSelectedException : IllegalArgumentException(MESSAGE) {
+    companion object { const val MESSAGE = "Only selected is on, but no apps are checked" }
+}
+
+/** Fails before any VPN change when the split-tunneling choice cannot be honored. */
+fun requireAppRouting(onlySelected: Boolean, includedApps: Set<String>) {
+    if (onlySelected && includedApps.isEmpty()) throw NoAppsSelectedException()
+}
 
 fun wgQuickConfig(account: Account, device: DeviceKey, server: Server, options: WgOptions): String {
     require(server.isOpen && options.port in 1..65535)
     require(options.excludedApps.isEmpty() || options.includedApps.isEmpty())
+    require(!options.onlySelected || options.excludedApps.isEmpty())
+    requireAppRouting(options.onlySelected, options.includedApps)
     fun key(value: String): String {
         require(Base64.getDecoder().decode(value).size == 32) { "Invalid WireGuard key" }
         return value

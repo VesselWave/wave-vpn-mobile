@@ -69,11 +69,25 @@ fun parseManifest(text: String): Manifest {
             attr("warning_open").ifBlank { null }, attr("warning_closed").ifBlank { null })
     }
     fun factor(name: String) = root.getAttribute(name).toDoubleOrNull()?.takeIf { it.isFinite() && it > 0 } ?: 1.0
+    val bootstrap = manifestBootstrap(root) ?: Defaults.bootstrap
+    val modes = Xml.descendants(root, "mode").filter { it.getAttribute("type") == "wireguard" }.map {
+        WireguardMode(it.getAttribute("port").toInt(), it.getAttribute("entry_index").toInt()).also { m ->
+            require(m.port in 1..65535 && m.entryIndex in 0..15)
+        }
+    }
+    require(servers.isNotEmpty() && modes.isNotEmpty()) { "Manifest contains no usable server configuration" }
+    return Manifest(servers, modes, bootstrap,
+        Factors(factor("speed_factor"), factor("load_factor"), factor("users_factor")),
+        (root.getAttribute("next_update").toIntOrNull() ?: 30).coerceIn(1, 1440),
+        Xml.descendants(root, "message").map { Notice(it.getAttribute("text")) }.filter { it.text.isNotBlank() })
+}
+
+/** Bootstrap metadata is optional; never let it discard otherwise usable server data. */
+private fun manifestBootstrap(root: Element): Bootstrap? = try {
     val modulus = root.getAttribute("auth_rsa_modulus")
     val exponent = root.getAttribute("auth_rsa_exponent")
     val urls = Xml.descendants(root, "url").map { it.getAttribute("address") }.filter(String::isNotBlank)
     require(modulus.isNotBlank() && exponent.isNotBlank() && urls.isNotEmpty()) { "Incomplete bootstrap manifest" }
-    // Reject invalid advertised routing/key material before replacing the last usable snapshot.
     val bootstrap = Bootstrap(urls.distinct(), modulus, exponent)
     for (url in bootstrap.urls) {
         val uri = java.net.URI(url)
@@ -84,15 +98,27 @@ fun parseManifest(text: String): Manifest {
     require(rsaModulus.bitLength() in 2048..8192 && rsaModulus.testBit(0))
     require(rsaExponent >= java.math.BigInteger.valueOf(3) && rsaExponent < rsaModulus && rsaExponent.testBit(0))
     RequestEnvelope(bootstrap).close()
-    val modes = Xml.descendants(root, "mode").filter { it.getAttribute("type") == "wireguard" }.map {
-        WireguardMode(it.getAttribute("port").toInt(), it.getAttribute("entry_index").toInt()).also { m ->
-            require(m.port in 1..65535 && m.entryIndex in 0..15)
-        }
-    }
-    return Manifest(servers, modes, bootstrap,
-        Factors(factor("speed_factor"), factor("load_factor"), factor("users_factor")),
-        (root.getAttribute("next_update").toIntOrNull() ?: 30).coerceIn(1, 1440),
-        Xml.descendants(root, "message").map { Notice(it.getAttribute("text")) }.filter { it.text.isNotBlank() })
+    bootstrap
+} catch (_: Exception) { null }
+
+/** Persist safe prior routing with fresh servers so a process restart cannot lose it. */
+internal fun manifestWithSafeBootstrap(text: String, previous: Bootstrap): String {
+    val root = Xml.root(text)
+    require(root.tagName == "manifest") { "Expected manifest document" }
+    if (manifestBootstrap(root) != null) return text
+    root.setAttribute("auth_rsa_modulus", previous.modulus)
+    root.setAttribute("auth_rsa_exponent", previous.exponent)
+    for (url in Xml.descendants(root, "url")) url.parentNode.removeChild(url)
+    for (urls in Xml.descendants(root, "urls")) urls.parentNode.removeChild(urls)
+    val urls = root.ownerDocument.createElement("urls")
+    for (address in previous.urls) urls.appendChild(root.ownerDocument.createElement("url").apply {
+        setAttribute("address", address)
+    })
+    root.appendChild(urls)
+    val out = java.io.StringWriter()
+    javax.xml.transform.TransformerFactory.newInstance().newTransformer().transform(
+        javax.xml.transform.dom.DOMSource(root.ownerDocument), javax.xml.transform.stream.StreamResult(out))
+    return out.toString()
 }
 
 // Avoid generated toString() methods on objects carrying key material.

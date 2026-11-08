@@ -166,11 +166,11 @@ class BootstrapLoadRegressionTest {
 
     @Test fun `manifest RSA and next_update validation`() {
         val weak = FakeAirNetwork.Key(java.security.KeyPairGenerator.getInstance("RSA").apply { initialize(1024) }.generateKeyPair())
-        assertThrows(Exception::class.java) { parseManifest(manifest(weak, urls)) }
-        assertThrows(Exception::class.java) { parseManifest(doc.replace(Regex("auth_rsa_exponent=\"[^\"]*\""), "auth_rsa_exponent=\"AQ==\"")) }
+        assertEquals(Defaults.bootstrap, parseManifest(manifest(weak, urls)).bootstrap)
+        assertEquals(Defaults.bootstrap, parseManifest(doc.replace(Regex("auth_rsa_exponent=\"[^\"]*\""), "auth_rsa_exponent=\"AQ==\"")).bootstrap)
         val even = java.util.Base64.getEncoder().encodeToString(ByteArray(256) { if (it == 0) 0x80.toByte() else 0 })
-        assertThrows(Exception::class.java) { parseManifest(doc.replace(Regex("auth_rsa_modulus=\"[^\"]*\""), "auth_rsa_modulus=\"$even\"")) }
-        assertThrows(Exception::class.java) { parseManifest(manifest(keyA, listOf("ftp://192.0.2.1"))) }
+        assertEquals(Defaults.bootstrap, parseManifest(doc.replace(Regex("auth_rsa_modulus=\"[^\"]*\""), "auth_rsa_modulus=\"$even\"")).bootstrap)
+        assertEquals(Defaults.bootstrap, parseManifest(manifest(keyA, listOf("ftp://192.0.2.1"))).bootstrap)
         assertEquals(1, parseManifest(manifest(keyA, urls, nextUpdate = 0)).nextUpdateMinutes)
         assertEquals(1, parseManifest(manifest(keyA, urls, nextUpdate = -5)).nextUpdateMinutes)
         assertEquals(1440, parseManifest(manifest(keyA, urls, nextUpdate = 999_999)).nextUpdateMinutes)

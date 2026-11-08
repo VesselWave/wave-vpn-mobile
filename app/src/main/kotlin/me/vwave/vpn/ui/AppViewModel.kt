@@ -23,6 +23,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val connectedSince = app.tunnels.connectedSince
     val connectionCount = app.tunnels.connectionCount
     val interruption = app.tunnels.interruption
+    /** Wave's blocking interface is installed: apps have no internet whatever the tunnel state says. */
+    val blockingTraffic = me.vwave.vpn.vpn.WaveVpnService.blockingTraffic
+    fun lockdownEnabled() = me.vwave.vpn.vpn.WaveVpnService.lockdownEnabled()
     val log = app.log.entries
     val loginBusy = MutableStateFlow(false)
     val loginError = MutableStateFlow<String?>(null)
@@ -74,6 +77,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             finally { refreshing.value = false }
         }
     }
+    /**
+     * TunnelManager refuses settings it cannot honor (Only selected with nothing checked) and
+     * reports why. Skip Android's consent prompt then: it would stop another VPN for nothing.
+     */
+    val needsConsentFirst get() = !settings.value.noAppsSelected
     fun connect() = app.tunnels.connect()
     fun disconnect() = app.tunnels.disconnect()
     fun choose(target: Target) { updateSettings { it.copy(target = target) }; reconnectIfActive() }
@@ -81,6 +89,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         s.copy(favorites = if (name in s.favorites) s.favorites - name else s.favorites + name)
     }
     fun updateSettings(change: (Settings) -> Settings) = app.settings.update(change)
+    /**
+     * Applies changed settings to a running tunnel. Settings it can no longer honor (Only selected
+     * with nothing checked) disconnect with the reason rather than keep routing every app.
+     */
     fun reconnectIfActive() { if (app.tunnels.isActive) connect() }
     fun clearLog() = app.log.clear()
     fun noticeShown() { notice.value = null }

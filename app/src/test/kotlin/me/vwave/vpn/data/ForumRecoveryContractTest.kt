@@ -4,14 +4,11 @@ package me.vwave.vpn.data
 import kotlinx.coroutines.*
 import me.vwave.vpn.core.CooldownException
 import org.junit.Assert.*
-import org.junit.Assume.assumeTrue
-import org.junit.Before
 import org.junit.Test
 import java.io.IOException
 
 /** Exercises the production recovery policy used before TunnelManager starts WireGuard. */
 class ForumRecoveryContractTest {
-    @Before fun optIn() { assumeTrue(System.getenv("WAVE_FORUM_CONTRACTS") == "1") }
 
     @Test(timeout = 5000) fun `recovery outage must not prevent cached tunnel attempt`() = runBlocking {
         val policy = HandshakeRefresh().apply { outcome(false) }

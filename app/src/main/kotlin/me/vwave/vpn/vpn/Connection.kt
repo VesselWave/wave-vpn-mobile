@@ -133,6 +133,20 @@ class TunnelManager(private val context: Context, private val repository: AirRep
     }
     fun connect(target: Target = preferences.current.target) {
         if (!repository.isLoggedIn) return
+        // Every entry point (screen, tile, Always-on restart) refuses "Only selected" with nothing
+        // checked before any VPN change: an empty app list would otherwise tunnel every app.
+        if (preferences.current.noAppsSelected) {
+            log.warn("Not connecting: ${NoAppsSelectedException.MESSAGE}")
+            val refused = TunnelState.Failed(NO_APPS_FAILURE)
+            if (isActive) disconnect(after = refused)
+            else {
+                interrupted.value = null; status.value = refused
+                // A sticky restart must not keep a foreground service with nothing to run.
+                if (WaveVpnService.instance?.isBlocking != true)
+                    context.stopService(Intent(context, ConnectionService::class.java))
+            }
+            return
+        }
         interrupted.value = null
         status.value = TunnelState.Connecting(null)
         pinger.stop()
@@ -141,38 +155,41 @@ class TunnelManager(private val context: Context, private val repository: AirRep
         operation?.cancel()
         operation = scope.launch { lock.withLock { connection(target) } }
     }
-    fun disconnect() {
+    /** Stops the tunnel, then publishes [after] (Down, or the reason Wave refused to connect). */
+    fun disconnect(after: TunnelState = TunnelState.Down) {
         shouldReconnect = false
         interrupted.value = null
         val previousState = status.value
         operation?.cancel()
         operation = scope.launch { lock.withLock {
-            try { withContext(Dispatchers.IO) {
-                val service = WaveVpnService.instance
-                val lockdown = permissionIntent() == null &&
-                    runCatching { backend.isLockdownEnabled }.getOrDefault(false)
-                log.info("Stopping tunnel; lockdown=$lockdown, service=${service != null}")
-                if (lockdown) {
-                    checkNotNull(service) { "VPN service unavailable" }.block()
-                    log.info("Blocking interface established")
-                }
-                backend.setState(tunnel, Tunnel.State.DOWN, null)
-                if (!lockdown) {
-                    context.stopService(Intent(context, ConnectionService::class.java))
-                    service?.releaseBlock()
-                    serviceBinding?.let { context.unbindService(it) }
-                    serviceBinding = null
-                    boundService = null
-                }
-            } }
+            try { teardown() }
             catch (e: CancellationException) { throw e }
             catch (e: Exception) {
                 log.warn("Android could not stop the tunnel (${e.javaClass.simpleName})")
                 status.value = previousState
                 return@withLock
             }
-            status.value = TunnelState.Down; since.value = null; counters.value = null
+            status.value = after; since.value = null; counters.value = null
         } }
+    }
+    /** Caller holds [lock]. Under Android lockdown the blocking interface replaces the tunnel. */
+    private suspend fun teardown() = withContext(Dispatchers.IO) {
+        val service = WaveVpnService.instance
+        val lockdown = permissionIntent() == null &&
+            runCatching { backend.isLockdownEnabled }.getOrDefault(false)
+        log.info("Stopping tunnel; lockdown=$lockdown, service=${service != null}")
+        if (lockdown) {
+            checkNotNull(service) { "VPN service unavailable" }.block()
+            log.info("Blocking interface established")
+        }
+        backend.setState(tunnel, Tunnel.State.DOWN, null)
+        if (!lockdown) {
+            context.stopService(Intent(context, ConnectionService::class.java))
+            service?.releaseBlock()
+            serviceBinding?.let { context.unbindService(it) }
+            serviceBinding = null
+            boundService = null
+        }
     }
     fun toggle() { if (isActive) disconnect() else connect() }
     private suspend fun connection(target: Target) {
@@ -183,13 +200,18 @@ class TunnelManager(private val context: Context, private val repository: AirRep
         try {
             vpnService()
             // Recovery uses only the bootstrap transport on an underlying network, before
-            // another attempt consumes cached device keys. Keep the existing tunnel installed.
+            // another attempt consumes cached device keys. It is best effort: an outage or local
+            // deadline must not gate the cached connection. Keep the existing tunnel installed.
             handshakeRefresh.recover { withTimeout(3_000) { repository.refreshAccount() } }
-            if (repository.manifest.value == null && WaveVpnService.instance?.isBlocking != true)
-                withTimeout(3_000) { repository.refresh() }
+            if (repository.manifest.value == null && WaveVpnService.instance?.isBlocking != true) {
+                val refreshed = withTimeoutOrNull(3_000) { repository.refresh(); true } ?: false
+                if (!refreshed) throw java.io.IOException("Server list refresh timed out")
+            }
             val m = repository.manifest.value ?: error("Refresh the server list first")
             val a = repository.account.value ?: error("Sign in first")
             val prefs = preferences.current
+            // Settings may have changed since connect(); re-check before touching the VPN.
+            requireAppRouting(prefs.splitMode == SplitMode.Include, prefs.splitApps)
             val device = a.key(prefs.deviceKey) ?: error("Select an available device")
             val mode = m.wireguardModes.find { it.port == prefs.port } ?: error("Select a supported WireGuard port")
             val candidates = Scoring.rank(m.servers, pinger.cached(m.servers), m.factors, allowFailedFallback = target != Target.Best) { s -> when(target) {
@@ -211,7 +233,8 @@ class TunnelManager(private val context: Context, private val repository: AirRep
                 val config = Config.parse(wgQuickConfig(a, device, server, WgOptions(prefs.port, mode.entryIndex,
                     prefs.ipv6Endpoint,
                     if (prefs.splitMode == SplitMode.Exclude) prefs.splitApps else emptySet(),
-                    if (prefs.splitMode == SplitMode.Include) prefs.splitApps else emptySet())).byteInputStream())
+                    if (prefs.splitMode == SplitMode.Include) prefs.splitApps else emptySet(),
+                    onlySelected = prefs.splitMode == SplitMode.Include)).byteInputStream())
                 log.info("Connecting to ${server.name}")
                 withContext(Dispatchers.IO) {
                     val service = vpnService()
@@ -273,6 +296,13 @@ class TunnelManager(private val context: Context, private val repository: AirRep
             // Cancellation is followed by another serialized connect or disconnect.
             // Keep the current TUN until the next serialized operation replaces it.
             throw e
+        } catch (e: NoAppsSelectedException) {
+            // Never keep a previous tunnel routing every app once the user chose "Only selected".
+            log.warn("Not connecting: ${e.message}")
+            runCatching { teardown() }.onFailure { if (it is CancellationException) throw it
+                log.warn("Android could not stop the tunnel (${it.javaClass.simpleName})") }
+            since.value = null; counters.value = null
+            status.value = TunnelState.Failed(NO_APPS_FAILURE)
         } catch (e: Exception) {
             // Keep an existing tunnel in place on monitor errors instead of opening a traffic gap.
             val retainedServer = selectedServer ?: repository.manifest.value?.servers?.find { it.name == lastServerName }
@@ -293,3 +323,6 @@ class TunnelManager(private val context: Context, private val repository: AirRep
 }
 
 private class NoCandidateException(message: String) : Exception(message)
+
+/** Shown after "Couldn't connect." on Overview. */
+const val NO_APPS_FAILURE = "${NoAppsSelectedException.MESSAGE}. Check at least one app in Split tunneling, or switch to All apps."

@@ -16,7 +16,10 @@ enum class SplitMode { Off, Exclude, Include }
 data class Settings(val target: Target = Target.Best, val deviceKey: String = "", val port: Int = 1637,
     val ipv6Endpoint: Boolean = false, val splitMode: SplitMode = SplitMode.Off,
     val splitApps: Set<String> = emptySet(), val favorites: Set<String> = emptySet(),
-    val unitBits: Boolean = false, val unitIec: Boolean = false)
+    val unitBits: Boolean = false, val unitIec: Boolean = false) {
+    /** "Only selected" with nothing checked: Wave refuses to connect rather than tunnel every app. */
+    val noAppsSelected get() = splitMode == SplitMode.Include && splitApps.isEmpty()
+}
 
 class SettingsStore(context: Context) {
     private val prefs = context.getSharedPreferences("wave-settings-v2", Context.MODE_PRIVATE)

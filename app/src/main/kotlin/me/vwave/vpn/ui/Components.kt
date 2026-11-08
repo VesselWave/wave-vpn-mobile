@@ -176,15 +176,15 @@ fun SettingRow(
     }
 }
 
-/** A row that opens something: value in muted text, then a chevron. */
+/** A row that opens something: value in muted text (amber when it needs attention), then a chevron. */
 @Composable
-fun ValueRow(label: String, value: String?, hint: String? = null, onClick: () -> Unit) {
+fun ValueRow(label: String, value: String?, hint: String? = null, warn: Boolean = false, onClick: () -> Unit) {
     SettingRow(label, hint, onClick = onClick) {
         if (value != null) {
             Text(
                 value,
                 style = MaterialTheme.typography.bodyMedium,
-                color = tokens.muted,
+                color = if (warn) tokens.warning else tokens.muted,
                 // SettingRow moves a long value under the label rather than truncating it early.
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,

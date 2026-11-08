@@ -49,6 +49,12 @@ internal class HandshakeRefresh {
     fun outcome(success: Boolean) { recoveryNeeded = !success }
     fun verifiedHandshake(refresh: () -> Unit) { recoveryNeeded = false; refresh() }
     suspend fun recover(refresh: suspend () -> Unit) {
-        if (recoveryNeeded) { refresh(); recoveryNeeded = false }
+        if (!recoveryNeeded) return
+        try { refresh(); recoveryNeeded = false }
+        catch (e: TimeoutCancellationException) { currentCoroutineContext().ensureActive() }
+        catch (e: CancellationException) { throw e }
+        catch (_: Exception) { currentCoroutineContext().ensureActive() }
+        // A failed optional refresh leaves recovery pending, but cached keys remain usable.
+        // RefreshSession independently retains its request cooldown across these retries.
     }
 }

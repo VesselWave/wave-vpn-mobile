@@ -10,8 +10,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,15 +51,24 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import me.vwave.vpn.data.LogLevel
 import me.vwave.vpn.data.Target
+import me.vwave.vpn.vpn.NO_APPS_FAILURE
 import me.vwave.vpn.vpn.TunnelState
 import me.vwave.vpn.vpn.VpnInterruption
 
 @Composable
-fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> Unit, onLockSettings: () -> Unit) {
+fun OverviewScreen(
+    vm: AppViewModel,
+    connect: () -> Unit,
+    onChooseServer: () -> Unit,
+    onLockSettings: () -> Unit,
+    onSplitTunneling: () -> Unit,
+) {
     val state by vm.tunnel.collectAsStateWithLifecycle()
     val stats by vm.stats.collectAsStateWithLifecycle()
     val settings by vm.settings.collectAsStateWithLifecycle()
@@ -67,6 +78,7 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
     val count by vm.connectionCount.collectAsStateWithLifecycle()
     val log by vm.log.collectAsStateWithLifecycle()
     val interruption by vm.interruption.collectAsStateWithLifecycle()
+    val blockingTraffic by vm.blockingTraffic.collectAsStateWithLifecycle()
     var deviceDialog by rememberSaveable { mutableStateOf(false) }
     val t = tokens
     val units = Units(settings.unitBits, settings.unitIec)
@@ -81,6 +93,13 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
     }
 
     val idle = state is TunnelState.Down || state is TunnelState.Failed
+    // Not connected, yet Wave's blocking interface still holds every app's traffic. This is never
+    // "Disconnected": the user has no internet until Wave connects or the block is released.
+    val blocked = idle && blockingTraffic
+    // Re-read on return from Android settings, where the user may have turned the block off.
+    var resumes by remember { mutableLongStateOf(0L) }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { resumes++ }
+    val lockdown = remember(blocked, resumes) { blocked && vm.lockdownEnabled() }
     val server = when (val s = state) {
         is TunnelState.Connected -> s.server
         is TunnelState.Stalled -> s.server
@@ -109,12 +128,13 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
                     is TunnelState.Stalled -> DotKind.Warn
                     is TunnelState.Connected -> DotKind.On
                 }
-                PowerButton(kind, onClick = if (idle) connect else vm::disconnect)
+                PowerButton(kind, onClick = if (idle) connect else vm::disconnect, blocked = blocked)
 
                 // ── Status chip and headline: where traffic goes (or will go) ──
                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     when (state) {
-                        TunnelState.Down, is TunnelState.Failed -> StatusChip(DotKind.Off, "Disconnected")
+                        TunnelState.Down, is TunnelState.Failed ->
+                            if (blocked) StatusChip(DotKind.Warn, "Blocking traffic") else StatusChip(DotKind.Off, "Disconnected")
                         is TunnelState.Connecting -> StatusChip(DotKind.Busy, "Connecting…")
                         is TunnelState.Stalled -> StatusChip(DotKind.Warn, "Not responding")
                         is TunnelState.Connected -> StatusChip(
@@ -161,11 +181,27 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
                             textAlign = TextAlign.Center,
                         )
                     }
-                    (state as? TunnelState.Failed)?.let { ErrorBanner("Couldn't connect. ${it.message}") }
+                    // The "No apps selected" panel below explains that refusal and links to the fix.
+                    (state as? TunnelState.Failed)?.takeUnless { it.message == NO_APPS_FAILURE && settings.noAppsSelected }
+                        ?.let { ErrorBanner("Couldn't connect. ${it.message}") }
                 }
+
+                // ── Traffic still blocked after a failure or disconnect: say so, and how to release it ──
+                if (blocked) BlockingPanel(lockdown, onStopBlocking = vm::disconnect)
 
                 // ── Android refused or took back the VPN: say so, and where to fix it ──
                 interruption?.takeIf { idle }?.let { InterruptionPanel(it) }
+
+                // ── Only selected with nothing checked: Connect refuses rather than route every app ──
+                if (idle && settings.noAppsSelected) {
+                    NoticePanel(
+                        "No apps selected",
+                        "Split tunneling is set to Only selected, but no apps are checked, so Wave won't connect. " +
+                            "Check the apps that should use the VPN, or switch to All apps.",
+                        "Choose apps",
+                        onClick = onSplitTunneling,
+                    )
+                }
 
                 // ── Device picker (only before connecting, only with a choice to make or a stale selection) ──
                 val keys = account?.keys.orEmpty()
@@ -247,7 +283,6 @@ fun OverviewScreen(vm: AppViewModel, connect: () -> Unit, onChooseServer: () -> 
  */
 @Composable
 private fun InterruptionPanel(interruption: VpnInterruption) {
-    val t = tokens
     val context = LocalContext.current
     val (title, body) = when (interruption) {
         VpnInterruption.PermissionDenied -> "Android didn't let Wave connect" to
@@ -256,6 +291,41 @@ private fun InterruptionPanel(interruption: VpnInterruption) {
         VpnInterruption.Revoked -> "Android turned off Wave's VPN" to
             "Another VPN app started, or the VPN was disconnected in Android settings. Tap Connect to reconnect."
     }
+    NoticePanel(title, body, "Open VPN settings", onClick = { context.startActivity(Intent(AndroidSettings.ACTION_VPN_SETTINGS)) })
+}
+
+/**
+ * Wave's blocking interface outlived the connection. Without Android lockdown, Wave holds the
+ * block itself and can release it. With lockdown, Android would keep blocking anyway, so the
+ * only honest release is in Android's settings.
+ */
+@Composable
+private fun BlockingPanel(lockdown: Boolean, onStopBlocking: () -> Unit) {
+    val context = LocalContext.current
+    if (lockdown) {
+        NoticePanel(
+            "Apps have no internet",
+            "Block connections without VPN is on for Wave, so Android blocks all traffic until Wave connects. " +
+                "To go online without the VPN, turn it off in Android's VPN settings.",
+            "Open VPN settings",
+            onClick = { context.startActivity(Intent(AndroidSettings.ACTION_VPN_SETTINGS)) },
+        )
+    } else {
+        NoticePanel(
+            "Apps have no internet",
+            "Wave is still blocking all traffic so nothing leaks outside the VPN. " +
+                "Tap Connect to try again, or stop blocking to go online without the VPN.",
+            "Stop blocking",
+            chevron = false,
+            onClick = onStopBlocking,
+        )
+    }
+}
+
+/** A warning with one way out: the Overview's shared shape for "something needs you". */
+@Composable
+private fun NoticePanel(title: String, body: String, action: String, chevron: Boolean = true, onClick: () -> Unit) {
+    val t = tokens
     Panel {
         Column(
             Modifier.padding(start = Dimens.md, end = Dimens.md, top = 14.dp, bottom = Dimens.xs),
@@ -269,10 +339,7 @@ private fun InterruptionPanel(interruption: VpnInterruption) {
                 Text(title, style = titleStyle)
             }
             Text(body, style = MaterialTheme.typography.bodyMedium, color = t.muted)
-            LinkButton(
-                "Open VPN settings",
-                onClick = { context.startActivity(Intent(AndroidSettings.ACTION_VPN_SETTINGS)) },
-            )
+            LinkButton(action, onClick = onClick, chevron = chevron)
         }
     }
 }
@@ -323,7 +390,7 @@ private fun StatCell(stat: Stat, modifier: Modifier) {
  * responding: filled amber; connecting: a spinner around it (tap to cancel).
  */
 @Composable
-private fun PowerButton(kind: DotKind, onClick: () -> Unit) {
+private fun PowerButton(kind: DotKind, onClick: () -> Unit, blocked: Boolean = false) {
     val t = tokens
     val fill by animateColorAsState(
         when (kind) {
@@ -339,6 +406,16 @@ private fun PowerButton(kind: DotKind, onClick: () -> Unit) {
     val compact = LocalDensity.current.fontScale >= 1.5f
     val outer = if (compact) 148.dp else 196.dp
     Box(Modifier.size(outer), contentAlignment = Alignment.Center) {
+        // Drawn first and kept out of the accessibility tree: Compose drops nodes that a later
+        // sibling fully covers, which used to hide "Cancel connecting" from TalkBack and Switch Access.
+        if (kind == DotKind.Busy) {
+            CircularProgressIndicator(
+                Modifier.size(outer).clearAndSetSemantics {},
+                color = t.accent,
+                strokeWidth = 2.dp,
+                trackColor = Color.Transparent,
+            )
+        }
         Surface(
             onClick = onClick,
             shape = CircleShape,
@@ -353,14 +430,18 @@ private fun PowerButton(kind: DotKind, onClick: () -> Unit) {
                         DotKind.Busy -> "Cancel connecting"
                         else -> "Disconnect"
                     }
+                    stateDescription = when {
+                        kind == DotKind.Busy -> "Connecting"
+                        kind == DotKind.Warn -> "Not responding"
+                        kind == DotKind.On -> "Connected"
+                        blocked -> "Blocking traffic"
+                        else -> "Disconnected"
+                    }
                 },
         ) {
             Box(contentAlignment = Alignment.Center) {
                 LucideIcon(Lucide.Power, ink, if (compact) 52.dp else 64.dp)
             }
-        }
-        if (kind == DotKind.Busy) {
-            CircularProgressIndicator(Modifier.size(outer), color = t.accent, strokeWidth = 2.dp, trackColor = Color.Transparent)
         }
     }
 }

@@ -15,6 +15,9 @@
 
 - When Android refuses VPN permission (for example, while another app is Always-on VPN) or another VPN takes over, Overview explains what happened and links to Android VPN settings instead of staying silent
 - The Quick Settings tile opens Wave to ask for VPN permission or sign-in instead of ignoring the tap
+- When Wave is still blocking traffic after a failed connection or a disconnect, Overview says "Blocking traffic", explains that apps have no internet, and offers Stop blocking (or Android VPN settings when Block connections without VPN is on) instead of showing Disconnected
+- "Only selected" with no apps checked no longer tunnels every app: Wave refuses to connect from every entry point, disconnects a running tunnel, and Overview, Settings and Split tunneling say why
+- TalkBack and Switch Access can reach Cancel connecting while Wave connects
 
 - Sign-in headings and the wordmark inherit the correct text color in dark mode; all screens share a themed root surface
 - Search placeholders, log timestamps and log level labels use readable secondary text colors in both themes

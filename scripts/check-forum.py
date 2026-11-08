@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Offline desired-behavior checks for Staff comment 268266; current defects exit 1.
+"""Offline regression checks for Staff comment 268266; failed contracts exit 1.
 
 No account, emulator, socket, signing identity, or external service is required by
 these tests. Gradle may download build dependencies. UI/device checks have their
@@ -54,7 +54,7 @@ def main():
                '--tests', '*Forum*ContractTest', '--rerun-tasks']
     log = args.report.with_suffix('.log')
     with log.open('w') as output:
-        run = subprocess.run(command, cwd=ROOT, env={**os.environ, 'WAVE_FORUM_CONTRACTS': '1'},
+        run = subprocess.run(command, cwd=ROOT, env=os.environ.copy(),
                              stdout=output, stderr=subprocess.STDOUT)
     cases = collect(sorted(p for directory in RESULTS for p in directory.glob('TEST-*Forum*ContractTest.xml')))
     required = {'ForumManifestContractTest', 'ForumManifestControlsContractTest',
