@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.4 · 2026-11-07 · early release
+
+- Fix inherited screen colors and secondary text contrast
+- Switch Android tabs instantly instead of crossfading
+- Hide device setting when the account has a single device
+- Show verified Android 0.1.3 APK download size
+
+[Release notes](docs/RELEASE-v0.1.4.md).
+
 ## Unreleased
 
 **Fixed**
