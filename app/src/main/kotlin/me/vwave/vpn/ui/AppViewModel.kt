@@ -43,13 +43,25 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (user.isBlank() || password.isEmpty()) { loginError.value = "Enter your username and password"; return }
         loginBusy.value = true; loginError.value = null
         signingIn = viewModelScope.launch {
-            try { app.repository.login(user.trim(), password); app.log.info("Signed in"); refresh(false) }
+            // One 45-second deadline for the whole sign-in, as on Linux; Cancel stays a cancellation.
+            try {
+                me.vwave.vpn.core.withSignInDeadline { app.repository.login(user.trim(), password) }
+                app.log.info("Signed in"); refresh(false)
+            }
             catch (e: CancellationException) { throw e }
             catch (e: me.vwave.vpn.core.CooldownException) { loginError.value = e.message }
             catch (e: me.vwave.vpn.core.LoginException) { loginError.value = e.message }
+            catch (e: me.vwave.vpn.core.SignInTimeoutException) { loginError.value = e.message; app.log.error(e.message.orEmpty()) }
             catch (_: Exception) { loginError.value = "Sign-in failed. Check your network and retry shortly." }
             finally { loginBusy.value = false }
         }
+    }
+    /** Not a failure: no error, no endpoint penalty, nothing saved; the form keeps what was typed. */
+    fun cancelSignIn() {
+        if (!loginBusy.value) return
+        signingIn?.cancel()
+        loginError.value = null
+        app.log.info("Sign-in cancelled")
     }
     fun refresh(force: Boolean = true) {
         if (refreshing.value) return

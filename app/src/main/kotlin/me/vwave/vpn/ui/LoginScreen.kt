@@ -109,6 +109,11 @@ fun LoginScreen(vm: AppViewModel) {
             modifier = Modifier.fillMaxWidth(),
             height = 52.dp,
         )
+        if (busy) {
+            TextButton(onClick = vm::cancelSignIn, modifier = Modifier.fillMaxWidth()) {
+                Text("Cancel", color = tokens.text)
+            }
+        }
         Text(
             "Independent app, not made by AirVPN. Uses WireGuard only.",
             style = MaterialTheme.typography.bodySmall,

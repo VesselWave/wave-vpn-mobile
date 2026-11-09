@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Sign-in gives up after 45 seconds with a clear message instead of waiting on unreachable addresses, and offers **Cancel** while signing in; Cancel shows no error, penalizes no address and saves nothing (same behavior as Linux).
+
 ## 0.1.5 · 2026-11-08 · early release
 
 - Continue cached tunnel recovery when account refresh is unavailable, cooling down or reaches its local deadline; preserve user cancellation.

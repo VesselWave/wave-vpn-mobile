@@ -58,7 +58,7 @@ def main():
                              stdout=output, stderr=subprocess.STDOUT)
     cases = collect(sorted(p for directory in RESULTS for p in directory.glob('TEST-*Forum*ContractTest.xml')))
     required = {'ForumManifestContractTest', 'ForumManifestControlsContractTest',
-                'ForumTimeoutContractTest', 'ForumRecoveryContractTest'}
+                'ForumTimeoutContractTest', 'ForumRecoveryContractTest', 'ForumSignInContractTest'}
     present = {case['id'].split('.')[-2] for case in cases}
     missing = sorted(required - present)
     code = 2 if missing else outcome(cases, run.returncode)
