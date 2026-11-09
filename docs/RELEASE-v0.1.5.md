@@ -21,8 +21,6 @@ Best server remains a latency/load estimate; throughput and long-term reliabilit
 
 For ongoing updates through F-Droid, add the **[Wave repository](https://f-droid.vwave.me/fdroid/repo?fingerprint=47841BF725DA7B106B2D05DF097E4898C7B5576411804A23D6A5505C5AD17933)**. F-Droid offers the current version; use the APK link above for this exact release.
 
-**Updating from 0.1.0 or 0.1.1?** Install over your existing copy to keep your sign-in and settings. These releases use the same signing certificate.
-
 <details>
 <summary>Installing the APK</summary>
 
