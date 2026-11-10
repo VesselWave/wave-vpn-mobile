@@ -36,7 +36,7 @@ import me.vwave.vpn.data.SplitMode
 
 /** Same titled groups and row shapes as the desktop's Settings tab. */
 @Composable
-fun SettingsScreen(vm: AppViewModel, onSplitTunneling: () -> Unit) {
+fun SettingsScreen(vm: AppViewModel, onSignIn: () -> Unit, onSplitTunneling: () -> Unit) {
     val account by vm.account.collectAsStateWithLifecycle()
     val manifest by vm.manifest.collectAsStateWithLifecycle()
     val settings by vm.settings.collectAsStateWithLifecycle()
@@ -56,12 +56,24 @@ fun SettingsScreen(vm: AppViewModel, onSplitTunneling: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(Dimens.lg),
     ) {
         Group("Account") {
-            row { SettingRow("Signed in as") { Text(account?.login.orEmpty(), style = MaterialTheme.typography.bodyMedium, color = t.accentFg) } }
-            account?.expiration?.let { expiry ->
-                row { SettingRow("Plan ends") { Text(expiry.substringBefore(' '), style = MaterialTheme.typography.bodyMedium, color = t.muted) } }
+            if (account == null) {
+                row {
+                    Text(
+                        "Settings are saved on this phone and kept when you sign in. Wave makes no external requests until you sign in.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = t.muted,
+                        modifier = Modifier.padding(Dimens.md),
+                    )
+                }
+                row { SettingRow("Sign in to AirVPN", onClick = onSignIn) }
+            } else {
+                row { SettingRow("Signed in as") { Text(account?.login.orEmpty(), style = MaterialTheme.typography.bodyMedium, color = t.accentFg) } }
+                account?.expiration?.let { expiry ->
+                    row { SettingRow("Plan ends") { Text(expiry.substringBefore(' '), style = MaterialTheme.typography.bodyMedium, color = t.muted) } }
+                }
+                if (showDevice) row { ValueRow("Device", device, hint = "Each device has its own WireGuard key", onClick = { dialog = "device" }) }
+                row { SettingRow("Sign out", labelColor = t.danger, onClick = { dialog = "logout" }) }
             }
-            if (showDevice) row { ValueRow("Device", device, hint = "Each device has its own WireGuard key", onClick = { dialog = "device" }) }
-            row { SettingRow("Sign out", labelColor = t.danger, onClick = { dialog = "logout" }) }
         }
 
         Group("Connection") {

@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
-fun LoginScreen(vm: AppViewModel) {
+fun LoginScreen(vm: AppViewModel, onConfigure: () -> Unit) {
     var user by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var showPassword by rememberSaveable { mutableStateOf(false) }
@@ -113,6 +113,9 @@ fun LoginScreen(vm: AppViewModel) {
             TextButton(onClick = vm::cancelSignIn, modifier = Modifier.fillMaxWidth()) {
                 Text("Cancel", color = tokens.text)
             }
+        }
+        TextButton(onClick = onConfigure, enabled = !busy, modifier = Modifier.fillMaxWidth()) {
+            Text("Configure before signing in", color = tokens.text)
         }
         Text(
             "Independent app, not made by AirVPN. Uses WireGuard only.",

@@ -127,8 +127,12 @@ class AirRepository(private val vault: SessionVault, context: Context) {
         }
     }
     suspend fun login(login: String, password: String) = update(login, password)
-    suspend fun refresh(force: Boolean = false) = update(force = force)
-    suspend fun refreshAccount() = update(account = true)
+    suspend fun refresh(force: Boolean = false) {
+        if (isLoggedIn) update(force = force)
+    }
+    suspend fun refreshAccount() {
+        if (isLoggedIn) update(account = true)
+    }
     fun logout(scope: CoroutineScope, after: () -> Unit = {}): Job = work.logout(scope) {
         withContext(NonCancellable + Dispatchers.IO) {
             session.clear(); vault.clear(); a.value = null; m.value = null

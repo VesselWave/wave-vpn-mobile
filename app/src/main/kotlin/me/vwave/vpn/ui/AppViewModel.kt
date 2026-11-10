@@ -64,7 +64,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         app.log.info("Sign-in cancelled")
     }
     fun refresh(force: Boolean = true) {
-        if (refreshing.value) return
+        if (!app.repository.isLoggedIn || refreshing.value) return
         refreshing.value = true
         viewModelScope.launch {
             try {

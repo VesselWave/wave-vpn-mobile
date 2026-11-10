@@ -81,3 +81,11 @@ That's why everything is published: the source, the protocol references in [prov
 ---
 
 GPL-3.0-or-later. Independent project, not affiliated with or endorsed by AirVPN. Report security issues privately to **vesselwave@protonmail.com** ([security policy](SECURITY.md)).
+
+### Configure before signing in
+
+Wave opens the real interface without an account. Browse Overview, Servers, Logs
+and Settings, including split tunneling, before signing in. Settings are saved
+locally and kept when you sign in. Signed-out refreshes and latency probes do
+not send network requests. Connect opens the sign-in form first; opening the
+form does not contact AirVPN. Submit Sign in when you are ready.

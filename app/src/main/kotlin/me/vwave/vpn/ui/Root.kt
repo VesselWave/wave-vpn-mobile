@@ -7,6 +7,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -15,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,10 +47,7 @@ private enum class Tab(val route: String, val label: String, val icon: ImageVect
 @Composable
 fun WaveRoot(vm: AppViewModel = viewModel()) {
     val account by vm.account.collectAsStateWithLifecycle()
-    if (account == null) {
-        LoginScreen(vm)
-        return
-    }
+    val nav = rememberNavController()
 
     val context = LocalContext.current
     // Android shows its VPN consent dialog once; connect when the user accepts. Anything else is
@@ -57,12 +56,15 @@ fun WaveRoot(vm: AppViewModel = viewModel()) {
         if (it.resultCode == Activity.RESULT_OK) vm.connect() else context.app.tunnels.permissionDenied()
     }
     val connect = {
-        val intent = if (vm.needsConsentFirst) context.app.tunnels.permissionIntent() else null
-        if (intent != null) consent.launch(intent) else vm.connect()
+        if (account == null) {
+            nav.navigate("login") { launchSingleTop = true }
+        } else {
+            val intent = if (vm.needsConsentFirst) context.app.tunnels.permissionIntent() else null
+            if (intent != null) consent.launch(intent) else vm.connect()
+        }
     }
     val connectRequested by context.app.connectRequested.collectAsStateWithLifecycle()
 
-    val nav = rememberNavController()
     val entry by nav.currentBackStackEntryAsState()
     val snackbar = remember { SnackbarHostState() }
     val notice by vm.notice.collectAsStateWithLifecycle()
@@ -71,6 +73,9 @@ fun WaveRoot(vm: AppViewModel = viewModel()) {
             snackbar.showSnackbar(it)
             vm.noticeShown()
         }
+    }
+    LaunchedEffect(account) {
+        if (account != null && nav.currentDestination?.route == "login") nav.popBackStack()
     }
     val t = tokens
     LaunchedEffect(connectRequested) {
@@ -84,6 +89,14 @@ fun WaveRoot(vm: AppViewModel = viewModel()) {
     Scaffold(
         containerColor = t.bg,
         snackbarHost = { SnackbarHost(snackbar) },
+        topBar = {
+            if (account == null && entry?.destination?.route != "login") {
+                TextButton(
+                    onClick = { nav.navigate("login") { launchSingleTop = true } },
+                    modifier = Modifier.statusBarsPadding(),
+                ) { Text("Not signed in · Sign in to AirVPN") }
+            }
+        },
         bottomBar = {
             Column {
                 Rule()
@@ -130,7 +143,8 @@ fun WaveRoot(vm: AppViewModel = viewModel()) {
             }
             composable(Tab.Servers.route) { ServersScreen(vm, connect, onConnected = { nav.open(Tab.Overview) }) }
             composable(Tab.Logs.route) { LogsScreen(vm) }
-            composable(Tab.Settings.route) { SettingsScreen(vm, onSplitTunneling = { nav.navigate("apps") }) }
+            composable(Tab.Settings.route) { SettingsScreen(vm, onSignIn = { nav.navigate("login") { launchSingleTop = true } }, onSplitTunneling = { nav.navigate("apps") }) }
+            composable("login") { LoginScreen(vm, onConfigure = { nav.open(Tab.Settings) }) }
             composable("apps") { AppsScreen(vm, onBack = { nav.popBackStack() }) }
         }
     }

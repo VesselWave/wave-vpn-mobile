@@ -67,6 +67,7 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
     var sort by rememberSaveable { mutableStateOf(SortColumn.Score) }
     var ascending by rememberSaveable { mutableStateOf(true) }
     var expanded by rememberSaveable { mutableStateOf(setOf<String>()) }
+    val account by vm.account.collectAsStateWithLifecycle()
     val t = tokens
 
     val servers = manifest?.servers.orEmpty()
@@ -155,7 +156,7 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
                     item {
                         EmptyState(
                             if (refreshing) "Loading servers…" else "No servers loaded",
-                            if (refreshing) "Fetching the list from AirVPN." else "Pull down to fetch the server list.",
+                            if (refreshing) "Fetching the list from AirVPN." else if (account == null) "Sign in to AirVPN to fetch servers. You can configure settings first." else "Pull down to fetch the server list.",
                         )
                     }
                 }
