@@ -88,7 +88,7 @@ fun ServersScreen(vm: AppViewModel, connect: () -> Unit, onConnected: () -> Unit
     val comparator: Comparator<Server> = remember(sort, ascending, pings, scores) {
         val base: Comparator<Server> = when (sort) {
             SortColumn.Name -> compareBy { it.name.lowercase() }
-            SortColumn.Country -> compareBy<Server> { it.countryCode.lowercase() }.thenBy { it.location.lowercase() }
+            SortColumn.Country -> compareBy<Server> { countryName(it.countryCode).lowercase() }.thenBy { it.location.lowercase() }
             SortColumn.Load -> compareBy { it.loadPercent }
             SortColumn.Users -> compareBy { it.users }
             // Unanswered pings sort last either way.
@@ -296,7 +296,7 @@ private fun BestRow(best: Server?, selected: Boolean, onClick: () -> Unit) {
         Column(Modifier.weight(1f)) {
             Text("Best server", style = MaterialTheme.typography.titleMedium)
             Text(
-                best?.let { "Now: ${it.name}, ${it.countryCode.uppercase()}" } ?: "Lowest load and latency, anywhere",
+                best?.let { "Now: ${it.name}, ${countryName(it.countryCode)}" } ?: "Lowest load and latency, anywhere",
                 style = MaterialTheme.typography.bodySmall,
                 color = t.muted,
             )

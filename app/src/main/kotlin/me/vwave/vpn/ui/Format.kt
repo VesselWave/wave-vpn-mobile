@@ -6,7 +6,7 @@ import java.util.Locale
 fun countryName(code: String): String = runCatching {
     Locale("", if (code.equals("uk", true)) "GB" else code.uppercase()).displayCountry
 }.getOrDefault(code.uppercase())
-fun locationLabel(location: String, countryCode: String) = "$location, ${countryCode.uppercase()}"
+fun locationLabel(location: String, countryCode: String) = "$location, ${countryName(countryCode)}"
 data class Units(val bits: Boolean, val iec: Boolean)
 private fun amount(value: Double, units: Units, rate: Boolean): String {
     var n = if (units.bits) value * 8 else value

@@ -96,7 +96,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val needsConsentFirst get() = !settings.value.noAppsSelected
     fun connect() = app.tunnels.connect()
     fun disconnect() = app.tunnels.disconnect()
-    fun choose(target: Target) { updateSettings { it.copy(target = target) }; reconnectIfActive() }
+    fun choose(target: Target) {
+        val connected = app.tunnels.state.value as? me.vwave.vpn.vpn.TunnelState.Connected
+        updateSettings { it.copy(target = target) }
+        // Choosing the server already carrying traffic must not interrupt that connection.
+        if (target is Target.Server && target.name == connected?.server?.name) return
+        reconnectIfActive()
+    }
     fun toggleFavorite(name: String) = updateSettings { s ->
         s.copy(favorites = if (name in s.favorites) s.favorites - name else s.favorites + name)
     }
