@@ -2,9 +2,14 @@
 
 ## Unreleased
 
+## 0.1.6 · 2026-11-09 · early release
+
+- Configure local settings and browse the interface before sign-in; Connect opens the sign-in form.
 - Server locations show country names and sort by those names; choosing the server already connected no longer restarts the tunnel.
 
 - Sign-in gives up after 45 seconds with a clear message instead of waiting on unreachable addresses, and offers **Cancel** while signing in; Cancel shows no error, penalizes no address and saves nothing (same behavior as Linux).
+
+[Release notes](docs/RELEASE-v0.1.6.md).
 
 ## 0.1.5 · 2026-11-08 · early release
 

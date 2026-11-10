@@ -27,8 +27,8 @@ android {
         applicationId = "me.vwave.vpn"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "0.1.5"
+        versionCode = 8
+        versionName = "0.1.6"
         ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64") }
         // Forum UI/emulator checks: see docs/qa/FORUM-UI-2026-11-07.md. The runner seeds a
         // synthetic offline session and refuses to run in any package except me.vwave.vpn.qa.
